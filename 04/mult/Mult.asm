@@ -9,4 +9,39 @@
 // This program only needs to handle arguments that satisfy
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
-// Put your code here.
+//idea: (R1 + ... + R1) R0 times equlas R0*R1
+
+//R2=0
+@R2
+M=0
+
+//i=0
+@i
+M=0
+
+(LOOP)
+
+	//if i==R0 go to END
+	@i
+	D=M
+	@R0
+	D=D-M
+	@END
+	D;JEQ
+
+	//R2=R2+R1
+	@R1
+	D=M
+	@R2
+	M=M+D
+
+	//i=i+1
+	@i
+	M=M+1
+
+	@LOOP
+	0;JMP
+	
+(FINAL_LOOP)	
+	@FINAL_LOOP
+	0;JMP
