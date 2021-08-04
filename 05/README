@@ -1,7 +1,7 @@
-bartsimp, lisasimp
+gal.ofer1,amitkeinan
 ===============================================================================
-Bart Simpson, ID 011111111, bart@mail.huji.ac.il
-Lisa Simpson, ID 022222222, lisa@mail.huji.ac.il
+Gal Ofer, ID 211589544, gal.ofer1@mail.huji.ac.il
+Amit Keinan, ID 208296426, amit.keinan2@mail.huji.ac.il
 ===============================================================================
 
                            Project 5 - Computer Architecture
@@ -14,15 +14,5 @@ README - This file.
 CPU.hdl - 
 Memory.hdl - 
 Computer.hdl - 
-Include other files required by your project, if there are any.
+First15.hdl - helper chip - returns the first 15 bits of 16-bit input.
 
-Remarks
--------
-* The README file must contain the following:
-- In the first line: login(s) of the author(s), 
-separated by commas and nothing else! 
-If you work alone, do not include a comma. 
-Logins should be identical to the names of your home folders and are 
-case-sensitive.
-- Name(s), email(s) and ID(s) of the project's author(s).
-- Any remarks you have about your submission.
