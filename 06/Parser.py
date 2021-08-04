@@ -5,7 +5,9 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from tables import command_types, dest_table, comp_table, jump_table
+
+from Code import Code
+from tables import command_types
 
 
 class Parser:
@@ -21,8 +23,6 @@ class Parser:
         Args:
             input_file (typing.TextIO): input file.
         """
-        # Your code goes here!
-        # A good place to start is:
         self.input_lines = input_file.read().splitlines()
         self._remove_whitespace_lines()
         self.line_index = 0
@@ -81,9 +81,9 @@ class Parser:
 
         if "=" in self.curr_command:
             dest_symbol = self.curr_command.split("=")[0]
-            return dest_table[dest_symbol]
         else:
-            return "000"
+            dest_symbol = ""
+        return Code.dest(dest_symbol)
 
     def comp(self) -> str:
         """
@@ -92,13 +92,7 @@ class Parser:
             only when commandType() is "C_COMMAND".
         """
         comp = self.curr_command.split("=")[1].split(";")[0]
-        if "M" in comp:
-            a = "1"
-            dummy_comp = comp.replace("M", "B")
-        else:
-            a = "0"
-            dummy_comp = comp.replace("D", "B")
-        return comp_table[dummy_comp]
+        return Code.comp(comp)
 
     def jump(self) -> str:
         """
@@ -108,6 +102,6 @@ class Parser:
         """
         if ";" in self.curr_command:
             jump_symbol = self.curr_command.split(";")[1]
-            return jump_table[jump_symbol]
         else:
-            return "000"
+            jump_symbol = ""
+        return Code.jump(jump_symbol)

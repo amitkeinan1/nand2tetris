@@ -4,6 +4,7 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
+from tables import dest_table, jump_table, comp_table
 
 
 class Code:
@@ -18,8 +19,8 @@ class Code:
         Returns:
             str: 3-bit long binary code of the given mnemonic.
         """
-        # Your code goes here!
-        pass
+
+        return dest_table[mnemonic]
 
     @staticmethod
     def comp(mnemonic: str) -> str:
@@ -30,8 +31,13 @@ class Code:
         Returns:
             str: 9-bit long binary code of the given mnemonic.
         """
-        # Your code goes here!
-        pass
+        if "M" in mnemonic:
+            a = "1"
+            dummy_mnemonic = mnemonic.replace("M", "B")
+        else:
+            a = "0"
+            dummy_mnemonic = mnemonic.replace("D", "B")
+        return f"11{a}{comp_table[dummy_mnemonic]}"
 
     @staticmethod
     def jump(mnemonic: str) -> str:
@@ -42,5 +48,5 @@ class Code:
         Returns:
             str: 3-bit long binary code of the given mnemonic.
         """
-        # Your code goes here!
-        pass
+        return jump_table[mnemonic]
+

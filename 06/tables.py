@@ -2,7 +2,8 @@ command_types = {"0": "A_COMMAND",
                  "1": "C_COMMAND",
                  "(": "L_COMMAND"}
 
-dest_table = {"M": "001",
+dest_table = {"":"000",
+    "M": "001",
               "D": "010",
               "MD": "011",
               "A": "100",
@@ -37,5 +38,6 @@ jump_table = {"JGT": "001",
               "JLT": "100",
               "JNE": "101",
               "JLE": "110",
-              "JMP": "111"
+              "JMP": "111",
+              "":"000"
               }
