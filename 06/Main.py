@@ -24,49 +24,33 @@ def assemble_file(
         input_file (typing.TextIO): the file to assemble.
         output_file (typing.TextIO): writes all output to this file.
     """
-    # *Initialization*
     symbol_table = SymbolTable()
 
-    # *First Pass*
-    # Go through the entire assembly program, line by line, and build the symbol
-    # table without generating any code. As you march through the program lines,
-    # keep a running number recording the ROM address into which the current
-    # command will be eventually loaded.
-    # This number starts at 0 and is incremented by 1 whenever a C-instruction
-    # or an A-instruction is encountered, but does not change when a label
-    # pseudo-command or a comment is encountered. Each time a pseudo-command
-    # (Xxx) is encountered, add a new entry to the symbol table, associating
-    # Xxx with the ROM address that will eventually store the next command in
-    # the program.
-    # This pass results in entering all the program’s labels along with their
-    # ROM addresses into the symbol table.
-    # The program’s variables are handled in the second pass.
     parser = Parser(input_file)
     rom_address = 0
 
+    first_iteration = True
     while parser.has_more_commands():
+        if first_iteration:
+            first_iteration = False
+        else:
+            parser.advance()
+
         if parser.command_type() == L_COMMAND:
             symbol_table.add_entry(parser.symbol(), rom_address)
         else:
             rom_address += 1
 
-    # *Second Pass*
-    # Now go again through the entire program, and parse each line.
-    # Each time a symbolic A-instruction is encountered, namely, @Xxx where Xxx
-    # is a symbol and not a number, look up Xxx in the symbol table.
-    # If the symbol is found in the table, replace it with its numeric meaning
-    # and complete the command’s translation.
-    # If the symbol is not found in the table, then it must represent a new
-    # variable. To handle it, add the pair (Xxx,n) to the symbol table, where n
-    # is the next available RAM address, and complete the command’s translation.
-    # The allocated RAM addresses are consecutive numbers, starting at address
-    # 16 (just after the addresses allocated to the predefined symbols).
-    # After the command is translated, write the translation to the output file.
-
+    input_file.seek(0)
     parser = Parser(input_file)
     translated_lines = []
 
+    first_iteration = True
     while parser.has_more_commands():
+        if first_iteration:
+            first_iteration = False
+        else:
+            parser.advance()
         if parser.command_type() == A_COMMAND:
             value = parser.symbol()
             if not value.isnumeric():

@@ -51,8 +51,8 @@ class Code:
         return jump_table[mnemonic]
 
     @staticmethod
-    def translate_a_command(value):
-        binary_value = '{0:015b}'.format(value)
+    def translate_a_command(value: str):
+        binary_value = '{0:015b}'.format(int(value))
         return f"0{binary_value}"
 
     @staticmethod

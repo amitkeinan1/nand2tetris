@@ -9,6 +9,9 @@ import typing
 from Code import Code
 from tables import command_types
 
+COMMENT_SIGN = "//"
+C_COMMAND = "C_COMMAND"  # TODO: put in one place
+
 
 class Parser:
     """Encapsulates access to the input code. Reads and assembly language 
@@ -24,16 +27,24 @@ class Parser:
             input_file (typing.TextIO): input file.
         """
         self.input_lines = input_file.read().splitlines()
+        self._remove_comments_from_lines()
         self._remove_whitespace_lines()
         self.line_index = 0
         self.curr_command = self.input_lines[self.line_index]
 
     @staticmethod
-    def _is_line_whitespace(line: str):
-        return line == '' or line.strip().split("//")[0] == ''
+    def _remove_comments(line: str):
+        return line.split(COMMENT_SIGN)[0]
+
+    def _remove_comments_from_lines(self):
+        self.input_lines = list(map(self._remove_comments, self.input_lines))
+
+    @staticmethod
+    def _is_line_not_whitespace(line: str):
+        return line != ''
 
     def _remove_whitespace_lines(self):
-        self.input_lines = list(filter(Parser._is_line_whitespace, self.input_lines))
+        self.input_lines = list(filter(Parser._is_line_not_whitespace, self.input_lines))
 
     def has_more_commands(self) -> bool:
         """Are there more commands in the input?
@@ -41,7 +52,7 @@ class Parser:
         Returns:
             bool: True if there are more commands, False otherwise.
         """
-        return self.line_index <= (len(self.input_lines) - 1)
+        return self.line_index < (len(self.input_lines) - 1)
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current command.
@@ -58,7 +69,10 @@ class Parser:
             "C_COMMAND" for dest=comp;jump
             "L_COMMAND" (actually, pseudo-command) for (Xxx) where Xxx is a symbol
         """
-        return command_types[self.curr_command[0]]
+        if self.curr_command[0] in command_types:
+            return command_types[self.curr_command[0]]
+        else:
+            return C_COMMAND
 
     def symbol(self) -> str:
         """
