@@ -40,8 +40,8 @@ CHIP CPU {
 
     PARTS:
     Mux16(a=instruction, b=ALU-out, sel=instruction[15], out=Aregister-in);
-	Not(in=instruction[3], out=not-d3); // not sure
-	Nand(a=instruction[15], b=not-d3, out=Aregiter-load); // not sure
+	Not(in=instruction[5], out=not-d1); // not sure
+	Nand(a=instruction[15], b=not-d1, out=Aregiter-load); // not sure
 	Register(in=Aregister-in, out=Aregister-out, load=Aregiter-load); // A register
     
 	Mux16(a=Aregister-out, b=inM, sel=instruction[12], out=ALU-yin);
