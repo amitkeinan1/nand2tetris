@@ -97,7 +97,7 @@ class Parser:
             dest_symbol = self.curr_command.split("=")[0]
         else:
             dest_symbol = ""
-        return Code.dest(dest_symbol)
+        return dest_symbol
 
     def comp(self) -> str:
         """
@@ -106,7 +106,7 @@ class Parser:
             only when commandType() is "C_COMMAND".
         """
         comp = self.curr_command.split("=")[1].split(";")[0]
-        return Code.comp(comp)
+        return comp
 
     def jump(self) -> str:
         """
@@ -118,4 +118,4 @@ class Parser:
             jump_symbol = self.curr_command.split(";")[1]
         else:
             jump_symbol = ""
-        return Code.jump(jump_symbol)
+        return jump_symbol

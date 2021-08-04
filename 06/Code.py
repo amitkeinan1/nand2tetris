@@ -36,7 +36,7 @@ class Code:
             dummy_mnemonic = mnemonic.replace("M", "B")
         else:
             a = "0"
-            dummy_mnemonic = mnemonic.replace("D", "B")
+            dummy_mnemonic = mnemonic.replace("A", "B")
         return f"11{a}{comp_table[dummy_mnemonic]}"
 
     @staticmethod
@@ -57,7 +57,7 @@ class Code:
 
     @staticmethod
     def translate_c_command(dest, comp, jump):
-        bin_dest, bin_comp, bin_jump = dest(dest), comp(comp), ump(jump)
+        bin_dest, bin_comp, bin_jump = Code.dest(dest), Code.comp(comp), Code.jump(jump)
         return f"1{bin_comp}{bin_dest}{bin_jump}"
 
 

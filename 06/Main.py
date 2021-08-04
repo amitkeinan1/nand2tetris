@@ -65,6 +65,7 @@ def assemble_file(
             dest, comp, jump = parser.dest(), parser.comp(), parser.jump()
             translated_lines.append(Code.translate_c_command(dest, comp, jump))
 
+    translated_lines = [line + "\n" for line in translated_lines]
     output_file.writelines(translated_lines)
 
 
