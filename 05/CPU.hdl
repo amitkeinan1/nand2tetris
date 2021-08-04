@@ -69,7 +69,7 @@ CHIP CPU {
 	First15(in=pc-out, out=pc);
 	First15(in=Aregister-out, out=addressM);
 	And16(a=true, b=ALU-out, out=outM);
-	And(a=instruction[15], b=instruction[5], out=writeM);
+	And(a=instruction[15], b=instruction[3], out=writeM);
 	
 	
 }
