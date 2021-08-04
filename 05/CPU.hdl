@@ -40,14 +40,14 @@ CHIP CPU {
 
     PARTS:
     Mux16(a=instruction, b=ALU-out, sel=instruction[15], out=Aregister-in);
-	Not(in=instruction[5], out=not-d1); // not sure
-	Nand(a=instruction[15], b=not-d1, out=Aregiter-load); // not sure
-	ARegister(in=Aregister-in, out=Aregister-out, load=Aregiter-load); // A register
+	Not(in=instruction[5], out=not-d1);
+	Nand(a=instruction[15], b=not-d1, out=Aregiter-load);
+	ARegister(in=Aregister-in, out=Aregister-out, load=Aregiter-load);
     
 	Mux16(a=Aregister-out, b=inM, sel=instruction[12], out=ALU-yin);
 	
-	And(a=instruction[15], b=instruction[4], out=Dregiter-load); // not sure
-	DRegister(in=ALU-out, out=ALU-xin, load=Dregiter-load); // D register
+	And(a=instruction[15], b=instruction[4], out=Dregiter-load);
+	DRegister(in=ALU-out, out=ALU-xin, load=Dregiter-load);
 	
 	ALU(x=ALU-xin, y=ALU-yin, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU-out, zr=zr, ng=ng);
 	
@@ -55,10 +55,10 @@ CHIP CPU {
 	Not(in=ng, out=not-neg);
 	Not(in=zr, out=not-zr);
 	And(a=not-neg, b=not-zr,out=pos);
-	And(a=instruction[0], b=pos, out=jump-pos);
+	And(a=instruction[0], b=pos, out=jump-pos); // jump > 0
 	
-	And(a=instruction[1], b=zr, out=jump-zr);
-	And(a=instruction[2], b=ng, out=jump-ng);
+	And(a=instruction[1], b=zr, out=jump-zr); // jump == 0
+	And(a=instruction[2], b=ng, out=jump-ng); // jump < 0
 	
 	// checks whether any of the jump terms are satisfied
 	Or(a=jump-pos, b=jump-zr, out=jump-tag);
