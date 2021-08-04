@@ -1,4 +1,4 @@
-command_types = {"0": "A_COMMNAD",
+command_types = {"0": "A_COMMAND",
                  "1": "C_COMMAND",
                  "(": "L_COMMAND"}
 
