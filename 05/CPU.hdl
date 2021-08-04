@@ -51,8 +51,10 @@ CHIP CPU {
 	
 	ALU(x=ALU-xin, y=ALU=yin, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU-out, zr=zr, ng=ng);
 	
+	
 	PC(in=Aregister-out, load=, inc=, reset=reset, out=pc);
 	And16(a=true, b=Aregister-out, out=adressM);
+	And16(a=true, b=ALU-out, out=outM);
 	And(a=true, b=instruction[5], out=writeM);
 	
 	
