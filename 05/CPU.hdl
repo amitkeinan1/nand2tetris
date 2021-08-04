@@ -49,7 +49,7 @@ CHIP CPU {
 	And(a=instruction[15], b=instruction[4], out=Dregiter-load); // not sure
 	Register(in=ALU-out, out=ALU-xin, load=Dregiter-load); // D register
 	
-	ALU(x=ALU-xin, y=ALU=yin, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU-out, zr=zr, ng=ng);
+	ALU(x=ALU-xin, y=ALU-yin, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU-out, zr=zr, ng=ng);
 	
 	// calculates truth value for each of the jump terms
 	Not(in=ng, out=pos);
@@ -63,14 +63,13 @@ CHIP CPU {
 	
 	// jumps only if the instruction is a C instruction
 	And(a=jumpc, b=instruction[15], out=jump);
-	And(a=jumpc, b=instruction[15], out=jump);
 	
 	
-	PC(in=Aregister-out, load=jump, inc=true, reset=reset, out=pc);
-	
-	And16(a=true, b=Aregister-out, out=adressM);
+	PC(in=Aregister-out, load=jump, inc=true, reset=reset, out=pc-out);
+	First15(in=pc-out, out=pc);
+	First15(in=Aregister-out, out=addressM);
 	And16(a=true, b=ALU-out, out=outM);
-	And(a=true, b=instruction[5], out=writeM);
+	And(a=instruction[15], b=instruction[5], out=writeM);
 	
 	
 }
