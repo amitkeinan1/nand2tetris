@@ -51,8 +51,23 @@ CHIP CPU {
 	
 	ALU(x=ALU-xin, y=ALU=yin, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU-out, zr=zr, ng=ng);
 	
+	// calculates truth value for each of the jump terms
+	Not(in=ng, out=pos);
+	And(a=instruction[0], b=pos, out=jump-pos);
+	And(a=instruction[1], b=zr, out=jump-zr);
+	And(a=instruction[2], b=ng, out=jump-ng);
 	
-	PC(in=Aregister-out, load=, inc=, reset=reset, out=pc);
+	// checks whether any of the jump terms are satisfied
+	Or(a=jump-pos, b=jump-zr, out=jump-tag);
+	Or(a=jump-tag, b=jump-ng, out=jumpc);
+	
+	// jumps only if the instruction is a C instruction
+	And(a=jumpc, b=instruction[15], out=jump);
+	And(a=jumpc, b=instruction[15], out=jump);
+	
+	
+	PC(in=Aregister-out, load=jump, inc=true, reset=reset, out=pc);
+	
 	And16(a=true, b=Aregister-out, out=adressM);
 	And16(a=true, b=ALU-out, out=outM);
 	And(a=true, b=instruction[5], out=writeM);
