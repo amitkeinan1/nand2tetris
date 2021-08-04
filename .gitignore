@@ -2,3 +2,5 @@
 *.out
 
 06/.idea/
+
+06/__pycache__/

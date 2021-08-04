@@ -50,3 +50,15 @@ class Code:
         """
         return jump_table[mnemonic]
 
+    @staticmethod
+    def translate_a_command(value):
+        binary_value = '{0:015b}'.format(value)
+        return f"0{binary_value}"
+
+    @staticmethod
+    def translate_c_command(dest, comp, jump):
+        bin_dest, bin_comp, bin_jump = dest(dest), comp(comp), ump(jump)
+        return f"1{bin_comp}{bin_dest}{bin_jump}"
+
+
+

@@ -15,6 +15,7 @@ A_COMMAND = "A_COMMAND"
 C_COMMAND = "C_COMMAND"
 L_COMMAND = "L_COMMAND"
 
+
 def assemble_file(
         input_file: typing.TextIO, output_file: typing.TextIO) -> None:
     """Assembles a single file.
@@ -42,6 +43,7 @@ def assemble_file(
     # The program’s variables are handled in the second pass.
     parser = Parser(input_file)
     rom_address = 0
+
     while parser.has_more_commands():
         if parser.command_type() == L_COMMAND:
             symbol_table.add_entry(parser.symbol(), rom_address)
@@ -60,7 +62,26 @@ def assemble_file(
     # The allocated RAM addresses are consecutive numbers, starting at address
     # 16 (just after the addresses allocated to the predefined symbols).
     # After the command is translated, write the translation to the output file.
-    pass
+
+    parser = Parser(input_file)
+    translated_lines = []
+
+    while parser.has_more_commands():
+        if parser.command_type() == A_COMMAND:
+            value = parser.symbol()
+            if not value.isnumeric():
+                if symbol_table.contains(value):
+                    translated_lines.append(parser.curr_command.replace(value, symbol_table.get_address(value)))
+                else:
+                    symbol_table.add_symbol(value)
+            else:
+                translated_lines.append(Code.translate_a_command(value))
+
+        elif parser.command_type() == C_COMMAND:
+            dest, comp, jump = parser.dest(), parser.comp(), parser.jump()
+            translated_lines.append(Code.translate_c_command(dest, comp, jump))
+
+    output_file.writelines(translated_lines)
 
 
 if "__main__" == __name__:
