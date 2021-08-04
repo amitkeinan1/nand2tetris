@@ -11,6 +11,9 @@ from SymbolTable import SymbolTable
 from Parser import Parser
 from Code import Code
 
+A_COMMAND = "A_COMMAND"
+C_COMMAND = "C_COMMAND"
+L_COMMAND = "L_COMMAND"
 
 def assemble_file(
         input_file: typing.TextIO, output_file: typing.TextIO) -> None:
@@ -20,14 +23,9 @@ def assemble_file(
         input_file (typing.TextIO): the file to assemble.
         output_file (typing.TextIO): writes all output to this file.
     """
-    # Your code goes here!
-    #
-    # You should use the two-pass implementation suggested in the book:
-    #
     # *Initialization*
-    # Initialize the symbol table with all the predefined symbols and their
-    # pre-allocated RAM addresses, according to section 6.2.3 of the book.
-    #
+    symbol_table = SymbolTable()
+
     # *First Pass*
     # Go through the entire assembly program, line by line, and build the symbol
     # table without generating any code. As you march through the program lines,
@@ -42,7 +40,14 @@ def assemble_file(
     # This pass results in entering all the program’s labels along with their
     # ROM addresses into the symbol table.
     # The program’s variables are handled in the second pass.
-    #
+    parser = Parser(input_file)
+    rom_address = 0
+    while parser.has_more_commands():
+        if parser.command_type() == L_COMMAND:
+            symbol_table.add_entry(parser.symbol(), rom_address)
+        else:
+            rom_address += 1
+
     # *Second Pass*
     # Now go again through the entire program, and parse each line.
     # Each time a symbolic A-instruction is encountered, namely, @Xxx where Xxx
