@@ -55,7 +55,8 @@ def assemble_file(
             value = parser.symbol()
             if not value.isnumeric():
                 if symbol_table.contains(value):
-                    translated_lines.append(parser.curr_command.replace(value, symbol_table.get_address(value)))
+                    translated_lines.append(Code.translate_a_command(symbol_table.get_address(value)))
+
                 else:
                     symbol_table.add_symbol(value)
             else:

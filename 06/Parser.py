@@ -27,7 +27,7 @@ class Parser:
             input_file (typing.TextIO): input file.
         """
         self.input_lines = input_file.read().splitlines()
-        self._remove_comments_from_lines()
+        self._clean_lines()
         self._remove_whitespace_lines()
         self.line_index = 0
         self.curr_command = self.input_lines[self.line_index]
@@ -36,8 +36,21 @@ class Parser:
     def _remove_comments(line: str):
         return line.split(COMMENT_SIGN)[0]
 
-    def _remove_comments_from_lines(self):
-        self.input_lines = list(map(self._remove_comments, self.input_lines))
+    @staticmethod
+    def _trim_spaces(line: str):
+        return line.strip()
+
+    @staticmethod
+    def _clean_line(line: str):
+        """
+        remove everything which is not pure code from line
+        """
+        line = Parser._remove_comments(line)
+        line = Parser._trim_spaces(line)
+        return line
+
+    def _clean_lines(self):
+        self.input_lines = list(map(self._clean_line, self.input_lines))
 
     @staticmethod
     def _is_line_not_whitespace(line: str):
@@ -105,7 +118,10 @@ class Parser:
             str: the comp mnemonic in the current C-command. Should be called 
             only when commandType() is "C_COMMAND".
         """
-        comp = self.curr_command.split("=")[1].split(";")[0]
+        comp = self.curr_command
+        if "=" in comp:
+            comp = self.curr_command.split("=")[1]
+        comp = comp.split(";")[0]
         return comp
 
     def jump(self) -> str:
