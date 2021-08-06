@@ -10,10 +10,7 @@ import typing
 from SymbolTable import SymbolTable
 from Parser import Parser
 from Code import Code
-
-A_COMMAND = "A_COMMAND"
-C_COMMAND = "C_COMMAND"
-L_COMMAND = "L_COMMAND"
+from tables import A_COMMAND, C_COMMAND, L_COMMAND
 
 
 def assemble_file(
@@ -54,11 +51,9 @@ def assemble_file(
         if parser.command_type() == A_COMMAND:
             value = parser.symbol()
             if not value.isnumeric():
-                if symbol_table.contains(value):
-                    translated_lines.append(Code.translate_a_command(symbol_table.get_address(value)))
-                else:
+                if not symbol_table.contains(value):
                     symbol_table.add_symbol(value)
-                    translated_lines.append(Code.translate_a_command(symbol_table.get_address(value)))
+                translated_lines.append(Code.translate_a_command(str(symbol_table.get_address(value))))
             else:
                 translated_lines.append(Code.translate_a_command(value))
 
