@@ -41,6 +41,7 @@ class SymbolTable:
                       "SCREEN": 16384,
                       "KBD": 24576
                       }
+        self.max_address = 15
 
     def add_entry(self, symbol: str, address: int) -> None:
         """Adds the pair (symbol, address) to the table.
@@ -74,9 +75,8 @@ class SymbolTable:
         return self.table[symbol]
 
     def _get_min_free_address(self) -> int:
-        address_space = set(range(24576))
-        catched_addresses = set(self.table.values())
-        return min(address_space - catched_addresses)
+        self.max_address += 1
+        return self.max_address
 
     def add_symbol(self, symbol: str) -> None:
         """Adds the symbol to the next available in the table
