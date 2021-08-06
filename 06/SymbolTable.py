@@ -74,7 +74,7 @@ class SymbolTable:
         """
         return self.table[symbol]
 
-    def _get_min_free_address(self) -> int:
+    def _get_next_address(self) -> int:
         self.max_address += 1
         return self.max_address
 
@@ -84,4 +84,4 @@ class SymbolTable:
         Args:
             symbol (str): the symbol to add.
         """
-        self.add_entry(symbol, self._get_min_free_address())
+        self.add_entry(symbol, self._get_next_address())

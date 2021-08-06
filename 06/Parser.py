@@ -6,11 +6,9 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
-from Code import Code
-from tables import command_types
+from tables import command_types, C_COMMAND
 
 COMMENT_SIGN = "//"
-C_COMMAND = "C_COMMAND"  # TODO: put in one place
 
 
 class Parser:

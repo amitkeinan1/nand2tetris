@@ -1,6 +1,8 @@
 command_types = {"@": "A_COMMAND",
                  "(": "L_COMMAND"}
 
+C_COMMAND = "C_COMMAND"
+
 dest_table = {"": "000",
               "M": "001",
               "D": "010",
