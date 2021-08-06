@@ -59,6 +59,7 @@ def assemble_file(
 
                 else:
                     symbol_table.add_symbol(value)
+                    translated_lines.append(Code.translate_a_command(symbol_table.get_address(value)))
             else:
                 translated_lines.append(Code.translate_a_command(value))
 
