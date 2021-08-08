@@ -26,10 +26,11 @@ def assemble_file(
     parser = Parser(input_file)
     rom_address = 0
 
-    first_iteration = True
+    # first pass
+    is_first_iteration = True  # indicates first iteration of loop, not to confuse with first code pass
     while parser.has_more_commands():
-        if first_iteration:
-            first_iteration = False
+        if is_first_iteration:
+            is_first_iteration = False
         else:
             parser.advance()
 
@@ -42,10 +43,11 @@ def assemble_file(
     parser = Parser(input_file)
     translated_lines = []
 
-    first_iteration = True
+    # second pass
+    is_first_iteration = True  # indicates first iteration of loop, not to confuse with first code pass
     while parser.has_more_commands():
-        if first_iteration:
-            first_iteration = False
+        if is_first_iteration:
+            is_first_iteration = False
         else:
             parser.advance()
         if parser.command_type() == A_COMMAND:
