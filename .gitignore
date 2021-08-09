@@ -1,2 +1,10 @@
 
 *.out
+
+06/.idea/
+
+06/__pycache__/
+
+*.xml
+
+.idea/nand2tetris.iml
