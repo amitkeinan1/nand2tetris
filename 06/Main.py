@@ -51,13 +51,13 @@ def assemble_file(
         else:
             parser.advance()
         if parser.command_type() == A_COMMAND:
-            value = parser.symbol()
-            if not value.isnumeric():
-                if not symbol_table.contains(value):
-                    symbol_table.add_symbol(value)
-                translated_lines.append(Code.translate_a_command(str(symbol_table.get_address(value))))
+            address_symbol = parser.symbol()
+            if not address_symbol.isnumeric():
+                if not symbol_table.contains(address_symbol):
+                    symbol_table.add_symbol(address_symbol)
+                translated_lines.append(Code.translate_a_command(str(symbol_table.get_address(address_symbol))))
             else:
-                translated_lines.append(Code.translate_a_command(value))
+                translated_lines.append(Code.translate_a_command(address_symbol))
 
         elif parser.command_type() == C_COMMAND:
             dest, comp, jump = parser.dest(), parser.comp(), parser.jump()
