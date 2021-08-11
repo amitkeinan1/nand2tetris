@@ -54,47 +54,47 @@ class CodeWriter:
                 line = line.format(self.lines_counter + 2)  # +2 in order to skip one line
             self.write_line(line)
 
-    def sp_plus_plus(self):
+    def _sp_plus_plus(self):
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M+1")
 
-    def sp_minus_minus(self):
+    def _sp_minus_minus(self):
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M-1")
 
-    def d_eq_ast_address(self, address):
+    def _d_eq_ast_address(self, address):
         # *address = D
         self.write_line(f"@{address}")
         self.write_line("A=M")
         self.write_line("D=M")
 
-    def ast_sp_eq_d(self):
+    def _ast_sp_eq_d(self):
         # *SP = D
         self.write_line(f"@{self.sp}")
         self.write_line("A=M")
         self.write_line("M=D")
 
-    def d_eq_ast_sp(self):
+    def _d_eq_ast_sp(self):
         # D = *SP
-        self.d_eq_ast_address(self.sp)
+        self._d_eq_ast_address(self.sp)
 
-    def write_push_pop_given_addr(self, command, segment):
+    def _write_push_pop_given_addr(self, command, segment):
         if command == PUSH_TYPE:
             # pseudo code: *sp = *addr
             self.write_line(f"@addr")
             self.write_line("A=M")
             self.write_line("D=M")
-            self.ast_sp_eq_d()
+            self._ast_sp_eq_d()
 
             # pseudo code: sp++
-            self.sp_plus_plus()
+            self._sp_plus_plus()
 
         elif command == POP_TYPE:
             # pseudo code: sp--
-            self.sp_minus_minus()
+            self._sp_minus_minus()
 
             # pseudo code: *addr = *sp
-            self.d_eq_ast_sp()
+            self._d_eq_ast_sp()
 
             self.write_line(f"@addr")
             self.write_line("A=M")
@@ -103,7 +103,7 @@ class CodeWriter:
         else:
             raise Exception(f"only push and pop commands are supported for segment {segment}")
 
-    def write_push_pop_normal_segment(self, command: str, segment: str, index: int) -> None:
+    def _write_push_pop_normal_segment(self, command: str, segment: str, index: int) -> None:
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
 
@@ -116,9 +116,9 @@ class CodeWriter:
         self.write_line(f"@addr")
         self.write_line(f"M=D")
 
-        self.write_push_pop_given_addr(command, segment)
+        self._write_push_pop_given_addr(command, segment)
 
-    def write_push_pop_constant(self, command: str, index: int) -> None:
+    def _write_push_pop_constant(self, command: str, index: int) -> None:
         if command == PUSH_TYPE:
             # pseudo: *sp = i; sp++
             self.write_line(f"@{index}")
@@ -127,39 +127,39 @@ class CodeWriter:
             self.write_line("A=M")
             self.write_line("M=D")
 
-            self.sp_plus_plus()
+            self._sp_plus_plus()
 
-    def write_push_pop_static(self, command, index):
+    def _write_push_pop_static(self, command, index):
         if command == PUSH_TYPE:
             # pseudo code: *sp = variable
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("D=M")
-            self.ast_sp_eq_d()
+            self._ast_sp_eq_d()
 
             # pseudo code: sp++
-            self.sp_plus_plus()
+            self._sp_plus_plus()
 
         if command == POP_TYPE:
             # pseudo code: sp--
-            self.sp_minus_minus()
+            self._sp_minus_minus()
 
             # pseudo code: variable = *sp
-            self.d_eq_ast_sp()
+            self._d_eq_ast_sp()
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("M=D")
 
-    def set_address(self, address):
+    def _set_address(self, address):
         self.write_line(f"@{address}")
         self.write_line("D=A")
         self.write_line("@addr")
         self.write_line("M=D")
 
-    def write_push_pop_temp(self, command, index):
+    def _write_push_pop_temp(self, command, index):
         # pseudo code: addr = temp_addr + index
-        self.set_address(self.temp_addr + index)
-        self.write_push_pop_given_addr(command, "temp")
+        self._set_address(self.temp_addr + index)
+        self._write_push_pop_given_addr(command, "temp")
 
-    def write_push_pop_pointer(self, command, index):
+    def _write_push_pop_pointer(self, command, index):
         pseudo_segment_mapping = {0: "this", 1: "that"}
         try:
             pseudo_segment = pseudo_segment_mapping[index]
@@ -167,12 +167,12 @@ class CodeWriter:
             raise Exception("only indexes 0 and 1 are supported for segment pointer")
 
         if command == PUSH_TYPE:
-            self.d_eq_ast_address(self.segments_pointers[pseudo_segment])
-            self.ast_sp_eq_d()
-            self.sp_plus_plus()
+            self._d_eq_ast_address(self.segments_pointers[pseudo_segment])
+            self._ast_sp_eq_d()
+            self._sp_plus_plus()
         elif command == POP_TYPE:
-            self.sp_minus_minus()
-            self.d_eq_ast_sp()
+            self._sp_minus_minus()
+            self._d_eq_ast_sp()
             self.write_line(f"@{self.segments_pointers[pseudo_segment]}")
             self.write_line("A=M")
             self.write_line("M=D")
@@ -190,15 +190,15 @@ class CodeWriter:
         """
 
         if segment in self.segments_pointers.keys():  # if this is a normal segment
-            self.write_push_pop_normal_segment(command, segment, index)
+            self._write_push_pop_normal_segment(command, segment, index)
         elif segment == "constant":
-            self.write_push_pop_constant(command, index)
+            self._write_push_pop_constant(command, index)
         elif segment == "static":
-            self.write_push_pop_static(command, index)
+            self._write_push_pop_static(command, index)
         elif segment == "temp":
-            self.write_push_pop_temp(command, index)
+            self._write_push_pop_temp(command, index)
         elif segment == "pointer":
-            self.write_push_pop_pointer(command, index)
+            self._write_push_pop_pointer(command, index)
         else:
             raise Exception(f"segment {segment} not supported")
 
