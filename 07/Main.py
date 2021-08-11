@@ -27,7 +27,7 @@ def translate_file(
     while parser.has_more_commands():
         if parser.curr_command() is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
-        elif parser.curr_command() is in ACCESS_COMMANDS:
+        elif parser.curr_command() in ACCESS_COMMANDS:
             writer.write_push_pop(parser.curr_command, parser.arg1(), parser.arg2())
         parser.advance()
     writer.close()
