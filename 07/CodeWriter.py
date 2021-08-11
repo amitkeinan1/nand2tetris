@@ -57,6 +57,10 @@ class CodeWriter:
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M+1")
 
+    def sp_minus_minus(self):
+        self.write_line(f"@{self.sp}")
+        self.write_line(f"M=M-1")
+
     def write_pop_push_normal_segment(self, command: str, segment: str, index: int) -> None:
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
@@ -84,8 +88,7 @@ class CodeWriter:
 
         elif command == POP_TYPE:
             # pseudo code: sp--
-            self.write_line(f"@{self.sp}")
-            self.write_line(f"M=M-1")
+            self.sp_minus_minus()
 
             # pseudo code: *addr = *sp
             self.write_line(f"@{self.sp}")
@@ -111,36 +114,48 @@ class CodeWriter:
             self.sp_plus_plus()
 
     def write_pop_push_static(self, command, index):
+        if command == PUSH_TYPE:
+            # pseudo code: *sp = *addr
+            self.write_line(f"@{self.filename}.{index}")
+            self.write_line("D=M")
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("M=D")
+
+            # pseudo code: sp++
+            self.sp_plus_plus()
+
         if command == POP_TYPE:
             # pseudo code: sp--
-            self.write_line(f"@{self.sp}")
-            self.write_line(f"M=M-1")
+            self.sp_minus_minus()
 
             # pseudo code: *addr = *sp
             self.write_line(f"@{self.sp}")
             self.write_line("A=M")
             self.write_line("D=M")
 
-            self.write_line(f"{self.filename.index}")
+            self.write_line(f"@{self.filename}.{index}")
             self.write_line("M=D")
 
-    def write_push_pop(self, command: str, segment: str, index: int) -> None:
-        """Writes the assembly code that is the translation of the given 
-        command, where command is either C_PUSH or C_POP.
 
-        Args:
-            command (str): "C_PUSH" or "C_POP".
-            segment (str): the memory segment to operate on.
-            index (int): the index in the memory segment.
-        """
+def write_push_pop(self, command: str, segment: str, index: int) -> None:
+    """Writes the assembly code that is the translation of the given
+    command, where command is either C_PUSH or C_POP.
 
-        if segment in self.segments_pointers.keys():  # if this is a normal segment
-            self.write_pop_push_normal_segment(command, segment, index)
-        elif segment == "constant":
-            self.write_push_pop_constant(command, index)
-        elif segment == "static":
-            self.write_push_pop_static(command, index)
+    Args:
+        command (str): "C_PUSH" or "C_POP".
+        segment (str): the memory segment to operate on.
+        index (int): the index in the memory segment.
+    """
 
-    def close(self) -> None:
-        """Closes the output file."""
-        self.output_stream.close()
+    if segment in self.segments_pointers.keys():  # if this is a normal segment
+        self.write_pop_push_normal_segment(command, segment, index)
+    elif segment == "constant":
+        self.write_push_pop_constant(command, index)
+    elif segment == "static":
+        self.write_push_pop_static(command, index)
+
+
+def close(self) -> None:
+    """Closes the output file."""
+    self.output_stream.close()
