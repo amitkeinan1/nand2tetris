@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-
+from  assembly_commands import arithmetic_commands
 
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
@@ -16,8 +16,12 @@ class CodeWriter:
         Args:
             output_stream (typing.TextIO): output stream.
         """
-        # Your code goes here!
-        pass
+        self.output_stream = output_stream
+        self.sp = 0
+        self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
+
+    def write_line(self, line):
+        self.output_stream.write(f"{line}\n")
 
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
@@ -36,8 +40,9 @@ class CodeWriter:
         Args:
             command (str): an arithmetic command.
         """
-        # Your code goes here!
-        pass
+        commands = arithmetic_commands[command]
+        for line in commands:
+            self.write_line(line)
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given 
@@ -48,10 +53,46 @@ class CodeWriter:
             segment (str): the memory segment to operate on.
             index (int): the index in the memory segment.
         """
-        # Your code goes here!
-        pass
+        # push: addr = segment_pointer + index; *sp = *addr; sp++
+        # pop: addr = segment_pointer + index; sp--; *addr = *sp
+
+        # pseudo code: addr = segment_pointer + index
+        segment_pointer = self.segments_pointers[segment]
+        self.write_line(f"@{segment_pointer + index}")
+        self.write_line(f"D=A")
+        self.write_line(f"@addr")
+        self.write_line(f"M=D")
+
+        if command == "C_PUSH":
+            # pseudo code: *sp = *addr
+            self.write_line(f"@addr")
+            self.write_line("A=M")
+            self.write_line("D=M")
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("M=D")
+
+            # pseudo code: sp++
+            self.write_line(f"@{self.sp}")
+            self.write_line(f"M=M+1")
+
+        elif command == "C_POP":
+            # pseudo code: sp--
+            self.write_line(f"@{self.sp}")
+            self.write_line(f"M=M-1")
+
+            # pseudo code: *addr = *sp
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("D=M")
+
+            self.write_line(f"@addr")
+            self.write_line("A=M")
+            self.write_line("M=D")
+
+        else:
+            raise Exception("only push and pop commands are supported")
 
     def close(self) -> None:
         """Closes the output file."""
-        # Your code goes here!
-        pass
+        self.output_stream.close()
