@@ -60,7 +60,7 @@ class CodeWriter:
     def write_pop_push_normal_segment(self, command: str, segment: str, index: int) -> None:
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
-        
+
         # pseudo code: addr = segment_pointer + index
         segment_pointer = self.segments_pointers[segment]
         self.write_line(f"@{index}")
@@ -110,6 +110,20 @@ class CodeWriter:
 
             self.sp_plus_plus()
 
+    def write_pop_push_static(self, command, index):
+        if command == POP_TYPE:
+            # pseudo code: sp--
+            self.write_line(f"@{self.sp}")
+            self.write_line(f"M=M-1")
+
+            # pseudo code: *addr = *sp
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("D=M")
+
+            self.write_line(f"{self.filename.index}")
+            self.write_line("M=D")
+
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given 
         command, where command is either C_PUSH or C_POP.
@@ -124,6 +138,8 @@ class CodeWriter:
             self.write_pop_push_normal_segment(command, segment, index)
         elif segment == "constant":
             self.write_push_pop_constant(command, index)
+        elif segment == "static":
+            self.write_push_pop_static(command, index)
 
     def close(self) -> None:
         """Closes the output file."""
