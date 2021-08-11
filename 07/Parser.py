@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from .vm_commands import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
+from vm_commands import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
 
 
 COMMENT_SIGN = "//"
@@ -25,12 +25,11 @@ class Parser:
         Args:
             input_file (typing.TextIO): input file.
         """
-        input_lines = input_file.read().splitlines()
+        self.input_lines = input_file.read().splitlines()
         self._clean_lines()
         self._remove_whitespace_lines()
         self.line_index = 0
         self.curr_command = self.input_lines[self.line_index]
-        pass
 
     @staticmethod
     def _remove_comments(line: str):

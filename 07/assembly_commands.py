@@ -1,4 +1,4 @@
-from .vm_commands import *
+from vm_commands import *
 
 assembly = {
     ADD_COMMAND: ["@SP", "A=M-1", "D=M", "@SP", "M=M-1", "A=M", "M=M+D"],  # *(SP-2) = *(SP-2) + *(SP-1)
