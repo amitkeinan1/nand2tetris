@@ -52,6 +52,10 @@ class CodeWriter:
                 line = line.format(self.lines_counter + 2)  # +2 in order to skip one line
             self.write_line(line)
 
+    def sp_plus_plus(self):
+        self.write_line(f"@{self.sp}")
+        self.write_line(f"M=M+1")
+
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given 
         command, where command is either C_PUSH or C_POP.
@@ -85,8 +89,7 @@ class CodeWriter:
                 self.write_line("M=D")
 
                 # pseudo code: sp++
-                self.write_line(f"@{self.sp}")
-                self.write_line(f"M=M+1")
+                self.sp_plus_plus()
 
             elif command == POP_TYPE:
                 # pseudo code: sp--
@@ -107,9 +110,15 @@ class CodeWriter:
 
         elif segment == "constant":
             if command == PUSH_TYPE:
+                # pseudo: *sp = i; sp++
+                self.write_line(f"@{index}")
+                self.write_line(f"D=A")
                 self.write_line(f"@{self.sp}")
                 self.write_line("A=M")
-                self.write_line()
+                self.write_line("M=D")
+
+                self.sp_plus_plus()
+
 
 
 
