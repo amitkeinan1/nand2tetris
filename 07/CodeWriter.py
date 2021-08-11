@@ -25,6 +25,7 @@ class CodeWriter:
         self.output_stream = output_stream
         self.sp = 0
         self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
+        self.temp_addr = 5
         self.lines_counter = 0
 
     def write_line(self, line):
@@ -140,25 +141,23 @@ class CodeWriter:
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("M=D")
 
+    def write_push_pop(self, command: str, segment: str, index: int) -> None:
+        """Writes the assembly code that is the translation of the given
+        command, where command is either C_PUSH or C_POP.
 
-def write_push_pop(self, command: str, segment: str, index: int) -> None:
-    """Writes the assembly code that is the translation of the given
-    command, where command is either C_PUSH or C_POP.
+        Args:
+            command (str): "C_PUSH" or "C_POP".
+            segment (str): the memory segment to operate on.
+            index (int): the index in the memory segment.
+        """
 
-    Args:
-        command (str): "C_PUSH" or "C_POP".
-        segment (str): the memory segment to operate on.
-        index (int): the index in the memory segment.
-    """
+        if segment in self.segments_pointers.keys():  # if this is a normal segment
+            self.write_pop_push_normal_segment(command, segment, index)
+        elif segment == "constant":
+            self.write_push_pop_constant(command, index)
+        elif segment == "static":
+            self.write_push_pop_static(command, index)
 
-    if segment in self.segments_pointers.keys():  # if this is a normal segment
-        self.write_pop_push_normal_segment(command, segment, index)
-    elif segment == "constant":
-        self.write_push_pop_constant(command, index)
-    elif segment == "static":
-        self.write_push_pop_static(command, index)
-
-
-def close(self) -> None:
-    """Closes the output file."""
-    self.output_stream.close()
+    def close(self) -> None:
+        """Closes the output file."""
+        self.output_stream.close()
