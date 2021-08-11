@@ -91,5 +91,4 @@ class CodeWriter:
 
     def close(self) -> None:
         """Closes the output file."""
-        # Your code goes here!
-        pass
+        self.output_stream.close()
