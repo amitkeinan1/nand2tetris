@@ -199,6 +199,8 @@ class CodeWriter:
             self.write_push_pop_temp(command, index)
         elif segment == "pointer":
             self.write_push_pop_pointer(command, index)
+        else:
+            raise Exception(f"segment {segment} not supported")
 
     def close(self) -> None:
         """Closes the output file."""
