@@ -74,19 +74,7 @@ class CodeWriter:
         self.write_line("A=M")
         self.write_line("D=M")
 
-    def write_pop_push_normal_segment(self, command: str, segment: str, index: int) -> None:
-        # push: addr = segment_pointer + index; *sp = *addr; sp++
-        # pop: addr = segment_pointer + index; sp--; *addr = *sp
-
-        # pseudo code: addr = segment_pointer + index
-        segment_pointer = self.segments_pointers[segment]
-        self.write_line(f"@{index}")
-        self.write_line(f"D=A")
-        self.write_line(f"@{segment_pointer}")
-        self.write_line(f"D=M+D")
-        self.write_line(f"@addr")
-        self.write_line(f"M=D")
-
+    def write_push_pop_given_addr(self, command, segment):
         if command == PUSH_TYPE:
             # pseudo code: *sp = *addr
             self.write_line(f"@addr")
@@ -111,6 +99,21 @@ class CodeWriter:
         else:
             raise Exception(f"only push and pop commands are supported for segment {segment}")
 
+    def write_push_pop_normal_segment(self, command: str, segment: str, index: int) -> None:
+        # push: addr = segment_pointer + index; *sp = *addr; sp++
+        # pop: addr = segment_pointer + index; sp--; *addr = *sp
+
+        # pseudo code: addr = *segment_pointer + index
+        segment_pointer = self.segments_pointers[segment]
+        self.write_line(f"@{index}")
+        self.write_line(f"D=A")
+        self.write_line(f"@{segment_pointer}")
+        self.write_line(f"D=M+D")
+        self.write_line(f"@addr")
+        self.write_line(f"M=D")
+
+        self.write_push_pop_given_addr(command, segment)
+
     def write_push_pop_constant(self, command: str, index: int) -> None:
         if command == PUSH_TYPE:
             # pseudo: *sp = i; sp++
@@ -122,7 +125,7 @@ class CodeWriter:
 
             self.sp_plus_plus()
 
-    def write_pop_push_static(self, command, index):
+    def write_push_pop_static(self, command, index):
         if command == PUSH_TYPE:
             # pseudo code: *sp = variable
             self.write_line(f"@{self.filename}.{index}")
@@ -141,6 +144,17 @@ class CodeWriter:
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("M=D")
 
+    def set_address(self, address):
+        self.write_line(f"@{address}")
+        self.write_line("D=A")
+        self.write_line("@addr")
+        self.write_line("M=D")
+
+    def write_push_pop_temp(self, command, index):
+        # pseudo code: addr = temp_addr + index
+        self.set_address(self.temp_addr + index)
+        self.write_push_pop_given_addr(command, "temp")
+
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given
         command, where command is either C_PUSH or C_POP.
@@ -152,7 +166,7 @@ class CodeWriter:
         """
 
         if segment in self.segments_pointers.keys():  # if this is a normal segment
-            self.write_pop_push_normal_segment(command, segment, index)
+            self.write_push_pop_normal_segment(command, segment, index)
         elif segment == "constant":
             self.write_push_pop_constant(command, index)
         elif segment == "static":
