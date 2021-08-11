@@ -5,7 +5,8 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from  assembly_commands import arithmetic_commands
+from assembly_commands import arithmetic_commands
+
 
 PUSH_TYPE = "C_PUSH"
 POP_TYPE = "C_POP"
@@ -19,11 +20,14 @@ class CodeWriter:
         Args:
             output_stream (typing.TextIO): output stream.
         """
+        self.filename: str = ''
         self.output_stream = output_stream
         self.sp = 0
         self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
+        self.lines_counter = 0
 
     def write_line(self, line):
+        self.lines_counter += 1
         self.output_stream.write(f"{line}\n")
 
     def set_file_name(self, filename: str) -> None:
@@ -33,8 +37,7 @@ class CodeWriter:
         Args:
             filename (str): The name of the VM file.
         """
-        # Your code goes here!
-        pass
+        self.filename = filename
 
     def write_arithmetic(self, command: str) -> None:
         """Writes the assembly code that is the translation of the given 
@@ -45,6 +48,8 @@ class CodeWriter:
         """
         commands = arithmetic_commands[command]
         for line in commands:
+            if '{}' in line:
+                line = line.format(self.lines_counter + 2)  # +2 in order to skip one line
             self.write_line(line)
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
