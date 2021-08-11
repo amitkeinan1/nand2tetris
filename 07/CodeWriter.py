@@ -20,6 +20,9 @@ class CodeWriter:
         self.sp = 0
         self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
 
+    def write_line(self, line):
+        self.output_stream.write(f"{line}\n")
+
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
         started.
@@ -54,37 +57,37 @@ class CodeWriter:
 
         # pseudo code: addr = segment_pointer + index
         segment_pointer = self.segments_pointers[segment]
-        self.output_stream.write(f"@{segment_pointer + index}")
-        self.output_stream.write(f"D=A")
-        self.output_stream.write(f"@addr")
-        self.output_stream.write(f"M=D")
+        self.write_line(f"@{segment_pointer + index}")
+        self.write_line(f"D=A")
+        self.write_line(f"@addr")
+        self.write_line(f"M=D")
 
         if command == "C_PUSH":
             # pseudo code: *sp = *addr
-            self.output_stream.write(f"@addr")
-            self.output_stream.write("A=M")
-            self.output_stream.write("D=M")
-            self.output_stream.write(f"@{self.sp}")
-            self.output_stream.write("A=M")
-            self.output_stream.write("M=D")
+            self.write_line(f"@addr")
+            self.write_line("A=M")
+            self.write_line("D=M")
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("M=D")
 
             # pseudo code: sp++
-            self.output_stream.write(f"@{self.sp}")
-            self.output_stream.write(f"M=M+1")
+            self.write_line(f"@{self.sp}")
+            self.write_line(f"M=M+1")
 
         elif command == "C_POP":
             # pseudo code: sp--
-            self.output_stream.write(f"@{self.sp}")
-            self.output_stream.write(f"M=M-1")
+            self.write_line(f"@{self.sp}")
+            self.write_line(f"M=M-1")
 
             # pseudo code: *addr = *sp
-            self.output_stream.write(f"@{self.sp}")
-            self.output_stream.write("A=M")
-            self.output_stream.write("D=M")
+            self.write_line(f"@{self.sp}")
+            self.write_line("A=M")
+            self.write_line("D=M")
 
-            self.output_stream.write(f"@addr")
-            self.output_stream.write("A=M")
-            self.output_stream.write("M=D")
+            self.write_line(f"@addr")
+            self.write_line("A=M")
+            self.write_line("M=D")
 
         else:
             raise Exception("only push and pop commands are supported")
