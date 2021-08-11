@@ -61,6 +61,11 @@ class CodeWriter:
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M-1")
 
+    def ast_sp_eq_d(self):
+        self.write_line(f"@{self.sp}")
+        self.write_line("A=M")
+        self.write_line("M=D")
+
     def write_pop_push_normal_segment(self, command: str, segment: str, index: int) -> None:
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
@@ -79,9 +84,7 @@ class CodeWriter:
             self.write_line(f"@addr")
             self.write_line("A=M")
             self.write_line("D=M")
-            self.write_line(f"@{self.sp}")
-            self.write_line("A=M")
-            self.write_line("M=D")
+            self.ast_sp_eq_d()
 
             # pseudo code: sp++
             self.sp_plus_plus()
@@ -118,9 +121,7 @@ class CodeWriter:
             # pseudo code: *sp = variable
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("D=M")
-            self.write_line(f"@{self.sp}")
-            self.write_line("A=M")
-            self.write_line("M=D")
+            self.ast_sp_eq_d()
 
             # pseudo code: sp++
             self.sp_plus_plus()
