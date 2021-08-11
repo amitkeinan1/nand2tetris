@@ -171,6 +171,8 @@ class CodeWriter:
             self.write_push_pop_constant(command, index)
         elif segment == "static":
             self.write_push_pop_static(command, index)
+        elif segment == "temp":
+            self.write_push_pop_temp(command, index)
 
     def close(self) -> None:
         """Closes the output file."""
