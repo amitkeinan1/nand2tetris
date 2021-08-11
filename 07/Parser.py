@@ -5,6 +5,10 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+from .tables import arithmetic_commands, ARITHMETIC_COMMAND
+
+
+COMMENT_SIGN = "//"
 
 
 class Parser:
@@ -21,10 +25,40 @@ class Parser:
         Args:
             input_file (typing.TextIO): input file.
         """
-        # Your code goes here!
-        # A good place to start is:
-        # input_lines = input_file.read().splitlines()
+        input_lines = input_file.read().splitlines()
+        self._clean_lines()
+        self._remove_whitespace_lines()
+        self.line_index = 0
+        self.curr_command = self.input_lines[self.line_index]
         pass
+
+    @staticmethod
+    def _remove_comments(line: str):
+        return line.split(COMMENT_SIGN)[0]
+
+    @staticmethod
+    def _trim_spaces(line: str):
+        return line.strip()
+
+    @staticmethod
+    def _clean_line(line: str):
+        """
+        remove everything which is not pure code from line
+        """
+        line = Parser._remove_comments(line)
+        line = Parser._trim_spaces(line)
+        return line
+
+    def _clean_lines(self):
+        self.input_lines = list(map(self._clean_line, self.input_lines))
+
+    @staticmethod
+    def _is_line_not_whitespace(line: str):
+        return line != ''
+
+    def _remove_whitespace_lines(self):
+        self.input_lines = list(filter(Parser._is_line_not_whitespace, self.input_lines))
+
 
     def has_more_commands(self) -> bool:
         """Are there more commands in the input?
@@ -32,16 +66,14 @@ class Parser:
         Returns:
             bool: True if there are more commands, False otherwise.
         """
-        # Your code goes here!
-        pass
+        return self.line_index < (len(self.input_lines) - 1)
 
     def advance(self) -> None:
-        """Reads the next command from the input and makes it the current 
-        command. Should be called only if has_more_commands() is true. Initially
-        there is no current command.
+        """Reads the next command from the input and makes it the current command.
+        Should be called only if has_more_commands() is true.
         """
-        # Your code goes here!
-        pass
+        self.line_index += 1
+        self.curr_command = self.input_lines[self.line_index]
 
     def command_type(self) -> str:
         """
@@ -52,7 +84,10 @@ class Parser:
             "C_PUSH", "C_POP", "C_LABEL", "C_GOTO", "C_IF", "C_FUNCTION",
             "C_RETURN", "C_CALL".
         """
-        # Your code goes here!
+        if self.curr_command.split(' ')[0] in arithmetic_commands:
+            return ARITHMETIC_COMMAND
+        else:
+            return 
         pass
 
     def arg1(self) -> str:
