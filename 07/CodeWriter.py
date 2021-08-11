@@ -7,6 +7,9 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import typing
 from  assembly_commands import arithmetic_commands
 
+PUSH_TYPE = "C_PUSH"
+POP_TYPE = "C_POP"
+
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
 
@@ -53,45 +56,57 @@ class CodeWriter:
             segment (str): the memory segment to operate on.
             index (int): the index in the memory segment.
         """
+
+
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
 
-        # pseudo code: addr = segment_pointer + index
-        segment_pointer = self.segments_pointers[segment]
-        self.write_line(f"@{segment_pointer + index}")
-        self.write_line(f"D=A")
-        self.write_line(f"@addr")
-        self.write_line(f"M=D")
-
-        if command == "C_PUSH":
-            # pseudo code: *sp = *addr
+        # TODO: helper methods
+        if segment in self.segments_pointers.keys(): # if this is a normal segment
+            # pseudo code: addr = segment_pointer + index
+            segment_pointer = self.segments_pointers[segment]
+            self.write_line(f"@{segment_pointer + index}")
+            self.write_line(f"D=A")
             self.write_line(f"@addr")
-            self.write_line("A=M")
-            self.write_line("D=M")
-            self.write_line(f"@{self.sp}")
-            self.write_line("A=M")
-            self.write_line("M=D")
+            self.write_line(f"M=D")
 
-            # pseudo code: sp++
-            self.write_line(f"@{self.sp}")
-            self.write_line(f"M=M+1")
+            if command == PUSH_TYPE:
+                # pseudo code: *sp = *addr
+                self.write_line(f"@addr")
+                self.write_line("A=M")
+                self.write_line("D=M")
+                self.write_line(f"@{self.sp}")
+                self.write_line("A=M")
+                self.write_line("M=D")
 
-        elif command == "C_POP":
-            # pseudo code: sp--
-            self.write_line(f"@{self.sp}")
-            self.write_line(f"M=M-1")
+                # pseudo code: sp++
+                self.write_line(f"@{self.sp}")
+                self.write_line(f"M=M+1")
 
-            # pseudo code: *addr = *sp
-            self.write_line(f"@{self.sp}")
-            self.write_line("A=M")
-            self.write_line("D=M")
+            elif command == POP_TYPE:
+                # pseudo code: sp--
+                self.write_line(f"@{self.sp}")
+                self.write_line(f"M=M-1")
 
-            self.write_line(f"@addr")
-            self.write_line("A=M")
-            self.write_line("M=D")
+                # pseudo code: *addr = *sp
+                self.write_line(f"@{self.sp}")
+                self.write_line("A=M")
+                self.write_line("D=M")
 
-        else:
-            raise Exception("only push and pop commands are supported")
+                self.write_line(f"@addr")
+                self.write_line("A=M")
+                self.write_line("M=D")
+
+            else:
+                raise Exception(f"only push and pop commands are supported for segment {segment}")
+
+        elif segment == "constant":
+            if command == PUSH_TYPE:
+                self.write_line(f"@{self.sp}")
+                self.write_line("A=M")
+                self.write_line()
+
+
 
     def close(self) -> None:
         """Closes the output file."""
