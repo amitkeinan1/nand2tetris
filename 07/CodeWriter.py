@@ -62,11 +62,13 @@ class CodeWriter:
         self.write_line(f"M=M-1")
 
     def ast_sp_eq_d(self):
+        # *SP = D
         self.write_line(f"@{self.sp}")
         self.write_line("A=M")
         self.write_line("M=D")
 
     def d_eq_ast_sp(self):
+        # D = *SP
         self.write_line(f"@{self.sp}")
         self.write_line("A=M")
         self.write_line("D=M")
