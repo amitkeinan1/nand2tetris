@@ -16,8 +16,9 @@ class CodeWriter:
         Args:
             output_stream (typing.TextIO): output stream.
         """
-        # Your code goes here!
-        pass
+        self.output_stream = output_stream
+        self.sp = 0
+        self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
 
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
