@@ -65,14 +65,16 @@ class Parser:
         Returns:
             bool: True if there are more commands, False otherwise.
         """
-        return self.line_index < (len(self.input_lines) - 1)
+        return self.line_index <= (len(self.input_lines) - 1)
 
     def advance(self) -> None:
         """Reads the next command from the input and makes it the current command.
         Should be called only if has_more_commands() is true.
         """
         self.line_index += 1
-        self.curr_command = self.input_lines[self.line_index]
+        if self.has_more_commands():
+            self.curr_command = self.input_lines[self.line_index]
+
 
     def command_type(self) -> str:
         """

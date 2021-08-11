@@ -51,7 +51,7 @@ class CodeWriter:
         commands = arithmetic_commands[command]
         for line in commands:
             if '{}' in line:
-                line = line.format(self.lines_counter + 2)  # +2 in order to skip one line
+                line = line.format(self.lines_counter + 3)  # +2 in order to skip one line
             self.write_line(line)
 
     def _sp_plus_plus(self):
