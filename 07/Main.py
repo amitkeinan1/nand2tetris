@@ -25,10 +25,11 @@ def translate_file(
     writer = CodeWriter(output_file)
     writer.set_file_name(input_filename)
     while parser.has_more_commands():
-        if parser.curr_command() is ARITHMETIC_COMMAND:
+        command_type = parser.command_type()
+        if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
-        elif parser.curr_command() in ACCESS_COMMANDS:
-            writer.write_push_pop(parser.curr_command, parser.arg1(), parser.arg2())
+        elif command_type in ACCESS_COMMANDS:
+            writer.write_push_pop(command_type, parser.arg1(), int(parser.arg2()))
         parser.advance()
     writer.close()
 
