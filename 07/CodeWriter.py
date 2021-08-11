@@ -155,6 +155,28 @@ class CodeWriter:
         self.set_address(self.temp_addr + index)
         self.write_push_pop_given_addr(command, "temp")
 
+    def write_push_pop_pointer(self, command, index):
+        pseudo_segment_mapping = {0: "this", 1: "that"}
+        try:
+            pseudo_segment = pseudo_segment_mapping[index]
+        except KeyError:
+            raise Exception("only indexes 0 and 1 are supported for segment pointer")
+
+        if command == PUSH_TYPE:
+            self.write_line(f"@{self.segments_pointers[pseudo_segment]}")
+            self.write_line("A=M")
+            self.write_line("D=M")
+            self.ast_sp_eq_d()
+            self.sp_plus_plus()
+        elif command == POP_TYPE:
+            self.sp_minus_minus()
+            self.d_eq_ast_sp()
+            self.write_line(f"@{self.segments_pointers[pseudo_segment]}")
+            self.write_line("A=M")
+            self.write_line("M=D")
+        else:
+            raise Exception(f"only push and pop commands are supported for segment pointer")
+
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given
         command, where command is either C_PUSH or C_POP.
@@ -173,6 +195,8 @@ class CodeWriter:
             self.write_push_pop_static(command, index)
         elif segment == "temp":
             self.write_push_pop_temp(command, index)
+        elif segment == "pointer":
+            self.write_push_pop_pointer(command, index)
 
     def close(self) -> None:
         """Closes the output file."""
