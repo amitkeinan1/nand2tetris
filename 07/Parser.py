@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from .tables import arithmetic_commands, ARITHMETIC_COMMAND
+from .tables import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
 
 
 COMMENT_SIGN = "//"
@@ -84,11 +84,11 @@ class Parser:
             "C_PUSH", "C_POP", "C_LABEL", "C_GOTO", "C_IF", "C_FUNCTION",
             "C_RETURN", "C_CALL".
         """
-        if self.curr_command.split(' ')[0] in arithmetic_commands:
+        curr_command_type = self.curr_command.split(' ')[0]
+        if curr_command_type in arithmetic_commands:
             return ARITHMETIC_COMMAND
         else:
-            return 
-        pass
+            return non_arithmetic_commands[curr_command_type]
 
     def arg1(self) -> str:
         """
@@ -97,8 +97,10 @@ class Parser:
             "C_ARITHMETIC", the command itself (add, sub, etc.) is returned. 
             Should not be called if the current command is "C_RETURN".
         """
-        # Your code goes here!
-        pass
+        if self.command_type() is ARITHMETIC_COMMAND:
+            return self.curr_command
+        else:
+            return self.curr_command.split(' ')[1]
 
     def arg2(self) -> int:
         """
@@ -107,5 +109,4 @@ class Parser:
             called only if the current command is "C_PUSH", "C_POP", 
             "C_FUNCTION" or "C_CALL".
         """
-        # Your code goes here!
-        pass
+        return self.curr_command.split(' ')[2]
