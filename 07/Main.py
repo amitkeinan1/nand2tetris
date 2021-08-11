@@ -9,7 +9,7 @@ import sys
 import typing
 from Parser import Parser
 from CodeWriter import CodeWriter
-from commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
+from vm_commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
 
 
 def translate_file(

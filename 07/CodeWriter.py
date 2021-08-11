@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-
+from  assembly_commands import arithmetic_commands
 
 class CodeWriter:
     """Translates VM commands into Hack assembly code."""
@@ -40,8 +40,9 @@ class CodeWriter:
         Args:
             command (str): an arithmetic command.
         """
-        # Your code goes here!
-        pass
+        commands = arithmetic_commands[command]
+        for line in commands:
+            self.write_line(line)
 
     def write_push_pop(self, command: str, segment: str, index: int) -> None:
         """Writes the assembly code that is the translation of the given 
