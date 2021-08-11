@@ -115,7 +115,7 @@ class CodeWriter:
 
     def write_pop_push_static(self, command, index):
         if command == PUSH_TYPE:
-            # pseudo code: *sp = *addr
+            # pseudo code: *sp = variable
             self.write_line(f"@{self.filename}.{index}")
             self.write_line("D=M")
             self.write_line(f"@{self.sp}")
@@ -129,7 +129,7 @@ class CodeWriter:
             # pseudo code: sp--
             self.sp_minus_minus()
 
-            # pseudo code: *addr = *sp
+            # pseudo code: variable = *sp
             self.write_line(f"@{self.sp}")
             self.write_line("A=M")
             self.write_line("D=M")
