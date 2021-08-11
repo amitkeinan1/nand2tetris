@@ -63,8 +63,11 @@ class CodeWriter:
 
         # pseudo code: addr = segment_pointer + index
         segment_pointer = self.segments_pointers[segment]
-        self.write_line(f"@{segment_pointer + index}")
+
+        self.write_line(f"@{index}")
         self.write_line(f"D=A")
+        self.write_line(f"@{segment_pointer}")
+        self.write_line(f"D=M+D")
         self.write_line(f"@addr")
         self.write_line(f"M=D")
 
