@@ -10,3 +10,5 @@
 .idea/nand2tetris.iml
 
 07/.idea/
+
+07/__pycache__/
