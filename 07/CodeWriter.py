@@ -62,6 +62,12 @@ class CodeWriter:
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M-1")
 
+    def d_eq_ast_address(self, address):
+        # *address = D
+        self.write_line(f"@{address}")
+        self.write_line("A=M")
+        self.write_line("D=M")
+
     def ast_sp_eq_d(self):
         # *SP = D
         self.write_line(f"@{self.sp}")
@@ -70,9 +76,7 @@ class CodeWriter:
 
     def d_eq_ast_sp(self):
         # D = *SP
-        self.write_line(f"@{self.sp}")
-        self.write_line("A=M")
-        self.write_line("D=M")
+        self.d_eq_ast_address(self.sp)
 
     def write_push_pop_given_addr(self, command, segment):
         if command == PUSH_TYPE:
@@ -163,9 +167,7 @@ class CodeWriter:
             raise Exception("only indexes 0 and 1 are supported for segment pointer")
 
         if command == PUSH_TYPE:
-            self.write_line(f"@{self.segments_pointers[pseudo_segment]}")
-            self.write_line("A=M")
-            self.write_line("D=M")
+            self.d_eq_ast_address(self.segments_pointers[pseudo_segment])
             self.ast_sp_eq_d()
             self.sp_plus_plus()
         elif command == POP_TYPE:
