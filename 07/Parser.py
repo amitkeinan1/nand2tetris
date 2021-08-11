@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
-from .tables import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
+from .commands import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
 
 
 COMMENT_SIGN = "//"

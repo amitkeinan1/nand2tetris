@@ -9,6 +9,7 @@ import sys
 import typing
 from Parser import Parser
 from CodeWriter import CodeWriter
+from commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
 
 
 def translate_file(
@@ -19,11 +20,17 @@ def translate_file(
         input_file (typing.TextIO): the file to translate.
         output_file (typing.TextIO): writes all output to this file.
     """
-    # Your code goes here!
-    # Note: you can get the input file's name using:
-    # input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
-    pass
-
+    input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
+    parser = Parser(input_file)
+    writer = CodeWriter(output_file)
+    writer.set_file_name(input_filename)
+    while parser.has_more_commands():
+        if parser.curr_command() is ARITHMETIC_COMMAND:
+            writer.write_arithmetic(parser.curr_command)
+        elif parser.curr_command() is in ACCESS_COMMANDS:
+            writer.write_push_pop(parser.curr_command, parser.arg1(), parser.arg2())
+        parser.advance()
+    writer.close()
 
 if "__main__" == __name__:
     # Parses the input path and calls translate_file on each input file
