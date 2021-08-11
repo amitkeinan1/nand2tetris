@@ -49,8 +49,45 @@ class CodeWriter:
             segment (str): the memory segment to operate on.
             index (int): the index in the memory segment.
         """
-        # Your code goes here!
-        pass
+        # push: addr = segment_pointer + index; *sp = *addr; sp++
+        # pop: addr = segment_pointer + index; sp--; *addr = *sp
+
+        # pseudo code: addr = segment_pointer + index
+        segment_pointer = self.segments_pointers[segment]
+        self.output_stream.write(f"@{segment_pointer + index}")
+        self.output_stream.write(f"D=A")
+        self.output_stream.write(f"@addr")
+        self.output_stream.write(f"M=D")
+
+        if command == "C_PUSH":
+            # pseudo code: *sp = *addr
+            self.output_stream.write(f"@addr")
+            self.output_stream.write("A=M")
+            self.output_stream.write("D=M")
+            self.output_stream.write(f"@{self.sp}")
+            self.output_stream.write("A=M")
+            self.output_stream.write("M=D")
+
+            # pseudo code: sp++
+            self.output_stream.write(f"@{self.sp}")
+            self.output_stream.write(f"M=M+1")
+
+        elif command == "C_POP":
+            # pseudo code: sp--
+            self.output_stream.write(f"@{self.sp}")
+            self.output_stream.write(f"M=M-1")
+
+            # pseudo code: *addr = *sp
+            self.output_stream.write(f"@{self.sp}")
+            self.output_stream.write("A=M")
+            self.output_stream.write("D=M")
+
+            self.output_stream.write(f"@addr")
+            self.output_stream.write("A=M")
+            self.output_stream.write("M=D")
+
+        else:
+            raise Exception("only push and pop commands are supported")
 
     def close(self) -> None:
         """Closes the output file."""
