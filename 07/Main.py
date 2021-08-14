@@ -7,8 +7,9 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import os
 import sys
 import typing
-from Parser import Parser
+
 from CodeWriter import CodeWriter
+from Parser import Parser
 from vm_commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
 
 
@@ -24,14 +25,19 @@ def translate_file(
     parser = Parser(input_file)
     writer = CodeWriter(output_file)
     writer.set_file_name(input_filename)
+    is_first_iteration = True
     while parser.has_more_commands():
+        if is_first_iteration:
+            is_first_iteration = False
+        else:
+            parser.advance()
         command_type = parser.command_type()
         if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
         elif command_type in ACCESS_COMMANDS:
             writer.write_push_pop(command_type, parser.arg1(), int(parser.arg2()))
-        parser.advance()
     writer.close()
+
 
 if "__main__" == __name__:
     # Parses the input path and calls translate_file on each input file
