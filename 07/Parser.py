@@ -7,7 +7,6 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import typing
 from vm_commands import arithmetic_commands, ARITHMETIC_COMMAND, non_arithmetic_commands
 
-
 COMMENT_SIGN = "//"
 
 
@@ -58,7 +57,6 @@ class Parser:
     def _remove_whitespace_lines(self):
         self.input_lines = list(filter(Parser._is_line_not_whitespace, self.input_lines))
 
-
     def has_more_commands(self) -> bool:
         """Are there more commands in the input?
 
@@ -74,7 +72,6 @@ class Parser:
         self.line_index += 1
         if self.has_more_commands():
             self.curr_command = self.input_lines[self.line_index]
-
 
     def command_type(self) -> str:
         """
