@@ -13,8 +13,7 @@ from Parser import Parser
 from vm_commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
 
 
-def translate_file(
-        input_file: typing.TextIO, output_file: typing.TextIO) -> None:
+def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> None:
     """Translates a single file.
 
     Args:

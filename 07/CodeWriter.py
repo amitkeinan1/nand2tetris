@@ -6,7 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
-from assembly_commands import arithmetic_commands, BRANCH_SKIP
+from arithmetic_commands import assembly_commands, BRANCH_SKIP
 
 PUSH_TYPE = "C_PUSH"
 POP_TYPE = "C_POP"
@@ -48,7 +48,7 @@ class CodeWriter:
         Args:
             command (str): an arithmetic command.
         """
-        commands = arithmetic_commands[command]
+        commands = assembly_commands[command]
         for line in commands:
             if '{}' in line:
                 line = line.format(self.lines_counter + BRANCH_SKIP)  # +4 in order to skip some lines and create

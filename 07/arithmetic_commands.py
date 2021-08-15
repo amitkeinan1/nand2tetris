@@ -1,7 +1,7 @@
 from vm_commands import *
 
 BRANCH_SKIP = 4
-arithmetic_commands = {
+assembly_commands = {
     ADD_COMMAND: [  # the pseudo-assembly code fo the add operation is: *(SP-2) = *(SP-2) + *(SP-1)
         "@SP", "A=M-1", "D=M",  # D = *(SP-1)
         "M=0",  # *(SP-1) = 0
@@ -72,5 +72,4 @@ arithmetic_commands = {
         "@SP", "M=M+1"  # SP++
     ],
     NOT_COMMAND: ["@SP", "A=M-1", "M=!M"]  # *(SP-1) = !*(SP-1)
-
 }
