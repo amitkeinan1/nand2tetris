@@ -56,10 +56,12 @@ class CodeWriter:
             self.write_line(line)
 
     def _sp_plus_plus(self):
+        # sp++
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M+1")
 
     def _sp_minus_minus(self):
+        # sp--
         self.write_line(f"@{self.sp}")
         self.write_line(f"M=M-1")
 
@@ -80,6 +82,7 @@ class CodeWriter:
         self._d_eq_ast_address(self.sp)
 
     def _write_push_pop_given_addr(self, command, segment):
+        # write push pop of value in address
         if command == PUSH_TYPE:
             # pseudo code: *sp = *addr
             self.write_line(f"@addr")
@@ -105,6 +108,8 @@ class CodeWriter:
             raise Exception(f"only push and pop commands are supported for segment {segment}")
 
     def _write_push_pop_normal_segment(self, command: str, segment: str, index: int) -> None:
+        # write push pop for standard memory segments
+
         # push: addr = segment_pointer + index; *sp = *addr; sp++
         # pop: addr = segment_pointer + index; sp--; *addr = *sp
 
@@ -120,6 +125,7 @@ class CodeWriter:
         self._write_push_pop_given_addr(command, segment)
 
     def _write_push_pop_constant(self, command: str, index: int) -> None:
+        # write push pop for constant segment
         if command == PUSH_TYPE:
             # pseudo: *sp = i; sp++
             self.write_line(f"@{index}")
@@ -131,6 +137,8 @@ class CodeWriter:
             self._sp_plus_plus()
 
     def _write_push_pop_static(self, command, index):
+        # write push pop for static segment
+
         if command == PUSH_TYPE:
             # pseudo code: *sp = variable
             self.write_line(f"@{self.filename}.{index}")
@@ -150,17 +158,23 @@ class CodeWriter:
             self.write_line("M=D")
 
     def _set_address(self, address):
+        # make value in address equal D
+
         self.write_line(f"@{address}")
         self.write_line("D=A")
         self.write_line("@addr")
         self.write_line("M=D")
 
     def _write_push_pop_temp(self, command, index):
+        # write push pop for temp segment
+
         # pseudo code: addr = temp_addr + index
         self._set_address(self.temp_addr + index)
         self._write_push_pop_given_addr(command, "temp")
 
     def _write_push_pop_pointer(self, command, index):
+        # write push pop for pointer segment
+
         pseudo_segment_mapping = {0: "this", 1: "that"}
         try:
             pseudo_segment = pseudo_segment_mapping[index]
