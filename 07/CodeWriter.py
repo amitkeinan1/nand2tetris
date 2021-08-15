@@ -63,7 +63,7 @@ class CodeWriter:
     def _sp_minus_minus(self):
         # sp--
         self.write_line(f"@{self.sp}")
-        self.write_line(f"M=M-1")
+        self.write_line("M=M-1")
 
     def _d_eq_ast_address(self, address):
         # *address = D
@@ -85,7 +85,7 @@ class CodeWriter:
         # write push pop of value in address
         if command == PUSH_TYPE:
             # pseudo code: *sp = *addr
-            self.write_line(f"@addr")
+            self.write_line("@addr")
             self.write_line("A=M")
             self.write_line("D=M")
             self._ast_sp_eq_d()
@@ -100,7 +100,7 @@ class CodeWriter:
             # pseudo code: *addr = *sp
             self._d_eq_ast_sp()
 
-            self.write_line(f"@addr")
+            self.write_line("@addr")
             self.write_line("A=M")
             self.write_line("M=D")
 
@@ -116,11 +116,11 @@ class CodeWriter:
         # pseudo code: addr = *segment_pointer + index
         segment_pointer = self.segments_pointers[segment]
         self.write_line(f"@{index}")
-        self.write_line(f"D=A")
+        self.write_line("D=A")
         self.write_line(f"@{segment_pointer}")
-        self.write_line(f"D=M+D")
-        self.write_line(f"@addr")
-        self.write_line(f"M=D")
+        self.write_line("D=M+D")
+        self.write_line("@addr")
+        self.write_line("M=D")
 
         self._write_push_pop_given_addr(command, segment)
 
@@ -129,7 +129,7 @@ class CodeWriter:
         if command == PUSH_TYPE:
             # pseudo: *sp = i; sp++
             self.write_line(f"@{index}")
-            self.write_line(f"D=A")
+            self.write_line("D=A")
             self.write_line(f"@{self.sp}")
             self.write_line("A=M")
             self.write_line("M=D")
