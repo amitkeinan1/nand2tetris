@@ -23,10 +23,26 @@ class CodeWriter:
         """
         self.filename: str = ''
         self.output_stream = output_stream
-        self.sp = 0
-        self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
+        # self.sp = 0
+        # self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
+        self.segments_pointers = {'local': "LCL", 'argument': "ARG", 'this': "THIS", 'that': "THAT"}
+
         self.temp_addr = 5
         self.lines_counter = 0
+        # self._init_symbols()
+
+    def _init_symbol(self, symbol, value):
+        self.write_line(f"@{value}")
+        self.write_line("D=A")
+        self.write_line(f"@{symbol}")
+        self.write_line("M=D")
+
+    def _init_symbols(self):
+        self._init_symbol("SP", 0)
+        self._init_symbol("LCL", 1)
+        self._init_symbol("ARG", 2)
+        self._init_symbol("THIS", 3)
+        self._init_symbol("THAT", 4)
 
     def write_line(self, line):
         self.lines_counter += 1
@@ -57,12 +73,12 @@ class CodeWriter:
 
     def _sp_plus_plus(self):
         # sp++
-        self.write_line(f"@{self.sp}")
+        self.write_line("@SP")
         self.write_line(f"M=M+1")
 
     def _sp_minus_minus(self):
         # sp--
-        self.write_line(f"@{self.sp}")
+        self.write_line(f"@SP")
         self.write_line("M=M-1")
 
     def _d_eq_ast_address(self, address):
@@ -73,13 +89,13 @@ class CodeWriter:
 
     def _ast_sp_eq_d(self):
         # *SP = D
-        self.write_line(f"@{self.sp}")
+        self.write_line(f"@SP")
         self.write_line("A=M")
         self.write_line("M=D")
 
     def _d_eq_ast_sp(self):
         # D = *SP
-        self._d_eq_ast_address(self.sp)
+        self._d_eq_ast_address("SP")
 
     def _write_push_pop_given_addr(self, command, segment):
         # write push pop of value in address
@@ -130,7 +146,7 @@ class CodeWriter:
             # pseudo: *sp = i; sp++
             self.write_line(f"@{index}")
             self.write_line("D=A")
-            self.write_line(f"@{self.sp}")
+            self.write_line("@SP")
             self.write_line("A=M")
             self.write_line("M=D")
 
@@ -178,19 +194,21 @@ class CodeWriter:
         pseudo_segment_mapping = {0: "this", 1: "that"}
         try:
             pseudo_segment_pointer = pseudo_segment_mapping[index]
-            pseudo_segment_address = self.segments_pointers[pseudo_segment_pointer]
+            pseudo_segment_symbol = self.segments_pointers[pseudo_segment_pointer]
         except KeyError:
             raise Exception("only indexes 0 and 1 are supported for segment pointer")
 
         if command == PUSH_TYPE:
-            self._d_eq_ast_address(pseudo_segment_address)
+            # self._d_eq_ast_address(pseudo_segment_pointer)
+            self.write_line(f"@{pseudo_segment_symbol}")
+            self.write_line(f"D=A")
             self._ast_sp_eq_d()
             self._sp_plus_plus()
         elif command == POP_TYPE:
             self._sp_minus_minus()
             self._d_eq_ast_sp()
-            self.write_line(f"@{pseudo_segment_address}")
-            self.write_line("A=M")
+            self.write_line(f"@{pseudo_segment_symbol}")
+            # self.write_line("A=M")
             self.write_line("M=D")
         else:
             raise Exception(f"only push and pop commands are supported for segment pointer")
