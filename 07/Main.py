@@ -25,7 +25,7 @@ def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> Non
     writer = CodeWriter(output_file)
     writer.set_file_name(input_filename)
     while parser.has_more_commands():
-        writer.write_line(fr"//{parser.curr_command}")
+        writer.write_line(fr"// {parser.curr_command}")
         command_type = parser.command_type()
         if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
