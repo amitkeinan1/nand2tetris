@@ -66,7 +66,7 @@ class CodeWriter:
         self.write_line("M=M-1")
 
     def _d_eq_ast_address(self, address):
-        # *address = D
+        # D = *address
         self.write_line(f"@{address}")
         self.write_line("A=M")
         self.write_line("D=M")
@@ -177,18 +177,19 @@ class CodeWriter:
 
         pseudo_segment_mapping = {0: "this", 1: "that"}
         try:
-            pseudo_segment = pseudo_segment_mapping[index]
+            pseudo_segment_pointer = pseudo_segment_mapping[index]
+            pseudo_segment_address = self.segments_pointers[pseudo_segment_pointer]
         except KeyError:
             raise Exception("only indexes 0 and 1 are supported for segment pointer")
 
         if command == PUSH_TYPE:
-            self._d_eq_ast_address(self.segments_pointers[pseudo_segment])
+            self._d_eq_ast_address(pseudo_segment_address)
             self._ast_sp_eq_d()
             self._sp_plus_plus()
         elif command == POP_TYPE:
             self._sp_minus_minus()
             self._d_eq_ast_sp()
-            self.write_line(f"@{self.segments_pointers[pseudo_segment]}")
+            self.write_line(f"@{pseudo_segment_address}")
             self.write_line("A=M")
             self.write_line("M=D")
         else:
