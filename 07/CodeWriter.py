@@ -23,13 +23,10 @@ class CodeWriter:
         """
         self.filename: str = ''
         self.output_stream = output_stream
-        # self.sp = 0
-        # self.segments_pointers = {'local': 1, 'argument': 2, 'this': 3, 'that': 4}
         self.segments_pointers = {'local': "LCL", 'argument': "ARG", 'this': "THIS", 'that': "THAT"}
 
         self.temp_addr = 5
         self.lines_counter = 0
-        # self._init_symbols()
 
     def _init_symbol(self, symbol, value):
         self.write_line(f"@{value}")
@@ -201,7 +198,7 @@ class CodeWriter:
         if command == PUSH_TYPE:
             # self._d_eq_ast_address(pseudo_segment_pointer)
             self.write_line(f"@{pseudo_segment_symbol}")
-            self.write_line(f"D=A")
+            self.write_line(f"D=M")
             self._ast_sp_eq_d()
             self._sp_plus_plus()
         elif command == POP_TYPE:

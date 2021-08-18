@@ -16,4 +16,5 @@ Makefile - A makefile for the project.
 Main.py
 Parser.py
 CodeWriter.py
+vm_commands.py - this file includes enumerations and string constants definitions of vm language commands
 arithmetic_commands.py - this file includes the assembly code for all of the arithmetic and logic commands.
