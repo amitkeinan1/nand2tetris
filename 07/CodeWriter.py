@@ -44,6 +44,8 @@ class CodeWriter:
     def write_line(self, line):
         self.lines_counter += 1
         self.output_stream.write(f"{line}\n")
+    def write_comment_line(self, line):
+        self.output_stream.write(f"{line}\n")
 
     def set_file_name(self, filename: str) -> None:
         """Informs the code writer that the translation of a new VM file is 
