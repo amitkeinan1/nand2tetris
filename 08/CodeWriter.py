@@ -235,6 +235,32 @@ class CodeWriter:
         else:
             raise Exception(f"segment {segment} not supported")
 
+    def write_init(self):
+        pass
+
+    def write_label(self, label: str):
+        self.write_line(f"({label})")
+
+    def write_goto(self, label: str):
+        self.write_line(f"@{label}")
+        self.write_line("0;JMP")
+
+    def write_if(self, label: str):
+        self.write_line("@SP")
+        self.write_line("A=M-1")
+        self.write_line("D=M")
+        self.write_line(f"@{label}")
+        self.write_line("D;JNE")
+
+    def write_function(self, func_name: str, num_vars: int):
+        pass
+
+    def write_call(self, func_name: str, num_args: int):
+        pass
+
+    def write_return(self):
+        pass
+
     def close(self) -> None:
         """Closes the output file."""
         self.output_stream.close()
