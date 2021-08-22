@@ -44,6 +44,7 @@ class CodeWriter:
     def write_line(self, line):
         self.lines_counter += 1
         self.output_stream.write(f"{line}\n")
+
     def write_comment_line(self, line):
         self.output_stream.write(f"{line}\n")
 
@@ -238,8 +239,7 @@ class CodeWriter:
     def write_init(self):
         self.write_line("@SP")
         self.write_line("M=256")
-
-
+        self.write_call("Sys.init", 1)
 
     def write_label(self, label: str):
         self.write_line(f"({label})")
@@ -256,10 +256,38 @@ class CodeWriter:
         self.write_line("D;JNE")
 
     def write_function(self, func_name: str, num_vars: int):
-        pass
+        for _ in range(num_vars):
+            self.write_push_pop(PUSH_TYPE, "constant", 0)
 
     def write_call(self, func_name: str, num_args: int):
-        pass
+        self.write_push_pop(POP_TYPE, "constant", num_args)  # *ARG = *SP-num_args
+        self.write_line("@addr")
+        self.write_line("D=M")
+        self.write_line("D=-D")
+        self.write_line("@SP")
+        self.write_line("D=D+M")
+        self.write_line("@ARG")
+        self.write_line("M=D")
+
+        self._push_pointer(f"return-{func_name}")  # push return-address
+        self._push_pointer("LCL")  # push LCL
+        self._push_pointer("ARG")  # push ARG
+        self._push_pointer("THIS")  # push THIS
+        self._push_pointer("THAT")  # push THAT
+        self._push_pointer("LCL")  # push LCL
+        self.write_line(f"(return-{func_name})")
+
+        self.write_line(f"@{func_name}")  # go and execute func
+        self.write_line("0;JMP")
+
+    def _push_pointer(self, pointer_name: str):
+        self.write_line(f"{pointer_name}")
+        self.write_line("D=M")
+        self.write_line("@SP")
+        self.write_line("A=M")
+        self.write_line("M=D")
+        self.write_line("@SP")
+        self.write_line("M=M+1")
 
     def write_return(self):
         pass
