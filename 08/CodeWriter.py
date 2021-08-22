@@ -236,7 +236,10 @@ class CodeWriter:
             raise Exception(f"segment {segment} not supported")
 
     def write_init(self):
-        pass
+        self.write_line("@SP")
+        self.write_line("M=256")
+
+
 
     def write_label(self, label: str):
         self.write_line(f"({label})")
