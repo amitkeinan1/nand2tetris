@@ -255,8 +255,8 @@ class CodeWriter:
         self.write_line(f"@{label}")
         self.write_line("D;JNE")
 
-    def write_function(self, func_name: str, num_vars: int):
-        for _ in range(num_vars):
+    def write_function(self, func_name: str, num_vars: str):
+        for _ in range(int(num_vars)):
             self.write_push_pop(PUSH_TYPE, "constant", 0)
 
     def write_call(self, func_name: str, num_args: int):

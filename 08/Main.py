@@ -10,7 +10,7 @@ import typing
 
 from CodeWriter import CodeWriter
 from Parser import Parser
-from vm_commands import ARITHMETIC_COMMAND, access_commands, branching_commands, two_args_branching_commands
+from vm_commands import ARITHMETIC_COMMAND, access_commands, branching_commands, two_args_branching_commands, zero_args_branching_commands
 
 
 def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> None:
@@ -32,7 +32,9 @@ def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> Non
         elif command_type in access_commands.values():
             writer.write_push_pop(command_type, parser.arg1(), int(parser.arg2()))
         elif command_type in branching_commands.values():
-            if command_type in two_args_branching_commands:
+            if command_type in zero_args_branching_commands:
+                writer.write_branching(command_type)
+            elif command_type in two_args_branching_commands:
                 writer.write_branching(command_type, parser.arg1(), parser.arg2())
             else:
                 writer.write_branching(command_type, parser.arg1())

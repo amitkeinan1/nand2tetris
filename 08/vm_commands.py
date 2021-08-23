@@ -38,4 +38,4 @@ branching_commands = {
 non_arithmetic_commands = {**access_commands, **branching_commands}
 
 two_args_branching_commands = ["C_CALL", "C_FUNCTION"]
-
+zero_args_branching_commands = ["C_RETURN"]
