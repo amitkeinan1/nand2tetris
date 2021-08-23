@@ -273,12 +273,13 @@ M=M-D
 M=M+1
 @SP
 A=M-1
+A=M
 D=M
 @ARG
-A=M
 M=D
 @SP
 M=M-1
+//LCL = *(FRAME-4)
 @FRAME
 D=M
 @SP
@@ -306,9 +307,9 @@ M=M-D
 M=M+1
 @SP
 A=M-1
+A=M
 D=M
 @LCL
-A=M
 M=D
 @SP
 M=M-1

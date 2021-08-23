@@ -283,12 +283,12 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_minus_minus()
 
-    def _pop_to_pointer(self, var_name: str):
+    def _pop_pointer_to_var(self, var_name: str):
         self.write_line("@SP")
         self.write_line("A=M-1")
+        self.write_line("A=M")
         self.write_line("D=M")
         self.write_line(f"@{var_name}")
-        self.write_line("A=M")
         self.write_line("M=D")
         self._sp_minus_minus()
 
@@ -335,11 +335,12 @@ class CodeWriter:
 
         # ARG = *(FRAME-3)
         self._sub_from_frame(3)
-        self._pop_to_pointer("ARG")
+        self._pop_pointer_to_var("ARG")
 
         # LCL = *(FRAME-4)
+        self.write_comment_line("//LCL = *(FRAME-4)")
         self._sub_from_frame(4)
-        self._pop_to_pointer("LCL")
+        self._pop_pointer_to_var("LCL")
 
         self.write_line("@RET")
         self.write_line("A=M")
