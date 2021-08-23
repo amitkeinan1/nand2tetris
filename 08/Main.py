@@ -10,7 +10,7 @@ import typing
 
 from CodeWriter import CodeWriter
 from Parser import Parser
-from vm_commands import ARITHMETIC_COMMAND, ACCESS_COMMANDS
+from vm_commands import ARITHMETIC_COMMAND, access_commands, branching_commands, two_args_branching_commands
 
 
 def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> None:
@@ -29,8 +29,13 @@ def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> Non
         command_type = parser.command_type()
         if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
-        elif command_type in ACCESS_COMMANDS:
+        elif command_type in access_commands.values():
             writer.write_push_pop(command_type, parser.arg1(), int(parser.arg2()))
+        elif command_type in branching_commands.values():
+            if command_type in two_args_branching_commands:
+                writer.write_branching(command_type, parser.arg1(), parser.arg2())
+            else:
+                writer.write_branching(command_type, parser.arg1())
         parser.advance()
     writer.close()
 
@@ -43,7 +48,8 @@ if "__main__" == __name__:
     if os.path.isdir(argument_path):
         files_to_translate = [
             os.path.join(argument_path, filename)
-            for filename in os.listdir(argument_path)]
+            for filename in os.listdir(argument_path)
+            if filename.endswith(".vm")]
         output_path = os.path.join(argument_path, os.path.basename(
             argument_path))
     else:

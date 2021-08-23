@@ -17,18 +17,25 @@ arithmetic_commands = [ADD_COMMAND,
                        AND_COMMAND,
                        OR_COMMAND,
                        NOT_COMMAND]
+
 ARITHMETIC_COMMAND = "C_ARITHMETIC"
-PUSH_COMMAND = "C_PUSH"
-POP_COMMAND = "C_POP"
-ACCESS_COMMANDS = [PUSH_COMMAND, POP_COMMAND]
-non_arithmetic_commands = {
-    "push": PUSH_COMMAND,
-    "pop": POP_COMMAND,
+
+access_commands = {
+    "push": "C_PUSH",
+    "pop": "C_POP"
+}
+
+branching_commands = {
     "label": "C_LABEL",
     "goto": "C_GOTO",
     "if": "C_IF",
     "if-goto": "C_IF",
     "return": "C_RETURN",
-    "call": "C_CALL"
+    "call": "C_CALL",
+    "function": "C_FUNCTION"
 }
+
+non_arithmetic_commands = {**access_commands, **branching_commands}
+
+two_args_branching_commands = ["C_CALL", "C_FUNCTION"]
 
