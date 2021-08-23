@@ -249,7 +249,7 @@ class CodeWriter:
 
     def write_call(self, func_name: str, num_args: str):
 
-        self._push_pointer(f"return-{func_name}")  # push return-address
+        self._push_var(f"return-{func_name}")  # push return-address
         self._push_pointer("LCL")  # push LCL
         self._push_pointer("ARG")  # push ARG
         self._push_pointer("THIS")  # push THIS
@@ -273,6 +273,14 @@ class CodeWriter:
     def _push_pointer(self, pointer_name: str):
         self.write_line(f"@{pointer_name}")
         self.write_line("D=M")
+        self.write_line("@SP")
+        self.write_line("A=M")
+        self.write_line("M=D")
+        self._sp_plus_plus()
+
+    def _push_var(self, var_name: str):
+        self.write_line(f"@{var_name}")
+        self.write_line("D=A")
         self.write_line("@SP")
         self.write_line("A=M")
         self.write_line("M=D")
