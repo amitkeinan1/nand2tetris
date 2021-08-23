@@ -298,7 +298,7 @@ class CodeWriter:
 
     def _sub_from_frame(self, value: int):
         self._push_pointer("FRAME")
-        self.write_push_pop(PUSH_TYPE, segment, value)
+        self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
 
     def write_return(self):
