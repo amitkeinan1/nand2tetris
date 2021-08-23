@@ -28,19 +28,6 @@ class CodeWriter:
         self.temp_addr = 5
         self.lines_counter = 0
 
-    def _init_symbol(self, symbol, value):
-        self.write_line(f"@{value}")
-        self.write_line("D=A")
-        self.write_line(f"@{symbol}")
-        self.write_line("M=D")
-
-    def _init_symbols(self):
-        self._init_symbol("SP", 0)
-        self._init_symbol("LCL", 1)
-        self._init_symbol("ARG", 2)
-        self._init_symbol("THIS", 3)
-        self._init_symbol("THAT", 4)
-
     def write_line(self, line):
         self.lines_counter += 1
         self.output_stream.write(f"{line}\n")
