@@ -296,6 +296,11 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_minus_minus()
 
+    def _sub_from_frame(self, value: int):
+        self._push_pointer("FRAME")
+        self.write_push_pop(PUSH_TYPE, segment, value)
+        self.write_arithmetic(SUB_COMMAND)
+
     def write_return(self):
         self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
 
@@ -304,39 +309,33 @@ class CodeWriter:
         self.write_line("@FRAME")
         self.write_line("M=D")
 
-        self._push_pointer("FRAME") # RET = *(FRAME-5)
-        self.write_push_pop(POP_TYPE, "constant", 5)
-        self.write_arithmetic(SUB_COMMAND)
+        # RET = *(FRAME-5)
+        self._sub_from_frame(5)
         self._pop_to_var("RET")
 
-        self.write_line("@ARG") # SP=ARG+1
+        self.write_line("@ARG")  # SP=ARG+1
         self.write_line("D=M+1")
         self.write_line("@SP")
         self.write_line("M=D")
 
-        self._push_pointer("FRAME")  # THAT = *(FRAME-1)
-        self.write_push_pop(POP_TYPE, "constant", 1)
-        self.write_arithmetic(SUB_COMMAND)
+        # THAT = *(FRAME-1)
+        self._sub_from_frame(1)
         self.write_push_pop(POP_TYPE, "pointer", 1)
 
-        self._push_pointer("FRAME")  # THIS = *(FRAME-1)
-        self.write_push_pop(POP_TYPE, "constant", 2)
-        self.write_arithmetic(SUB_COMMAND)
+        # THIS = *(FRAME-2)
+        self._sub_from_frame(2)
         self.write_push_pop(POP_TYPE, "pointer", 0)
 
-        self._push_pointer("FRAME")  # ARG = *(FRAME-3)
-        self.write_push_pop(POP_TYPE, "constant", 3)
-        self.write_arithmetic(SUB_COMMAND)
+        # ARG = *(FRAME-3)
+        self._sub_from_frame(3)
         self._pop_to_var("ARG")
 
-        self._push_pointer("FRAME")  # LCL = *(FRAME-4)
-        self.write_push_pop(POP_TYPE, "constant", 4)
-        self.write_arithmetic(SUB_COMMAND)
+        # LCL = *(FRAME-4)
+        self._sub_from_frame(4)
         self._pop_to_var("LCL")
 
         self.write_line("@RET")
         self.write_line("0;JMP")
-
 
     def write_branching(self, command_type, *args):
         write_functions_dict = {"C_LABEL": self.write_label,
