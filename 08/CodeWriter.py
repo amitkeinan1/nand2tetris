@@ -318,7 +318,7 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
+        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
 
         self.write_line("@LCL")  # FRAME=LCL
         self.write_line("D=M")
@@ -326,25 +326,32 @@ class CodeWriter:
         self.write_line("M=D")
 
         # RET = *(FRAME-5)
+        # self.write_comment_line("// RET=*(FRAME-5)")
         self._sub_from_pointer("FRAME", 5)
+        self._ast_stack_top()
         self._pop_to_var("RET")
 
-        self.write_line("@ARG")  # SP=ARG+1
+        # future_SP=ARG+1
+        # self.write_comment_line("// SP=ARG+1")
+        self.write_line("@ARG")
         self.write_line("D=M+1")
-        self.write_line("@SP")
+        self.write_line("@future_SP")
         self.write_line("M=D")
 
         # THAT = *(FRAME-1)
+        # self.write_comment_line("//THAT = *(FRAME-1)")
         self._sub_from_pointer("FRAME", 1)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 1)
 
         # THIS = *(FRAME-2)
+        # self.write_comment_line("//THIS = *(FRAME-2)")
         self._sub_from_pointer("FRAME", 2)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 0)
 
         # ARG = *(FRAME-3)
+        # self.write_comment_line("//ARG = *(FRAME-3)")
         self._sub_from_pointer("FRAME", 3)
         self._pop_pointer_to_var("ARG")
 
@@ -352,6 +359,11 @@ class CodeWriter:
         self.write_comment_line("//LCL = *(FRAME-4)")
         self._sub_from_pointer("FRAME", 4)
         self._pop_pointer_to_var("LCL")
+
+        self.write_line("@future_SP")
+        self.write_line("D=M")
+        self.write_line("@SP")
+        self.write_line("M=D")
 
         self.write_line("@RET")
         self.write_line("A=M")
