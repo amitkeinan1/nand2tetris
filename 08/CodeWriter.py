@@ -239,7 +239,7 @@ class CodeWriter:
     def write_init(self):
         self.write_line("@SP")
         self.write_line("M=256")
-        self.write_call("Sys.init", 1)
+        self.write_call("Sys.init", "1")
 
     def write_label(self, label: str):
         self.write_line(f"({label})")
