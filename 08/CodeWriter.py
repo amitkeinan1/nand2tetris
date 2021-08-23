@@ -6,7 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
-from arithmetic_commands import assembly_commands, BRANCH_SKIP
+from assembly_commands import assembly_commands, BRANCH_SKIP
 
 PUSH_TYPE = "C_PUSH"
 POP_TYPE = "C_POP"
