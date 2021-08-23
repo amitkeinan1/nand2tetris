@@ -6,7 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
-from arithmetic_commands import assembly_commands, BRANCH_SKIP
+from arithmetic_commands import assembly_commands, BRANCH_SKIP, SUB_COMMAND
 
 PUSH_TYPE = "C_PUSH"
 POP_TYPE = "C_POP"
@@ -281,16 +281,62 @@ class CodeWriter:
         self.write_line("0;JMP")
 
     def _push_pointer(self, pointer_name: str):
-        self.write_line(f"{pointer_name}")
+        self.write_line(f"@{pointer_name}")
         self.write_line("D=M")
         self.write_line("@SP")
         self.write_line("A=M")
         self.write_line("M=D")
+        self._sp_plus_plus()
+
+    def _pop_to_var(self, var_name: str):
         self.write_line("@SP")
-        self.write_line("M=M+1")
+        self.write_line("A=M-1")
+        self.write_line("D=M")
+        self.write_line(f"@{var_name}")
+        self.write_line("M=D")
+        self._sp_minus_minus()
 
     def write_return(self):
-        pass
+        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
+
+        self.write_line("@LCL")  # FRAME=LCL
+        self.write_line("D=M")
+        self.write_line("@FRAME")
+        self.write_line("M=D")
+
+        self._push_pointer("FRAME") # RET = *(FRAME-5)
+        self.write_push_pop(POP_TYPE, "constant", 5)
+        self.write_arithmetic(SUB_COMMAND)
+        self._pop_to_var("RET")
+
+        self.write_line("@ARG") # SP=ARG+1
+        self.write_line("D=M+1")
+        self.write_line("@SP")
+        self.write_line("M=D")
+
+        self._push_pointer("FRAME")  # THAT = *(FRAME-1)
+        self.write_push_pop(POP_TYPE, "constant", 1)
+        self.write_arithmetic(SUB_COMMAND)
+        self.write_push_pop(POP_TYPE, "pointer", 1)
+
+        self._push_pointer("FRAME")  # THIS = *(FRAME-1)
+        self.write_push_pop(POP_TYPE, "constant", 2)
+        self.write_arithmetic(SUB_COMMAND)
+        self.write_push_pop(POP_TYPE, "pointer", 0)
+
+        self._push_pointer("FRAME")  # ARG = *(FRAME-3)
+        self.write_push_pop(POP_TYPE, "constant", 3)
+        self.write_arithmetic(SUB_COMMAND)
+        self._pop_to_var("ARG")
+
+        self._push_pointer("FRAME")  # LCL = *(FRAME-4)
+        self.write_push_pop(POP_TYPE, "constant", 4)
+        self.write_arithmetic(SUB_COMMAND)
+        self._pop_to_var("LCL")
+
+        self.write_line("@RET")
+        self.write_line("0;JMP")
+
 
     def write_branching(self, command_type, *args):
         write_functions_dict = {"C_LABEL": self.write_label,
