@@ -28,7 +28,6 @@ access_commands = {
 branching_commands = {
     "label": "C_LABEL",
     "goto": "C_GOTO",
-    "if": "C_IF",
     "if-goto": "C_IF",
     "return": "C_RETURN",
     "call": "C_CALL",
