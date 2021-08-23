@@ -254,8 +254,8 @@ class CodeWriter:
         self._push_var("THIS")  # push THIS
         self._push_var("THAT")  # push THAT
 
-        # ARG = SP - num_args-5
-        self._sub_from_pointer("SP", int(num_args) + 5)
+        # ARG = SP - num_args - 5
+        self._sub_from_var("SP", int(num_args) + 5)
         self._pop_to_var("ARG")
 
         # LCL = SP
@@ -302,7 +302,7 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_minus_minus()
 
-    def _sub_from_pointer(self, pointer_name: str, value: int):
+    def _sub_from_var(self, pointer_name: str, value: int):
         self._push_var(pointer_name)
         self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
@@ -324,7 +324,7 @@ class CodeWriter:
         self.write_line("M=D")
 
         # RET = *(FRAME-5)
-        self._sub_from_pointer("FRAME", 5)
+        self._sub_from_var("FRAME", 5)
         self._pop_to_var("RET")
 
         # *ARG=return_value
@@ -337,22 +337,22 @@ class CodeWriter:
         self.write_line("M=D")
 
         # THAT = *(FRAME-1)
-        self._sub_from_pointer("FRAME", 1)
+        self._sub_from_var("FRAME", 1)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 1)
 
         # THIS = *(FRAME-2)
-        self._sub_from_pointer("FRAME", 2)
+        self._sub_from_var("FRAME", 2)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 0)
 
         # ARG = *(FRAME-3)
-        self._sub_from_pointer("FRAME", 3)
+        self._sub_from_var("FRAME", 3)
         self._pop_pointer_to_var("ARG")
 
         # LCL = *(FRAME-4)
         self.write_comment_line("//LCL = *(FRAME-4)")
-        self._sub_from_pointer("FRAME", 4)
+        self._sub_from_var("FRAME", 4)
         self._pop_pointer_to_var("LCL")
 
         # goto RET
