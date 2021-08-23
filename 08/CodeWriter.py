@@ -301,6 +301,15 @@ class CodeWriter:
         self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
 
+    def _ast_stack_top(self):
+        self.write_line("@SP")
+        self.write_line("A=M-1")
+        self.write_line("A=M")
+        self.write_line("D=M")
+        self.write_line("@SP")
+        self.write_line("A=M-1")
+        self.write_line("M=D")
+
     def write_return(self):
         self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
 
@@ -320,21 +329,26 @@ class CodeWriter:
 
         # THAT = *(FRAME-1)
         self._sub_from_frame(1)
+        self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 1)
 
         # THIS = *(FRAME-2)
         self._sub_from_frame(2)
+        self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 0)
 
         # ARG = *(FRAME-3)
         self._sub_from_frame(3)
+        self._ast_stack_top()
         self._pop_to_var("ARG")
 
         # LCL = *(FRAME-4)
         self._sub_from_frame(4)
+        self._ast_stack_top()
         self._pop_to_var("LCL")
 
         self.write_line("@RET")
+        self.write_line("A=M")
         self.write_line("0;JMP")
 
     def write_branching(self, command_type, *args):
