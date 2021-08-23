@@ -296,7 +296,6 @@ class CodeWriter:
         write_functions_dict = {"C_LABEL": self.write_label,
                                 "C_GOTO": self.write_goto,
                                 "C_IF": self.write_if,
-                                # "if-goto": self.write_if_goto, #TODO
                                 "C_RETURN": self.write_return,
                                 "C_CALL": self.write_call,
                                 "C_FUNCTION": self.write_function}
