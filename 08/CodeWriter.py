@@ -248,12 +248,11 @@ class CodeWriter:
             self.write_push_pop(PUSH_TYPE, "constant", 0)
 
     def write_call(self, func_name: str, num_args: str):
-
-        self._push_var(f"return-{func_name}")  # push return-address
-        self._push_pointer("LCL")  # push LCL
-        self._push_pointer("ARG")  # push ARG
-        self._push_pointer("THIS")  # push THIS
-        self._push_pointer("THAT")  # push THAT
+        self._push_label(f"return-{func_name}")  # push return-address
+        self._push_var("LCL")  # push LCL
+        self._push_var("ARG")  # push ARG
+        self._push_var("THIS")  # push THIS
+        self._push_var("THAT")  # push THAT
 
         # ARG = SP - num_args-5
         self._sub_from_pointer("SP", int(num_args) + 5)
@@ -270,7 +269,7 @@ class CodeWriter:
 
         self.write_line(f"(return-{func_name})")
 
-    def _push_pointer(self, pointer_name: str):
+    def _push_var(self, pointer_name: str):
         self.write_line(f"@{pointer_name}")
         self.write_line("D=M")
         self.write_line("@SP")
@@ -278,7 +277,7 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_plus_plus()
 
-    def _push_var(self, var_name: str):
+    def _push_label(self, var_name: str):
         self.write_line(f"@{var_name}")
         self.write_line("D=A")
         self.write_line("@SP")
@@ -304,7 +303,7 @@ class CodeWriter:
         self._sp_minus_minus()
 
     def _sub_from_pointer(self, pointer_name: str, value: int):
-        self._push_pointer(pointer_name)
+        self._push_var(pointer_name)
         self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
 
@@ -318,9 +317,8 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
-
-        self.write_line("@LCL")  # FRAME=LCL
+        # FRAME=LCL
+        self.write_line("@LCL")
         self.write_line("D=M")
         self.write_line("@FRAME")
         self.write_line("M=D")
@@ -329,7 +327,11 @@ class CodeWriter:
         self._sub_from_pointer("FRAME", 5)
         self._pop_to_var("RET")
 
-        self.write_line("@ARG")  # SP=ARG+1
+        # *ARG=return_value
+        self.write_push_pop(POP_TYPE, "argument", 0)
+
+        # SP=ARG+1
+        self.write_line("@ARG")
         self.write_line("D=M+1")
         self.write_line("@SP")
         self.write_line("M=D")
@@ -353,6 +355,7 @@ class CodeWriter:
         self._sub_from_pointer("FRAME", 4)
         self._pop_pointer_to_var("LCL")
 
+        # goto RET
         self.write_line("@RET")
         self.write_line("A=M")
         self.write_line("0;JMP")

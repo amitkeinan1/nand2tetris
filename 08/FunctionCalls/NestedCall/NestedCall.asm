@@ -34,7 +34,7 @@ D=M
 M=D
 // call Sys.main 0
 @return-Sys.main
-D=M
+D=A
 @SP
 A=M
 M=D
@@ -273,7 +273,7 @@ M=D
 M=M+1
 // call Sys.add12 1
 @return-Sys.add12
-D=M
+D=A
 @SP
 A=M
 M=D
@@ -483,20 +483,6 @@ M=M+D
 @SP
 M=M+1
 // return
-@0
-D=A
-@ARG
-D=M+D
-@addr
-M=D
-@SP
-M=M-1
-@SP
-A=M
-D=M
-@addr
-A=M
-M=D
 @LCL
 D=M
 @FRAME
@@ -533,6 +519,20 @@ D=M
 M=D
 @SP
 M=M-1
+@0
+D=A
+@ARG
+D=M+D
+@addr
+M=D
+@SP
+M=M-1
+@SP
+A=M
+D=M
+@addr
+A=M
+M=D
 @ARG
 D=M+1
 @SP
@@ -755,20 +755,6 @@ M=M+D
 @SP
 M=M+1
 // return
-@0
-D=A
-@ARG
-D=M+D
-@addr
-M=D
-@SP
-M=M-1
-@SP
-A=M
-D=M
-@addr
-A=M
-M=D
 @LCL
 D=M
 @FRAME
@@ -805,6 +791,20 @@ D=M
 M=D
 @SP
 M=M-1
+@0
+D=A
+@ARG
+D=M+D
+@addr
+M=D
+@SP
+M=M-1
+@SP
+A=M
+D=M
+@addr
+A=M
+M=D
 @ARG
 D=M+1
 @SP
