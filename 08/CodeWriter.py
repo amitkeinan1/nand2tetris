@@ -248,15 +248,14 @@ class CodeWriter:
             self.write_push_pop(PUSH_TYPE, "constant", 0)
 
     def write_call(self, func_name: str, num_args: str):
+        self._push_label(f"return-{func_name}")  # push return-address
+        self._push_var("LCL")  # push LCL
+        self._push_var("ARG")  # push ARG
+        self._push_var("THIS")  # push THIS
+        self._push_var("THAT")  # push THAT
 
-        self._push_var(f"return-{func_name}")  # push return-address
-        self._push_pointer("LCL")  # push LCL
-        self._push_pointer("ARG")  # push ARG
-        self._push_pointer("THIS")  # push THIS
-        self._push_pointer("THAT")  # push THAT
-
-        # ARG = SP - num_args-5
-        self._sub_from_pointer("SP", int(num_args) + 5)
+        # ARG = SP - num_args - 5
+        self._sub_from_var("SP", int(num_args) + 5)
         self._pop_to_var("ARG")
 
         # LCL = SP
@@ -270,7 +269,7 @@ class CodeWriter:
 
         self.write_line(f"(return-{func_name})")
 
-    def _push_pointer(self, pointer_name: str):
+    def _push_var(self, pointer_name: str):
         self.write_line(f"@{pointer_name}")
         self.write_line("D=M")
         self.write_line("@SP")
@@ -278,7 +277,7 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_plus_plus()
 
-    def _push_var(self, var_name: str):
+    def _push_label(self, var_name: str):
         self.write_line(f"@{var_name}")
         self.write_line("D=A")
         self.write_line("@SP")
@@ -303,8 +302,8 @@ class CodeWriter:
         self.write_line("M=D")
         self._sp_minus_minus()
 
-    def _sub_from_pointer(self, pointer_name: str, value: int):
-        self._push_pointer(pointer_name)
+    def _sub_from_var(self, pointer_name: str, value: int):
+        self._push_var(pointer_name)
         self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
 
@@ -319,15 +318,14 @@ class CodeWriter:
 
     def write_return(self):
         self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
-
-        self.write_line("@LCL")  # FRAME=LCL
+        # FRAME=LCL
+        self.write_line("@LCL")
         self.write_line("D=M")
         self.write_line("@FRAME")
         self.write_line("M=D")
 
         # RET = *(FRAME-5)
-        # self.write_comment_line("// RET=*(FRAME-5)")
-        self._sub_from_pointer("FRAME", 5)
+        self._sub_from_var("FRAME", 5)
         self._ast_stack_top()
         self._pop_to_var("RET")
 
@@ -339,25 +337,22 @@ class CodeWriter:
         self.write_line("M=D")
 
         # THAT = *(FRAME-1)
-        # self.write_comment_line("//THAT = *(FRAME-1)")
-        self._sub_from_pointer("FRAME", 1)
+        self._sub_from_var("FRAME", 1)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 1)
 
         # THIS = *(FRAME-2)
-        # self.write_comment_line("//THIS = *(FRAME-2)")
-        self._sub_from_pointer("FRAME", 2)
+        self._sub_from_var("FRAME", 2)
         self._ast_stack_top()
         self.write_push_pop(POP_TYPE, "pointer", 0)
 
         # ARG = *(FRAME-3)
-        # self.write_comment_line("//ARG = *(FRAME-3)")
-        self._sub_from_pointer("FRAME", 3)
+        self._sub_from_var("FRAME", 3)
         self._pop_pointer_to_var("ARG")
 
         # LCL = *(FRAME-4)
         self.write_comment_line("//LCL = *(FRAME-4)")
-        self._sub_from_pointer("FRAME", 4)
+        self._sub_from_var("FRAME", 4)
         self._pop_pointer_to_var("LCL")
 
         self.write_line("@future_SP")
@@ -365,6 +360,7 @@ class CodeWriter:
         self.write_line("@SP")
         self.write_line("M=D")
 
+        # goto RET
         self.write_line("@RET")
         self.write_line("A=M")
         self.write_line("0;JMP")
