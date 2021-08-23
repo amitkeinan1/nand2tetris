@@ -259,8 +259,8 @@ class CodeWriter:
         for _ in range(int(num_vars)):
             self.write_push_pop(PUSH_TYPE, "constant", 0)
 
-    def write_call(self, func_name: str, num_args: int):
-        self.write_push_pop(POP_TYPE, "constant", num_args)  # *ARG = *SP-num_args
+    def write_call(self, func_name: str, num_args: str):
+        self.write_push_pop(POP_TYPE, "constant", int(num_args))  # *ARG = *SP-num_args
         self.write_line("@addr")
         self.write_line("D=M")
         self.write_line("D=-D")
