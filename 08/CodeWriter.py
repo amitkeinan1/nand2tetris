@@ -44,8 +44,6 @@ class CodeWriter:
             filename (str): The name of the VM file.
         """
         self.filename = filename
-        if self.files_counter == 0:
-            self.write_init()
         self.files_counter += 1
 
     def write_arithmetic(self, command: str) -> None:

@@ -27,7 +27,6 @@ def translate_file(input_file: typing.TextIO, writer: CodeWriter) -> None:
     while parser.has_more_commands():
         writer.write_comment_line(fr"// {parser.curr_command}")
         writer.write_line(f"@{666+writer.files_counter}")
-        writer.write_line("A=M")
         command_type = parser.command_type()
         if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
@@ -62,6 +61,7 @@ if "__main__" == __name__:
     output_path += ".asm"
     with open(output_path, 'w') as output_file:
         writer = CodeWriter(output_file)
+        writer.write_init()
         for input_path in files_to_translate:
             filename, extension = os.path.splitext(input_path)
             if extension.lower() != ".vm":
