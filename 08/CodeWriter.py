@@ -317,7 +317,7 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
+
         # FRAME=LCL
         self.write_line("@LCL")
         self.write_line("D=M")
@@ -329,6 +329,8 @@ class CodeWriter:
         self._ast_stack_top()
         self._pop_to_var("RET")
 
+        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
+        
         # future_SP=ARG+1
         # self.write_comment_line("// SP=ARG+1")
         self.write_line("@ARG")
