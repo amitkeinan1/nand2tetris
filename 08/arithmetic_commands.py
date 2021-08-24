@@ -4,15 +4,15 @@ BRANCH_SKIP = 4
 assembly_commands = {
     ADD_COMMAND: [  # the pseudo-assembly code fo the add operation is: *(SP-2) = *(SP-2) + *(SP-1)
         "@SP", "A=M-1", "D=M",  # D = *(SP-1)
-        "@SP", "M=M-1", "M=M-1",  # SP = SP-2
-        "A=M", "M=M+D",  # *(SP-1) = *(SP-1)+D
-        "@SP", "M=M+1"  # SP++
+        "@SP", "M=M-1",  # SP = SP-2
+        "A=M-1", "M=M+D",  # *(SP-1) = *(SP-1)+D
+        "@SP",  # SP++
     ],
     SUB_COMMAND: [  # the pseudo-assembly code fo the sub operation is: *(SP-2) = *(SP-2) - *(SP-1)
         "@SP", "A=M-1", "D=M",  # D = *(SP-1)
-        "@SP", "M=M-1", "M=M-1",  # SP = SP-2
-        "A=M", "M=M-D",  # *(SP-1) = *(SP-1)-D
-        "@SP", "M=M+1"  # SP++
+        "@SP", "M=M-1",  # SP = SP-2
+        "A=M-1", "M=M-D",  # *(SP-1) = *(SP-1)-D
+        "@SP"  # SP++
     ],
     NEG_COMMAND: ["@SP", "A=M-1", "M=-M"],  # *(SP-1) = -*(SP-1)
 
