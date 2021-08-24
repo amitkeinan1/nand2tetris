@@ -27,6 +27,7 @@ class CodeWriter:
 
         self.temp_addr = 5
         self.lines_counter = 0
+        self.files_counter = 0
 
     def write_line(self, line):
         self.lines_counter += 1
@@ -43,6 +44,9 @@ class CodeWriter:
             filename (str): The name of the VM file.
         """
         self.filename = filename
+        if self.files_counter == 0:
+            self.write_init()
+        self.files_counter += 1
 
     def write_arithmetic(self, command: str) -> None:
         """Writes the assembly code that is the translation of the given 
@@ -224,9 +228,11 @@ class CodeWriter:
             raise Exception(f"segment {segment} not supported")
 
     def write_init(self):
+        self.write_line("@256")
+        self.write_line("D=A")
         self.write_line("@SP")
-        self.write_line("M=256")
-        self.write_call("Sys.init", "1")
+        self.write_line("M=D")
+        self.write_call("Sys.init", "0")
 
     def write_label(self, label: str):
         self.write_line(f"({label})")
