@@ -164,7 +164,7 @@ class CodeWriter:
             self.write_line("M=D")
 
     def _set_address(self, address):
-        # make value in address equal D
+        # make value in addr equal address
 
         self.write_line(f"@{address}")
         self.write_line("D=A")
@@ -256,7 +256,6 @@ class CodeWriter:
 
     def write_call(self, func_name: str, num_args: str):
         self.calls_count += 1
-        self.write_line("@6666")
         self._push_label(f"return-{func_name}{self.calls_count}")  # push return-address
         self._push_var("LCL")  # push LCL
         self._push_var("ARG")  # push ARG
@@ -279,6 +278,7 @@ class CodeWriter:
         self.write_line(f"(return-{func_name}{self.calls_count})")
 
     def _push_var(self, pointer_name: str):
+        """ push var to stack"""
         self.write_line(f"@{pointer_name}")
         self.write_line("D=M")
         self.write_line("@SP")
@@ -287,6 +287,7 @@ class CodeWriter:
         self._sp_plus_plus()
 
     def _push_label(self, var_name: str):
+        """ push label to stack"""
         self.write_line(f"@{var_name}")
         self.write_line("D=A")
         self.write_line("@SP")
@@ -326,7 +327,6 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-        self.write_line("@1234")
         # FRAME=LCL
         self.write_line("@LCL")
         self.write_line("D=M")
@@ -338,7 +338,7 @@ class CodeWriter:
         self._ast_stack_top()
         self._pop_to_var("RET")
 
-        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
+        self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value
 
         # future_SP=ARG+1
         self.write_line("@ARG")
