@@ -28,6 +28,7 @@ class CodeWriter:
         self.temp_addr = 5
         self.lines_counter = 0
         self.files_counter = 0
+        self.calls_count = 0
 
     def write_line(self, line):
         self.lines_counter += 1
@@ -254,7 +255,9 @@ class CodeWriter:
             self.write_push_pop(PUSH_TYPE, "constant", 0)
 
     def write_call(self, func_name: str, num_args: str):
-        self._push_label(f"return-{func_name}")  # push return-address
+        self.calls_count += 1
+        self.write_line("@6666")
+        self._push_label(f"return-{func_name}{self.calls_count}")  # push return-address
         self._push_var("LCL")  # push LCL
         self._push_var("ARG")  # push ARG
         self._push_var("THIS")  # push THIS
@@ -273,7 +276,7 @@ class CodeWriter:
         self.write_line(f"@{func_name}")  # go and execute func
         self.write_line("0;JMP")
 
-        self.write_line(f"(return-{func_name})")
+        self.write_line(f"(return-{func_name}{self.calls_count})")
 
     def _push_var(self, pointer_name: str):
         self.write_line(f"@{pointer_name}")
@@ -323,7 +326,7 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-
+        self.write_line("@1234")
         # FRAME=LCL
         self.write_line("@LCL")
         self.write_line("D=M")
@@ -336,7 +339,7 @@ class CodeWriter:
         self._pop_to_var("RET")
 
         self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
-        
+
         # future_SP=ARG+1
         self.write_line("@ARG")
         self.write_line("D=M+1")
