@@ -245,6 +245,7 @@ class CodeWriter:
         self.write_line("@SP")
         self.write_line("A=M-1")
         self.write_line("D=M")
+        self._sp_minus_minus()
         self.write_line(f"@{label}")
         self.write_line("D;JNE")
 
