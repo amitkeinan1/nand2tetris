@@ -39,7 +39,7 @@ def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> Non
             else:
                 writer.write_branching(command_type, parser.arg1())
         parser.advance()
-    writer.close()
+    # writer.close()
 
 
 if "__main__" == __name__:
