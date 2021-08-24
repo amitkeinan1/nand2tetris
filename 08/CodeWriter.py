@@ -241,6 +241,7 @@ class CodeWriter:
         self.write_line("D=M")
         self.write_line(f"@{label}")
         self.write_line("D;JNE")
+        self._sp_minus_minus()
 
     def write_function(self, func_name: str, num_vars: str):
         self.write_line(f"({func_name})")
