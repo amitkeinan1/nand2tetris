@@ -228,6 +228,7 @@ class CodeWriter:
             raise Exception(f"segment {segment} not supported")
 
     def write_init(self):
+        self.write_comment_line("// init")
         self.write_line("@256")
         self.write_line("D=A")
         self.write_line("@SP")

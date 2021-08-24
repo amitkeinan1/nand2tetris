@@ -13,7 +13,7 @@ from Parser import Parser
 from vm_commands import ARITHMETIC_COMMAND, access_commands, branching_commands, two_args_branching_commands, zero_args_branching_commands
 
 
-def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> None:
+def translate_file(input_file: typing.TextIO, writer: CodeWriter) -> None:
     """Translates a single file.
 
     Args:
@@ -22,10 +22,12 @@ def translate_file(input_file: typing.TextIO, output_file: typing.TextIO) -> Non
     """
     input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
     parser = Parser(input_file)
-    writer = CodeWriter(output_file)
     writer.set_file_name(input_filename)
+    # writer = CodeWriter(output_file)
     while parser.has_more_commands():
         writer.write_comment_line(fr"// {parser.curr_command}")
+        writer.write_line(f"@{666+writer.files_counter}")
+        writer.write_line("A=M")
         command_type = parser.command_type()
         if command_type is ARITHMETIC_COMMAND:
             writer.write_arithmetic(parser.curr_command)
@@ -59,9 +61,10 @@ if "__main__" == __name__:
         output_path, extension = os.path.splitext(argument_path)
     output_path += ".asm"
     with open(output_path, 'w') as output_file:
+        writer = CodeWriter(output_file)
         for input_path in files_to_translate:
             filename, extension = os.path.splitext(input_path)
             if extension.lower() != ".vm":
                 continue
             with open(input_path, 'r') as input_file:
-                translate_file(input_file, output_file)
+                translate_file(input_file, writer)
