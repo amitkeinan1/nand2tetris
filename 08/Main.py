@@ -23,7 +23,6 @@ def translate_file(input_file: typing.TextIO, writer: CodeWriter) -> None:
     input_filename, input_extension = os.path.splitext(os.path.basename(input_file.name))
     parser = Parser(input_file)
     writer.set_file_name(input_filename)
-    # writer = CodeWriter(output_file)
     while parser.has_more_commands():
         writer.write_comment_line(fr"// {parser.curr_command}")
         command_type = parser.command_type()
@@ -60,7 +59,7 @@ if "__main__" == __name__:
     output_path += ".asm"
     with open(output_path, 'w') as output_file:
         writer = CodeWriter(output_file)
-        writer.write_init()
+        # writer.write_init()
         for input_path in files_to_translate:
             filename, extension = os.path.splitext(input_path)
             if extension.lower() != ".vm":
