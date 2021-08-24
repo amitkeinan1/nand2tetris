@@ -1,4 +1,5 @@
 // function SimpleFunction.test 2
+(SimpleFunction.test)
 @0
 D=A
 @SP
@@ -47,7 +48,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -78,7 +78,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -105,7 +104,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -114,20 +112,6 @@ M=M-D
 @SP
 M=M+1
 // return
-@0
-D=A
-@ARG
-D=M+D
-@addr
-M=D
-@SP
-M=M-1
-@SP
-A=M
-D=M
-@addr
-A=M
-M=D
 @LCL
 D=M
 @FRAME
@@ -149,7 +133,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -159,14 +142,35 @@ M=M-D
 M=M+1
 @SP
 A=M-1
+A=M
+D=M
+@SP
+A=M-1
+M=D
+@SP
+A=M-1
 D=M
 @RET
 M=D
 @SP
 M=M-1
+@0
+D=A
+@ARG
+D=M+D
+@addr
+M=D
+@SP
+M=M-1
+@SP
+A=M
+D=M
+@addr
+A=M
+M=D
 @ARG
 D=M+1
-@SP
+@future_SP
 M=D
 @FRAME
 D=M
@@ -185,7 +189,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -224,7 +227,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -263,7 +265,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -279,7 +280,6 @@ D=M
 M=D
 @SP
 M=M-1
-//LCL = *(FRAME-4)
 @FRAME
 D=M
 @SP
@@ -297,7 +297,6 @@ M=M+1
 @SP
 A=M-1
 D=M
-M=0
 @SP
 M=M-1
 M=M-1
@@ -313,6 +312,10 @@ D=M
 M=D
 @SP
 M=M-1
+@future_SP
+D=M
+@SP
+M=D
 @RET
 A=M
 0;JMP

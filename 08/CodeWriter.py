@@ -256,7 +256,6 @@ class CodeWriter:
 
     def write_call(self, func_name: str, num_args: str):
         self.calls_count += 1
-        self.write_line("@6666")
         self._push_label(f"return-{func_name}{self.calls_count}")  # push return-address
         self._push_var("LCL")  # push LCL
         self._push_var("ARG")  # push ARG
@@ -326,7 +325,6 @@ class CodeWriter:
         self.write_line("M=D")
 
     def write_return(self):
-        self.write_line("@1234")
         # FRAME=LCL
         self.write_line("@LCL")
         self.write_line("D=M")
