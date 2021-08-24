@@ -313,11 +313,13 @@ class CodeWriter:
         self._sp_minus_minus()
 
     def _sub_from_var(self, pointer_name: str, value: int):
+        """ var = var - value"""
         self._push_var(pointer_name)
         self.write_push_pop(PUSH_TYPE, "constant", value)
         self.write_arithmetic(SUB_COMMAND)
 
     def _ast_stack_top(self):
+        """ SP =  *SP """
         self.write_line("@SP")
         self.write_line("A=M-1")
         self.write_line("A=M")
@@ -375,6 +377,7 @@ class CodeWriter:
         self.write_line("0;JMP")
 
     def write_branching(self, command_type, *args):
+        """ write assembly code of commands related to program flow """
         write_functions_dict = {"C_LABEL": self.write_label,
                                 "C_GOTO": self.write_goto,
                                 "C_IF": self.write_if,
