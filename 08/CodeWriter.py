@@ -339,7 +339,6 @@ class CodeWriter:
         self.write_push_pop(POP_TYPE, "argument", 0)  # *ARG=return_value #TODO check!!!
         
         # future_SP=ARG+1
-        # self.write_comment_line("// SP=ARG+1")
         self.write_line("@ARG")
         self.write_line("D=M+1")
         self.write_line("@future_SP")
@@ -360,7 +359,6 @@ class CodeWriter:
         self._pop_pointer_to_var("ARG")
 
         # LCL = *(FRAME-4)
-        self.write_comment_line("//LCL = *(FRAME-4)")
         self._sub_from_var("FRAME", 4)
         self._pop_pointer_to_var("LCL")
 
