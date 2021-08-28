@@ -23,7 +23,7 @@ class JackTokenizer:
         """
         self.jack_code = preprocess_jack_code(input_stream)
         self.tokens = self.jack_code.split(' ')
-        self.tokens_num = len(self.tokens)
+        self.tokens_num = len(self.tokens)  # TODO: handle multiple words tokens (string constants)
         self.curr_index = 0
         pass
 
