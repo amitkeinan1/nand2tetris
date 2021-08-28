@@ -88,6 +88,7 @@ def get_tokens(jack_code: str) -> List[str]:
 
 if __name__ == '__main__':
     with open("Square/Main.jack") as stream:
-        tokens = get_tokens(stream)
+        text = stream.read()
+        tokens = get_tokens(text)
         for token in tokens:
             print(token)
