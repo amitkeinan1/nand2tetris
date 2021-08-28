@@ -8,3 +8,11 @@
 *.xml
 
 .idea/nand2tetris.iml
+
+07/.idea/
+
+07/__pycache__/
+
+08/.idea/
+
+08/__pycache__/
