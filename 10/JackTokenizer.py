@@ -7,6 +7,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import typing
 
 from JackPreprocessing import preprocess_jack_code
+from config import KEY_WORDS, SYMBOLS
 
 
 class JackTokenizer:
@@ -41,14 +42,46 @@ class JackTokenizer:
         """
         self.curr_index += 1
 
+    @staticmethod
+    def _is_string_const(token):
+        if len(token) < 2:
+            return False
+        wrapped_with_double_quotes = token[0] == '"' and token[-1] == '"'
+        inner_string = token[1:-1]
+        has_inner_double_quotes = '"' in inner_string
+        has_inner_new_line = '\n' in inner_string
+        return wrapped_with_double_quotes and not (has_inner_double_quotes or has_inner_new_line)
+
+    @staticmethod
+    def _is_identifier(token: str):
+        if token == "":
+            return False
+        if token[0].isdigit():
+            return False
+        for char in token:
+            if not (char.isdigit() or char.isalpha() or char == '_'):
+                return False
+        return True
+
     def token_type(self) -> str:
         """
         Returns:
             str: the type of the current token, can be
             "KEYWORD", "SYMBOL", "IDENTIFIER", "INT_CONST", "STRING_CONST"
         """
-        # Your code goes here!
-        pass
+        curr_token = self.tokens[self.curr_index]
+        if curr_token in KEY_WORDS:
+            return "KEYWORD"
+        elif curr_token in SYMBOLS:
+            return "SYMBOL"
+        elif curr_token.isdigit() and 0 <= int(curr_token) <= 32767:
+            return "INT_CONST"
+        elif JackTokenizer._is_string_const(curr_token):
+            return "STRING_CONST"
+        elif JackTokenizer._is_identifier(curr_token):
+            return "IDENTIFIER"
+        else:
+            raise Exception(f"token {curr_token} is not valid.")
 
     def keyword(self) -> str:
         """
@@ -59,8 +92,7 @@ class JackTokenizer:
             "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO", 
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
         """
-        # Your code goes here!
-        pass
+        return self.tokens[self.curr_index]
 
     def symbol(self) -> str:
         """
@@ -68,8 +100,7 @@ class JackTokenizer:
             str: the character which is the current token.
             Should be called only when token_type() is "SYMBOL".
         """
-        # Your code goes here!
-        pass
+        return self.tokens[self.curr_index]
 
     def identifier(self) -> str:
         """
@@ -77,8 +108,7 @@ class JackTokenizer:
             str: the identifier which is the current token.
             Should be called only when token_type() is "IDENTIFIER".
         """
-        # Your code goes here!
-        pass
+        return self.tokens[self.curr_index]
 
     def int_val(self) -> int:
         """
@@ -86,8 +116,7 @@ class JackTokenizer:
             str: the integer value of the current token.
             Should be called only when token_type() is "INT_CONST".
         """
-        # Your code goes here!
-        pass
+        return int(self.tokens[self.curr_index])
 
     def string_val(self) -> str:
         """
@@ -95,5 +124,17 @@ class JackTokenizer:
             str: the string value of the current token, without the double 
             quotes. Should be called only when token_type() is "STRING_CONST".
         """
-        # Your code goes here!
-        pass
+        return self.tokens[self.curr_index][1:-1]
+
+
+if __name__ == '__main__':
+    with open("Square/Main.jack") as stream:
+        t = JackTokenizer(stream)
+        print(t.tokens[t.curr_index])
+        print(t.token_type())
+        print()
+        while t.has_more_tokens():
+            t.advance()
+            print(t.tokens[t.curr_index])
+            print(t.token_type())
+            print()

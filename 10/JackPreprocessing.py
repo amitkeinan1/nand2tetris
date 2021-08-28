@@ -26,6 +26,7 @@ def _remove_multiple_whitespaces(text):
 def _clean_text(text: str) -> str:
     text = _remove_comments(text)
     text = _remove_multiple_whitespaces(text)
+    text = text.strip()
     return text
 
 
