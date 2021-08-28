@@ -21,6 +21,9 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.jack_code = preprocess_jack_code(input_stream)
+        self.tokens = self.jack_code.split(' ')
+        self.tokens_num = len(self.tokens)
+        self.curr_index = 0
         pass
 
     def has_more_tokens(self) -> bool:
@@ -29,16 +32,14 @@ class JackTokenizer:
         Returns:
             bool: True if there are more tokens, False otherwise.
         """
-        # Your code goes here!
-        pass
+        return self.curr_index < self.tokens_num - 1
 
     def advance(self) -> None:
         """Gets the next token from the input and makes it the current token. 
         This method should be called if has_more_tokens() is true. 
         Initially there is no current token.
         """
-        # Your code goes here!
-        pass
+        self.curr_index += 1
 
     def token_type(self) -> str:
         """
