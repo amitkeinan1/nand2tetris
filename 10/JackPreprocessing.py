@@ -2,7 +2,7 @@ import re
 import typing
 from typing import List
 
-INLINE_COMMENT_SIGN = "//"
+from config import INLINE_COMMENT_SIGN, SYMBOLS
 
 
 def _remove_inline_comments(line: str) -> str:
@@ -19,20 +19,33 @@ def _remove_comments(text: str) -> str:
     return text
 
 
+def _remove_multiple_whitespaces(text):
+    return re.sub(' +', ' ', text)
+
+
 def _clean_text(text: str) -> str:
     text = _remove_comments(text)
-    text = re.sub(' +', ' ', text)
+    text = _remove_multiple_whitespaces(text)
     return text
 
 
-def read_jack_code(stream: typing.TextIO):
+def _split_to_tokens(text: str) -> str:
+    # symbols_string = f"[{''.join(SYMBOLS)}]"
+    for symbol in SYMBOLS:
+        text = text.replace(symbol, f" {symbol} ")
+    text = _remove_multiple_whitespaces(text)
+    return text
+
+
+def preprocess_jack_code(stream: typing.TextIO):
     lines = stream.read().splitlines()
     lines = _clean_lines(lines)
     text = ' '.join(lines)
     text = _clean_text(text)
+    text = _split_to_tokens(text)
     return text
 
 
 if __name__ == '__main__':
     with open("Square/Main.jack") as stream:
-        print(read_jack_code(stream))
+        print(preprocess_jack_code(stream))
