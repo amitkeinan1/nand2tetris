@@ -25,7 +25,6 @@ class JackTokenizer:
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
-        pass
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
