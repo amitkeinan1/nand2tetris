@@ -6,6 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
+from JackPreprocessing import read_jack_code
 
 class JackTokenizer:
     """Removes all comments from the input stream and breaks it
@@ -18,9 +19,7 @@ class JackTokenizer:
         Args:
             input_stream (typing.TextIO): input stream.
         """
-        # Your code goes here!
-        # A good place to start is:
-        # input_lines = input_stream.read().splitlines()
+        self.input_text = read_jack_code(input_stream)
         pass
 
     def has_more_tokens(self) -> bool:

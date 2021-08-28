@@ -15,7 +15,9 @@ JackAnalyzer - The executable.
 Makefile - A makefile for the project.
 JackAnalyzer.py - 
 JackTokenizer.py - 
-CompilationEngine.py - 
+CompilationEngine.py -
+JackPreprocessing.py - handles preprocessing of jack code streams: mainly removes comments, spaces and new lines.
+
 Include other files required by your project, if there are any.
 
 Remarks
