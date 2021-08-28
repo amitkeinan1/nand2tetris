@@ -22,8 +22,8 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.jack_code = preprocess_jack_code(input_stream)
-        self.tokens = self.jack_code.split(' ')
-        self.tokens_num = len(self.tokens)  # TODO: handle multiple words tokens (string constants)
+        self.tokens = self.jack_code.split(' ')  # TODO: handle multiple words tokens (string constants)
+        self.tokens_num = len(self.tokens)
         self.curr_index = 0
         pass
 
