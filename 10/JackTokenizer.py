@@ -21,13 +21,7 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.jack_code = preprocess_jack_code(input_stream)
-        self.jack_code = JackTokenizer._split_to_tokens(jack_code)
         pass
-
-    @staticmethod
-    def _split_to_tokens(jack_code):
-        jack_code = self.
-        return jack_code
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
