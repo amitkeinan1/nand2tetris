@@ -5,6 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+import re
 
 from JackPreprocessing import preprocess_jack_code
 from config import KEY_WORDS, SYMBOLS
@@ -22,10 +23,14 @@ class JackTokenizer:
             input_stream (typing.TextIO): input stream.
         """
         self.jack_code = preprocess_jack_code(input_stream)
-        self.tokens = self.jack_code.split(' ')  # TODO: handle multiple words tokens (string constants)
+        self.tokens = self.get_tokens(self.jack_code)  # TODO: handle multiple words tokens (string constants)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
         pass
+
+    @staticmethod
+    def get_tokens(jack_code):
+        string_const_indices = [(m.start(0), m.end(0)) for m in re.finditer('".*?"', jack_code)]
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
