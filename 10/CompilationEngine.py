@@ -262,10 +262,43 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
+    def _compile_else(self) -> List[Element]:
+
+        # ('else' '{' statements '}')
+        else_elements = self._add_token_if(expected_token="else")
+        left_bracket_elements = self._add_token_if(expected_token="{")
+        statements_expression = self.compile_statements()
+        right_bracket_elements = self._add_token_if(expected_token="}")
+
+        if else_elements and left_bracket_elements and statements_expression and right_bracket_elements:
+            return else_elements + left_bracket_elements + statements_expression + right_bracket_elements
+        else:
+            return None
+
     def compile_if(self) -> List[Element]:
         """Compiles a if statement, possibly with a trailing else clause."""
-        # Your code goes here!
-        pass
+        if_root = Element("ifStatement")
+
+        valid_if_statement = True
+
+        # 'if' '(' expression ')'
+        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="if"))
+        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="("))
+        valid_if_statement &= self._add_elements(if_root, self.compile_expression())
+        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token=")"))
+
+        # '{' statements '}'
+        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="{"))
+        valid_if_statement &= self._add_elements(if_root, self.compile_statement())
+        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="}"))
+
+        # ('else' '{' statements '}')?
+        valid_if_statement &= self._add_elements(if_root, self._question_mark_compiling(self._compile_else))
+
+        if valid_if_statement:
+            return [if_root]
+        else:
+            return None
 
     def compile_expression(self) -> List[Element]:
         """Compiles an expression."""
