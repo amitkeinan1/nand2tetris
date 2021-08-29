@@ -4,10 +4,11 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
+import re
 import typing
 
 from JackPreprocessing import get_tokens
-from config import KEY_WORDS, SYMBOLS
+from config import KEY_WORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 
 
 class JackTokenizer:
@@ -43,24 +44,11 @@ class JackTokenizer:
 
     @staticmethod
     def _is_string_const(token):
-        if len(token) < 2:
-            return False
-        wrapped_with_double_quotes = token[0] == '"' and token[-1] == '"'
-        inner_string = token[1:-1]
-        has_inner_double_quotes = '"' in inner_string
-        has_inner_new_line = '\n' in inner_string
-        return wrapped_with_double_quotes and not (has_inner_double_quotes or has_inner_new_line)
+        return bool(re.fullmatch(STRING_CONST_PATTERN, token))
 
     @staticmethod
     def _is_identifier(token: str):
-        if token == "":
-            return False
-        if token[0].isdigit():
-            return False
-        for char in token:
-            if not (char.isdigit() or char.isalpha() or char == '_'):
-                return False
-        return True
+        return bool(re.fullmatch(IDENTIFIER_PATTERN, token))
 
     def token_type(self) -> str:  # TODO rewrite with regexes
         """
