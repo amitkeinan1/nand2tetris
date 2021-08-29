@@ -5,8 +5,6 @@
 
 06/__pycache__/
 
-*.xml
-
 .idea/nand2tetris.iml
 
 07/.idea/
@@ -18,3 +16,5 @@
 08/__pycache__/
 
 10/__pycache__/
+
+10/.idea/
