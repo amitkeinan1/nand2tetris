@@ -29,12 +29,16 @@ class CompilationEngine:
         self.output_path = output_path
 
     def _add_curr_token(self) -> List[Element]:
+        if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
+            return None
         token_element = Element(self.tokenizer.token_type_repr())
         token_element.text = self.tokenizer.token_repr()
-        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? maybe handle with compile safely
+        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? maybe handle with compile_safely
         return [token_element]
 
     def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
+        if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
+            return None
         if expected_type is None or self.tokenizer.token_type() == expected_type \
                 and expected_token is None or self.tokenizer.curr_token() == expected_token:
             return self._add_curr_token()
@@ -186,7 +190,6 @@ class CompilationEngine:
         else:
             return None
 
-
     def compile_statements(self) -> List[Element]:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
@@ -267,6 +270,8 @@ class CompilationEngine:
 if __name__ == '__main__':
     root = Element("root")
     c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
-    c._add_elements(root, c.compile_comma_and_var_name())
+    c._add_elements(root, c._asterisk_compiling(c.compile_comma_and_var_name))
+    # c._add_elements(root, c.compile_comma_and_var_name())
+    # c._add_elements(root, c.compile_comma_and_var_name())
     class_tree = etree.ElementTree(root)
     class_tree.write(c.output_path, pretty_print=True)
