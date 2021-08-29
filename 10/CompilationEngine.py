@@ -70,14 +70,21 @@ class CompilationEngine:
                 return curr_elements
         return None
 
+    def _compile_safely(self, compile_method):
+        initial_token_index = self.tokenizer.curr_index
+        res = compile_method()
+        if not res:
+            self.tokenizer.curr_index = initial_token_index
+        return res
+
     def _asterisk_compiling(self, compile_method) -> List[Element]:
         elements = []
-        curr_elements = compile_method()
+        curr_elements = self._compile_safely(compile_method)
         while curr_elements:
             elements += curr_elements
-            curr_elements = compile_method()
-        return elements
+            curr_elements = self._compile_safely(compile_method)
 
+        return elements
 
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
@@ -137,7 +144,7 @@ class CompilationEngine:
         else:
             return None
 
-    def compile_parameter_list(self) -> List[Element]: # TODO: add question mark on everything
+    def compile_parameter_list(self) -> List[Element]:  # TODO: add question mark on everything
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
