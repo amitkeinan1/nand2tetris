@@ -17,18 +17,21 @@ class JackTokenizer:
     into Jack language tokens, as specified by the Jack grammar.
     """
 
-    def __init__(self, input_stream: typing.TextIO) -> None:
+    def __init__(self, input_path: str) -> None:
         """Opens the input stream and gets ready to tokenize it.
 
         Args:
             input_stream (typing.TextIO): input stream.
         """
-        jack_code = input_stream.read()
+        with open(input_path, 'r') as jack_file:
+            jack_code = jack_file.read()
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
         self._type_to_repr_method = {"KEYWORD": self.keyword, "SYMBOL": self.symbol, "INT_CONST": self.int_val,
                                      "STRING_CONST": self.string_val, "IDENTIFIER": self.identifier}
+        self._type_to_type_repr = {"KEYWORD": "keyword", "SYMBOL": "symbol", "INT_CONST": "integerConstant",
+                                     "STRING_CONST": "stringConstant", "IDENTIFIER": "identifier"}
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
@@ -122,13 +125,16 @@ class JackTokenizer:
     def _token_repr(self):
         return str(self._type_to_repr_method[self.token_type()]())
 
+    def _token_type_repr(self):
+        return self._type_to_type_repr[self.token_type()]
+
     def tokenize(self, output_path: str) -> None:
         tokens_root = ET.Element("tokens")
 
-        ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
+        ET.SubElement(tokens_root, self._token_type_repr()).text = self._token_repr()
         while self.has_more_tokens():
             self.advance()
-            ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
+            ET.SubElement(tokens_root, self._token_type_repr()).text = self._token_repr()
 
         tokens_tree = ET.ElementTree(tokens_root)
         tokens_tree.write(output_path, pretty_print=True)
