@@ -19,10 +19,7 @@ def analyze_file(
         input_file (typing.TextIO): the file to analyze.
         output_file (typing.TextIO): writes all output to this file.
     """
-    tokenizer = JackTokenizer(input_path)
-    temp_name = f"{input_path.split('.')[0]}T-our.xml" # TODO: change
-    tokenizer.tokenize(temp_name)
-    compiler = CompilationEngine(temp_name, output_path)
+    compiler = CompilationEngine(input_path, output_path)
     compiler.compile_class()
 
 

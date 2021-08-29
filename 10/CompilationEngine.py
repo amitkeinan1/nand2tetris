@@ -7,6 +7,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import typing
 from lxml import etree
 
+from JackTokenizer import JackTokenizer
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -17,11 +18,10 @@ class CompilationEngine:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
-        :param input_path: path of tokenized jack code in xml format to compile
-        :param output_path: path to write compiled jack program in xml format
+        :param input_path:
+        :param output_path:
         """
-        self.input_path = input_path  # TODO: needed?
-        self.tokens_tree = etree.parse(input_path)
+        self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
 
     def compile_class(self) -> None:
