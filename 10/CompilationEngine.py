@@ -39,8 +39,7 @@ class CompilationEngine:
     def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
         if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
             return None
-        if expected_type is None or self.tokenizer.token_type() == expected_type \
-                and expected_token is None or self.tokenizer.curr_token() == expected_token:
+        if (expected_type is None or self.tokenizer.token_type() == expected_type) and (expected_token is None or self.tokenizer.curr_token() == expected_token):
             return self._add_curr_token()
         else:
             return None
@@ -271,7 +270,6 @@ if __name__ == '__main__':
     root = Element("root")
     c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
     c._add_elements(root, c._asterisk_compiling(c.compile_comma_and_var_name))
-    # c._add_elements(root, c.compile_comma_and_var_name())
-    # c._add_elements(root, c.compile_comma_and_var_name())
+    # c._add_elements(root, c.compile_class_var_dec())
     class_tree = etree.ElementTree(root)
     class_tree.write(c.output_path, pretty_print=True)

@@ -8,10 +8,4 @@
     <identifier>test</identifier>
     <symbol>;</symbol>
   </classVarDec>
-  <classVarDec>
-    <keyword>function</keyword>
-    <keyword>void</keyword>
-    <identifier>main</identifier>
-    <symbol>(</symbol>
-  </classVarDec>
 </class>
