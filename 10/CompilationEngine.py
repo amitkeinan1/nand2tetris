@@ -20,8 +20,8 @@ class CompilationEngine:
         :param input_stream: The input stream.
         :param output_stream: The output stream.
         """
-        # Your code goes here!
-        pass
+        self.output_stream = output_stream
+        # TODO: add more stuff
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -47,8 +47,8 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        # Your code goes here!
-        pass
+        self.output_stream.write("<varDec>")
+
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 

@@ -6,6 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import re
 import typing
+from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
 from config import KEY_WORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
@@ -26,6 +27,8 @@ class JackTokenizer:
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
+        self._type_to_repr_method = {"KEYWORD": self.keyword, "SYMBOL": self.symbol, "INT_CONST": self.int_val,
+                                     "STRING_CONST": self.string_val, "IDENTIFIER": self.identifier}
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
@@ -50,13 +53,16 @@ class JackTokenizer:
     def _is_identifier(token: str):
         return bool(re.fullmatch(IDENTIFIER_PATTERN, token))
 
+    def curr_token(self):
+        return self.tokens[self.curr_index]
+
     def token_type(self) -> str:  # TODO rewrite with regexes
         """
         Returns:
             str: the type of the current token, can be
             "KEYWORD", "SYMBOL", "IDENTIFIER", "INT_CONST", "STRING_CONST"
         """
-        curr_token = self.tokens[self.curr_index]
+        curr_token = self.curr_token()
         if curr_token in KEY_WORDS:
             return "KEYWORD"
         elif curr_token in SYMBOLS:
@@ -113,15 +119,22 @@ class JackTokenizer:
         """
         return self.tokens[self.curr_index][1:-1]
 
+    def _token_repr(self):
+        return str(self._type_to_repr_method[self.token_type()]())
 
-if __name__ == '__main__':
-    with open("Square/main.jack") as stream:
-        t = JackTokenizer(stream)
-        print(t.tokens[t.curr_index])
-        print(t.token_type())
-        print()
+    def tokenize(self):
+        tokens_root = ET.Element("tokens")
+
+        ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
         while t.has_more_tokens():
             t.advance()
-            print(t.tokens[t.curr_index])
-            print(t.token_type())
-            print()
+            ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
+
+        tokens_tree = ET.ElementTree(tokens_root)
+        tokens_tree.write("tokens.xml", pretty_print=True)
+
+
+if __name__ == '__main__':
+    with open("TokenizerTest/condition.jack") as stream:
+        t = JackTokenizer(stream)
+        t.tokenize()
