@@ -236,8 +236,20 @@ class CompilationEngine:
 
     def compile_while(self) -> List[Element]:
         """Compiles a while statement."""
-        # Your code goes here!
-        pass
+        while_root = Element("whileStatement")
+        valid_while_statement = True
+        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="while"))
+        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="("))
+        valid_while_statement &= self._add_elements(while_root, self.compile_expression())
+        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token=")"))
+        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="{"))
+        valid_while_statement &= self._add_elements(while_root, self.compile_statements())
+        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="}"))
+
+        if valid_while_statement:
+            return [while_root]
+        else:
+            return None
 
     def compile_return(self) -> List[Element]:
         """Compiles a return statement."""
