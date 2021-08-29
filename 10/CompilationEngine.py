@@ -37,7 +37,13 @@ class CompilationEngine:
         else:
             return False
 
-    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None):
+    def _add_token_if_or_compile(self, root, expected_type, expected_token, compile_method):
+        did_add_token = self._add_token_if(root, expected_type, expected_token)
+        if not did_add_token:
+            did_add_token = compile_method(root)
+        return did_add_token
+
+    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None) -> bool:
         if expected_types is None and expected_tokens is None:
             raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
         if expected_types is None:
