@@ -29,12 +29,27 @@ class CompilationEngine:
         etree.SubElement(root, self.tokenizer.token_type_repr()).text = self.tokenizer.token_repr()
         self.tokenizer.advance()
 
-    def _add_token_if(self, root, expected_type=None, expected_token=None):
+    def _add_token_if(self, root, expected_type=None, expected_token=None) -> bool:
         if expected_type is None or self.tokenizer.token_type() == expected_type \
                 and expected_token is None or self.tokenizer.curr_token() == expected_token:
             self._add_curr_token(root)
+            return True
         else:
-            raise Exception("not expected")
+            return False
+
+    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None):
+        if expected_types is None and expected_tokens is None:
+            raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
+        if expected_types is None:
+            expected_types = [None for _ in range(len(expected_tokens))]
+        if expected_tokens is None:
+            expected_tokens = [None for _ in range(len(expected_types))]
+
+        for expected_type, expected_token in zip(expected_types, expected_tokens):
+            did_add_token = self._add_token_if(root, expected_type, expected_token)
+            if did_add_token:
+                return True
+        return False
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -43,19 +58,24 @@ class CompilationEngine:
         self._add_token_if(class_root, "KEYWORD", "class")
         self._add_token_if(class_root, "IDENTIFIER")
         self._add_token_if(class_root, "SYMBOL", "{")
-        self.compile_class_var_dec()  # TODO: maybe multiple
-        self.compile_subroutine()  # TODO: maybe multiple
+        self.compile_class_var_dec(class_root)  # TODO: maybe multiple
+        self.compile_subroutine(class_root)  # TODO: maybe multiple
         self._add_token_if(class_root, "SYMBOL", "{")
         class_tree = etree.ElementTree(class_root)
 
         class_tree.write(self.output_path, pretty_print=True)
 
-    def compile_class_var_dec(self) -> None:
+    def compile_class_var_dec(self, root) -> None:
         """Compiles a static declaration or a field declaration."""
-        # Your code goes here!
-        pass
+        var_dec_root = etree.SubElement(root, "classVarDec")
 
-    def compile_subroutine(self) -> None:
+        self._add_token_if_or(var_dec_root, expected_tokens=["static", "field"])
+        self.compile_type(var_dec_root)
+        self._add_token_if(var_dec_root, "IDENTIFIER")
+        # TODO: add multiple commas
+        self._add_token_if(var_dec_root, expected_token=";")
+
+    def compile_subroutine(self, root) -> None:
         """Compiles a complete method, function, or constructor."""
         # Your code goes here!
         pass
@@ -69,7 +89,7 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
-        self.output_stream.write("<varDec>")
+        pass
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 
@@ -125,3 +145,6 @@ class CompilationEngine:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # Your code goes here!
         pass
+
+    def compile_type(self, root):
+        self._add_token_if_or(root, [None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
