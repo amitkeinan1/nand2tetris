@@ -39,7 +39,8 @@ class CompilationEngine:
     def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
         if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
             return None
-        if (expected_type is None or self.tokenizer.token_type() == expected_type) and (expected_token is None or self.tokenizer.curr_token() == expected_token):
+        if (expected_type is None or self.tokenizer.token_type() == expected_type) and (
+                expected_token is None or self.tokenizer.curr_token() == expected_token):
             return self._add_curr_token()
         else:
             return None
@@ -89,14 +90,12 @@ class CompilationEngine:
 
         return elements
 
-    def _question_mark_compiling(self, compile_method, closing) -> List[Element]:
-        elements = []
+    def _question_mark_compiling(self, compile_method) -> List[Element]:
         curr_elements = self._compile_safely(compile_method)
-        while curr_elements:
-            elements += curr_elements
-            curr_elements = self._compile_safely(compile_method)
-
-        return elements
+        if curr_elements:
+            return curr_elements
+        else:
+            return []
 
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
@@ -157,7 +156,7 @@ class CompilationEngine:
         else:
             return None
 
-    def compile_parameter_list(self) -> List[Element]:  # TODO: add question mark on everything
+    def _inner_compile_parameter_list(self) -> List[Element]:  # TODO: add question mark on everything
         """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
         """
@@ -166,12 +165,17 @@ class CompilationEngine:
         valid_parameter_list = True
         valid_parameter_list &= self._add_elements(parameter_list_root, self.compile_type())
         valid_parameter_list &= self._add_elements(parameter_list_root,
+                                                   self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
+        valid_parameter_list &= self._add_elements(parameter_list_root,
                                                    self._asterisk_compiling(self.compile_comma_and_type_and_var_name))
 
         if valid_parameter_list:
             return [parameter_list_root]
         else:
             return None
+
+    def compile_parameter_list(self) -> List[Element]:
+        return self._question_mark_compiling(self._inner_compile_parameter_list)
 
     def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
