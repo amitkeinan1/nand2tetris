@@ -77,8 +77,15 @@ class CompilationEngine:
 
     def compile_subroutine(self, root) -> None:
         """Compiles a complete method, function, or constructor."""
-        # Your code goes here!
-        pass
+        subroutine_root = etree.SubElement(root, "subroutineDec")
+
+        self._add_token_if_or(subroutine_root, expected_tokens=["constructor","function", "method"])
+        # TODO: add void | type
+        self._add_token_if(subroutine_root, "IDENTIFIER")
+        self._add_token_if(subroutine_root, expected_token="(")
+        self.compile_parameter_list(subroutine_root)
+        self._add_token_if(subroutine_root, expected_token=")")
+        self.compile_subroutine_body(subroutine_root)
 
     def compile_parameter_list(self) -> None:
         """Compiles a (possibly empty) parameter list, not including the 
@@ -148,3 +155,6 @@ class CompilationEngine:
 
     def compile_type(self, root):
         self._add_token_if_or(root, [None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
+
+    def compile_subroutine_body(self, root):
+        pass
