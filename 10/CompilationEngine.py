@@ -37,7 +37,13 @@ class CompilationEngine:
         else:
             return False
 
-    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None):
+    def _add_token_if_or_compile(self, root, expected_type, expected_token, compile_method):
+        did_add_token = self._add_token_if(root, expected_type, expected_token)
+        if not did_add_token:
+            did_add_token = compile_method(root)
+        return did_add_token
+
+    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None) -> bool:
         if expected_types is None and expected_tokens is None:
             raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
         if expected_types is None:
@@ -51,7 +57,13 @@ class CompilationEngine:
                 return True
         return False
 
-    def compile_class(self) -> None:
+    def _compile_multiple(self, root, compile_method) -> bool:  # does not handle cases where it is not LL1
+        compile_success = compile_method(root)
+        while compile_success:
+            compile_method(root)
+        return True
+
+    def compile_class(self) -> bool:
         """Compiles a complete class."""
         class_root = etree.Element("class")
 
@@ -65,7 +77,7 @@ class CompilationEngine:
 
         class_tree.write(self.output_path, pretty_print=True)
 
-    def compile_class_var_dec(self, root) -> None:
+    def compile_class_var_dec(self, root) -> bool:
         """Compiles a static declaration or a field declaration."""
         var_dec_root = etree.SubElement(root, "classVarDec")
 
@@ -75,67 +87,67 @@ class CompilationEngine:
         # TODO: add multiple commas
         self._add_token_if(var_dec_root, expected_token=";")
 
-    def compile_subroutine(self, root) -> None:
+    def compile_subroutine(self, root) -> bool:
         """Compiles a complete method, function, or constructor."""
         subroutine_root = etree.SubElement(root, "subroutineDec")
 
-        self._add_token_if_or(subroutine_root, expected_tokens=["constructor","function", "method"])
-        # TODO: add void | type
+        self._add_token_if_or(subroutine_root, expected_tokens=["constructor", "function", "method"])
+        self._add_token_if_or_compile(subroutine_root, None, "void", self.compile_type)
         self._add_token_if(subroutine_root, "IDENTIFIER")
         self._add_token_if(subroutine_root, expected_token="(")
         self.compile_parameter_list(subroutine_root)
         self._add_token_if(subroutine_root, expected_token=")")
         self.compile_subroutine_body(subroutine_root)
 
-    def compile_parameter_list(self) -> None:
+    def compile_parameter_list(self, root) -> bool:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
         # Your code goes here!
         pass
 
-    def compile_var_dec(self) -> None:
+    def compile_var_dec(self) -> bool:
         """Compiles a var declaration."""
         pass
 
-    def compile_statements(self) -> None:
+    def compile_statements(self) -> bool:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
         # Your code goes here!
         pass
 
-    def compile_do(self) -> None:
+    def compile_do(self) -> bool:
         """Compiles a do statement."""
         # Your code goes here!
         pass
 
-    def compile_let(self) -> None:
+    def compile_let(self) -> bool:
         """Compiles a let statement."""
         # Your code goes here!
         pass
 
-    def compile_while(self) -> None:
+    def compile_while(self) -> bool:
         """Compiles a while statement."""
         # Your code goes here!
         pass
 
-    def compile_return(self) -> None:
+    def compile_return(self) -> bool:
         """Compiles a return statement."""
         # Your code goes here!
         pass
 
-    def compile_if(self) -> None:
+    def compile_if(self) -> bool:
         """Compiles a if statement, possibly with a trailing else clause."""
         # Your code goes here!
         pass
 
-    def compile_expression(self) -> None:
+    def compile_expression(self) -> bool:
         """Compiles an expression."""
         # Your code goes here!
         pass
 
-    def compile_term(self) -> None:
+    def compile_term(self) -> bool:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -148,7 +160,7 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
-    def compile_expression_list(self) -> None:
+    def compile_expression_list(self) -> bool:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # Your code goes here!
         pass
