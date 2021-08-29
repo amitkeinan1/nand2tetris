@@ -51,7 +51,13 @@ class CompilationEngine:
                 return True
         return False
 
-    def compile_class(self) -> None:
+    def _compile_multiple(self, root, compile_method) -> bool:  # does not handle cases where it is not LL1
+        compile_success = compile_method(root)
+        while compile_success:
+            compile_method(root)
+        return True
+
+    def compile_class(self) -> bool:
         """Compiles a complete class."""
         class_root = etree.Element("class")
 
