@@ -9,6 +9,7 @@ from lxml import etree
 
 from JackTokenizer import JackTokenizer
 
+
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
@@ -24,11 +25,29 @@ class CompilationEngine:
         self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
 
+    def _add_curr_token(self, root):
+        etree.SubElement(root, self.tokenizer.token_type_repr()).text = self.tokenizer.token_repr()
+        self.tokenizer.advance()
+
+    def _add_token_if(self, root, expected_type=None, expected_token=None):
+        if expected_type is None or self.tokenizer.token_type() == expected_type \
+                and expected_token is None or self.tokenizer.curr_token() == expected_token:
+            self._add_curr_token(root)
+        else:
+            raise Exception("not expected")
+
     def compile_class(self) -> None:
         """Compiles a complete class."""
         class_root = etree.Element("class")
-        # TODO: add staff
+
+        self._add_token_if(class_root, "KEYWORD", "class")
+        self._add_token_if(class_root, "IDENTIFIER")
+        self._add_token_if(class_root, "SYMBOL", "{")
+        self.compile_class_var_dec()  # TODO: maybe multiple
+        self.compile_subroutine()  # TODO: maybe multiple
+        self._add_token_if(class_root, "SYMBOL", "{")
         class_tree = etree.ElementTree(class_root)
+
         class_tree.write(self.output_path, pretty_print=True)
 
     def compile_class_var_dec(self) -> None:

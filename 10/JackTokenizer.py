@@ -122,19 +122,19 @@ class JackTokenizer:
         """
         return self.tokens[self.curr_index][1:-1]
 
-    def _token_repr(self):
+    def token_repr(self):
         return str(self._type_to_repr_method[self.token_type()]())
 
-    def _token_type_repr(self):
+    def token_type_repr(self):
         return self._type_to_type_repr[self.token_type()]
 
     def tokenize(self, output_path: str) -> None:
         tokens_root = ET.Element("tokens")
 
-        ET.SubElement(tokens_root, self._token_type_repr()).text = self._token_repr()
+        ET.SubElement(tokens_root, self.token_type_repr()).text = self.token_repr()
         while self.has_more_tokens():
             self.advance()
-            ET.SubElement(tokens_root, self._token_type_repr()).text = self._token_repr()
+            ET.SubElement(tokens_root, self.token_type_repr()).text = self.token_repr()
 
         tokens_tree = ET.ElementTree(tokens_root)
         tokens_tree.write(output_path, pretty_print=True)
