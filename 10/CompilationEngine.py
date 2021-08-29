@@ -12,12 +12,10 @@ class CompilationEngine:
     output stream.
     """
 
-    def __init__(self, input_stream: typing.TextIO,
-                output_stream: typing.TextIO) -> None:
+    def __init__(self, tokens_xml_path: str, output_stream: typing.TextIO) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
-        :param input_stream: The input stream.
         :param output_stream: The output stream.
         """
         self.output_stream = output_stream
@@ -48,7 +46,6 @@ class CompilationEngine:
     def compile_var_dec(self) -> None:
         """Compiles a var declaration."""
         self.output_stream.write("<varDec>")
-
 
     def compile_statements(self) -> None:
         """Compiles a sequence of statements, not including the enclosing 

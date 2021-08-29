@@ -122,7 +122,7 @@ class JackTokenizer:
     def _token_repr(self):
         return str(self._type_to_repr_method[self.token_type()]())
 
-    def tokenize(self):
+    def tokenize(self, output_path: str) -> None:
         tokens_root = ET.Element("tokens")
 
         ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
@@ -131,10 +131,10 @@ class JackTokenizer:
             ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
 
         tokens_tree = ET.ElementTree(tokens_root)
-        tokens_tree.write("tokens.xml", pretty_print=True)
+        tokens_tree.write(output_path, pretty_print=True)
 
 
 if __name__ == '__main__':
     with open("TokenizerTest/condition.jack") as stream:
         t = JackTokenizer(stream)
-        t.tokenize()
+        t.tokenize("tokens.xml")
