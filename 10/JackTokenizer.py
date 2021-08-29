@@ -56,7 +56,7 @@ class JackTokenizer:
     def curr_token(self):
         return self.tokens[self.curr_index]
 
-    def token_type(self) -> str:  # TODO rewrite with regexes
+    def token_type(self) -> str:
         """
         Returns:
             str: the type of the current token, can be

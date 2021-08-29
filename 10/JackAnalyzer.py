@@ -20,7 +20,7 @@ def analyze_file(
         output_file (typing.TextIO): writes all output to this file.
     """
     tokenizer = JackTokenizer(input_file)
-    tokenizer.tokenize("temp.tokens")
+    tokenizer.tokenize("temp.tokens")  # TODO: change
     compiler = CompilationEngine("temp.tokens", output_path)
     compiler.compile_class()
 
