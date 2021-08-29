@@ -75,13 +75,6 @@ class CompilationEngine:
             curr_elements = compile_method()
         return elements
 
-    def question_mark_compiling(self, compile_method) -> List[Element]:
-        elements = compile_method()
-        if elements:
-            extra_elements = self._asterisk_compiling()
-            if extra_elements:
-                return elements + extra_elements
-        return None
 
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
@@ -141,7 +134,7 @@ class CompilationEngine:
         else:
             return None
 
-    def compile_parameter_list(self) -> List[Element]:
+    def compile_parameter_list(self) -> List[Element]: # TODO: add question mark on everything
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
@@ -150,7 +143,7 @@ class CompilationEngine:
         valid_parameter_list = True
         valid_parameter_list &= self._add_elements(parameter_list_root, self.compile_type())
         valid_parameter_list &= self._add_elements(parameter_list_root,
-                                                   self.question_mark_compiling(self.compile_comma_and_type_and_var_name))
+                                                   self._asterisk_compiling(self.compile_comma_and_type_and_var_name))
 
         if valid_parameter_list:
             return [parameter_list_root]
