@@ -1,13 +1,12 @@
 import re
 from typing import List, Tuple
 
-from config import SYMBOLS
+from config import SYMBOLS, COMMENTS_REMOVING
 
 
 def _remove_comments(text: str) -> str:
-    text = re.sub("//.*\n", "\n", text)  # remove // inline comments
-    text = re.sub("/\*.*\*/", "", text)  # remove /* this kind of    comments */
-    text = re.sub("/\*\*.*\*/", "", text)  # remove /** api comments */
+    for comment_regex, comment_replacement in COMMENTS_REMOVING.items():
+        text = re.sub(comment_regex, comment_replacement, text)
     return text
 
 
