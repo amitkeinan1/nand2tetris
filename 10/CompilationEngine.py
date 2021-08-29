@@ -195,13 +195,41 @@ class CompilationEngine:
 
     def compile_do(self) -> List[Element]:
         """Compiles a do statement."""
-        # Your code goes here!
+        do_root = Element("doStatement")
+        valid_do_statement = True
+        valid_do_statement &= self._add_elements(do_root, self._add_token_if(expected_token="do"))
+        valid_do_statement &= self._add_elements(do_root, self._compile_subroutine_call())
+
+        if valid_do_statement:
+            return [do_root]
+        else:
+            return None
+
+    def _compile_subroutine_call(self) -> List[Element]:
         pass
+
+    def _compile_array_accessor(self) -> List[Element]:
+        left_bracket_element = self._add_token_if(expected_token="[")
+        expression_element = self.compile_expression()
+        right_bracket_element = self._add_token_if(expected_token="]")
+        if left_bracket_element and expression_element and right_bracket_element:
+            return [left_bracket_element, expression_element, right_bracket_element]
+        return None
 
     def compile_let(self) -> List[Element]:
         """Compiles a let statement."""
-        # Your code goes here!
-        pass
+        let_root = Element("letStatement")
+        valid_let_statement = True
+        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
+        valid_let_statement &= self._add_elements(let_root, self._compile_array_accessor()) # TODO: make optional
+        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
+        valid_let_statement &= self._add_elements(let_root, self.compile_expression())
+        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token=";"))
+
+        if valid_let_statement:
+            return [let_root]
+        else:
+            return None
 
     def compile_while(self) -> List[Element]:
         """Compiles a while statement."""
@@ -242,14 +270,14 @@ class CompilationEngine:
         pass
 
     def compile_type(self) -> List[Element]:
-        return self._add_token_if_or([None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
+        return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self) -> List[Element]:
         return []  # TODO: add method
 
     def compile_comma_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
-        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         if comma_element and var_name_element:
             return [comma_element, var_name_element]
         return None
@@ -257,7 +285,7 @@ class CompilationEngine:
     def compile_comma_and_type_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
         type_element = self.compile_type()
-        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         if comma_element and type_element and var_name_element:
             return [comma_element, type_element, var_name_element]
         return None
