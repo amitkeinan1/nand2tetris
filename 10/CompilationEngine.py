@@ -86,6 +86,15 @@ class CompilationEngine:
 
         return elements
 
+    def _question_mark_compiling(self, compile_method, closing) -> List[Element]:
+        elements = []
+        curr_elements = self._compile_safely(compile_method)
+        while curr_elements:
+            elements += curr_elements
+            curr_elements = self._compile_safely(compile_method)
+
+        return elements
+
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
             return False
@@ -146,7 +155,7 @@ class CompilationEngine:
             return None
 
     def compile_parameter_list(self) -> List[Element]:  # TODO: add question mark on everything
-        """Compiles a (possibly empty) parameter list, not including the 
+        """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
         """
         parameter_list_root = Element("parameterList")
@@ -163,7 +172,20 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
-        pass
+
+        var_dec_root = Element("varDec")
+        valid_var_dec = True
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token="var"))
+        valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_elements(var_dec_root,
+                                                                             self._asterisk_compiling(
+                                                                                 self.compile_comma_and_type_and_var_name)))
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
+        if valid_var_dec:
+            return [var_dec_root]
+        else:
+            return None
+
 
     def compile_statements(self) -> List[Element]:
         """Compiles a sequence of statements, not including the enclosing 
