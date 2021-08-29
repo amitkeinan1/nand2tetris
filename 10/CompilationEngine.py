@@ -13,14 +13,16 @@ class CompilationEngine:
     output stream.
     """
 
-    def __init__(self, tokens_xml_path: str, output_path: str) -> None:
+    def __init__(self, input_path: str, output_path: str) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
-        :param output_stream: The output stream.
+        :param input_path: path of tokenized jack code in xml format to compile
+        :param output_path: path to write compiled jack program in xml format
         """
+        self.input_path = input_path  # TODO: needed?
+        self.tokens_tree = etree.parse(input_path)
         self.output_path = output_path
-        # TODO: add more stuff
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
@@ -28,7 +30,6 @@ class CompilationEngine:
         # TODO: add staff
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path, pretty_print=True)
-
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""
