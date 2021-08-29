@@ -64,13 +64,13 @@ class CompilationEngine:
         for expected_type, expected_token in zip(expected_types, expected_tokens):
             elements_to_add = self._add_token_if(expected_type, expected_token)
             if elements_to_add:
-                elements_to_add
+                return elements_to_add
         return None
 
     def _asterisk_compiling(self, compile_method) -> List[Element]:  # does not handle cases where it is not LL1
         elements = []
         curr_elements = compile_method()
-        while curr_elements:
+        while bool(curr_elements):
             elements += curr_elements
             curr_elements = compile_method()
         return elements
