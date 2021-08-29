@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from config import SYMBOLS, COMMENTS_REMOVING
+from config import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
 
 
 def _remove_comments(text: str) -> str:
@@ -39,7 +39,7 @@ def _split_string_constants(jack_code: str) -> List[Tuple[str, bool]]:
     """
     code_parts = []
     string_const_indices = [m.span() for m in
-                            re.finditer('"[^\\n]*?"', jack_code)]  # find all string constants in jack code
+                            re.finditer(STRING_CONST_PATTERN, jack_code)]  # find all string constants in jack code
 
     first_start, first_end = string_const_indices[0]  # handle case where code does not start with a string
     if first_start != 0:
