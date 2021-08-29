@@ -11,7 +11,8 @@ from JackTokenizer import JackTokenizer
 from config import TokenTypes
 
 
-# TODO: code duplication between compilation methods because of boolean inner var, we can wrap it
+# TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
+#  we can wrap the methods
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -27,6 +28,8 @@ class CompilationEngine:
         """
         self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
+
+    # helper methods
 
     def _add_curr_token(self) -> List[Element]:
         if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
@@ -104,6 +107,8 @@ class CompilationEngine:
             root.append(element)
         return True
 
+    # compile methods
+
     def compile_class(self) -> List[Element]:  # TODO: it should return elements
         """Compiles a complete class."""
         class_root = Element("class")
@@ -114,7 +119,7 @@ class CompilationEngine:
         is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "}"))
 
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path,
@@ -192,7 +197,7 @@ class CompilationEngine:
 
     def compile_statement(self):
         return self._or_compiling(
-            [self.compile_let, self.compile_if, self.complie_while, self.compile_do, self.compile_return])
+            [self.compile_let, self.compile_if, self.compile_while, self.compile_do, self.compile_return])
 
     def compile_statements(self) -> List[Element]:
         """Compiles a sequence of statements, not including the enclosing 
@@ -259,8 +264,18 @@ class CompilationEngine:
 
     def compile_return(self) -> List[Element]:
         """Compiles a return statement."""
-        # Your code goes here!
-        pass
+        return_root = Element("whileStatement")
+
+        valid_return_statement = True
+        valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token="return"))
+        valid_return_statement &= self._add_elements(return_root,
+                                                     self._question_mark_compiling(self.compile_expression()))
+        valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token=";"))
+
+        if valid_return_statement:
+            return [return_root]
+        else:
+            return None
 
     def _compile_else(self) -> List[Element]:
 
