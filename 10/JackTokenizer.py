@@ -23,7 +23,7 @@ class JackTokenizer:
         Args:
             input_stream (typing.TextIO): input stream.
         """
-        jack_code = stream.read()
+        jack_code = input_stream.read()
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
@@ -126,8 +126,8 @@ class JackTokenizer:
         tokens_root = ET.Element("tokens")
 
         ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
-        while t.has_more_tokens():
-            t.advance()
+        while self.has_more_tokens():
+            self.advance()
             ET.SubElement(tokens_root, self.token_type()).text = self._token_repr()
 
         tokens_tree = ET.ElementTree(tokens_root)

@@ -12,7 +12,7 @@ from JackTokenizer import JackTokenizer
 
 
 def analyze_file(
-        input_file: typing.TextIO, output_file: typing.TextIO) -> None:
+        input_file: typing.TextIO, output_path: str) -> None:
     """Analyzes a single file.
 
     Args:
@@ -41,6 +41,5 @@ if "__main__" == __name__:
         if extension.lower() != ".jack":
             continue
         output_path = filename + ".xml"
-        with open(input_path, 'r') as input_file, \
-                open(output_path, 'w') as output_file:
-            analyze_file(input_file, output_file)
+        with open(input_path, 'r') as input_file:
+            analyze_file(input_file, output_path)

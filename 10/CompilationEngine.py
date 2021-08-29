@@ -5,6 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
+from lxml import etree
 
 
 class CompilationEngine:
@@ -12,19 +13,22 @@ class CompilationEngine:
     output stream.
     """
 
-    def __init__(self, tokens_xml_path: str, output_stream: typing.TextIO) -> None:
+    def __init__(self, tokens_xml_path: str, output_path: str) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
         :param output_stream: The output stream.
         """
-        self.output_stream = output_stream
+        self.output_path = output_path
         # TODO: add more stuff
 
     def compile_class(self) -> None:
         """Compiles a complete class."""
-        # Your code goes here!
-        pass
+        class_root = etree.Element("class")
+        # TODO: add staff
+        class_tree = etree.ElementTree(class_root)
+        class_tree.write(self.output_path, pretty_print=True)
+
 
     def compile_class_var_dec(self) -> None:
         """Compiles a static declaration or a field declaration."""
