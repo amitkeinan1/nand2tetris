@@ -9,6 +9,7 @@ from lxml import etree
 from lxml.etree import Element
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
+from jack_syntax import OPERATORS
 
 
 # TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
@@ -65,16 +66,9 @@ class CompilationEngine:
             expected_tokens = [None for _ in range(len(expected_types))]
 
         for expected_type, expected_token in zip(expected_types, expected_tokens):
-            elements_to_add = self._add_token_if(expected_type, expected_token)
+            elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it compile_safely
             if elements_to_add:
                 return elements_to_add
-        return None
-
-    def _or_compiling(self, compile_methods) -> List[Element]:
-        for compile_method in compile_methods:
-            curr_elements = compile_method()
-            if curr_elements:
-                return curr_elements
         return None
 
     def _compile_safely(self, compile_method):
@@ -83,6 +77,14 @@ class CompilationEngine:
         if not res:
             self.tokenizer.curr_index = initial_token_index
         return res
+
+    def _or_compiling(self, compile_methods) -> List[Element]:
+        for compile_method in compile_methods:
+            curr_elements = self._compile_safely(compile_method)
+            if curr_elements:
+                return curr_elements
+        return None
+
 
     def _asterisk_compiling(self, compile_method) -> List[Element]:
         elements = []
@@ -315,10 +317,32 @@ class CompilationEngine:
         else:
             return None
 
+    def _compile_op(self):
+        return self._add_token_if_or(expected_tokens=OPERATORS)
+
+    def _compile_op_term(self):
+        # op term
+        op_elements = self._compile_op()
+        term_elements = self.compile_term()
+
+        if op_elements and term_elements:
+            return op_elements + term_elements
+        else:
+            return None
+
     def compile_expression(self) -> List[Element]:
         """Compiles an expression."""
-        # Your code goes here!
-        pass
+        expression_root = Element("expression")
+
+        valid_expression = True
+
+        valid_expression &= self._add_elements(expression_root, self.compile_term())
+        valid_expression &= self._add_elements(expression_root, self._asterisk_compiling(self._compile_op_term))
+
+        if valid_expression:
+            return [expression_root]
+        else:
+            return None
 
     def compile_term(self) -> List[Element]:
         """Compiles a term. 
@@ -376,7 +400,6 @@ class CompilationEngine:
 if __name__ == '__main__':
     root = Element("root")
     c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
-    c._add_elements(root, c.compile_parameter_list())
-    # c._add_elements(root, c.compile_class_var_dec())
+    c._add_elements(root, c.compile_subroutine_body())
     class_tree = etree.ElementTree(root)
-    class_tree.write(c.output_path, pretty_print=True, method="html")
+    class_tree.write(c.output_path, pretty_print=True)

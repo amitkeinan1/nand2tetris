@@ -1,0 +1,2 @@
+var SquareGame game;
+let game = SquareGame.new();
