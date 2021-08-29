@@ -6,14 +6,6 @@
     <keyword>static</keyword>
     <keyword>boolean</keyword>
     <identifier>test</identifier>
-    <symbol>;</symbol>
-  </classVarDec>
-  <subroutineDec>
     <keyword>function</keyword>
-    <keyword>void</keyword>
-    <identifier>main</identifier>
-    <symbol>(</symbol>
-    <symbol>)</symbol>
-  </subroutineDec>
-  <symbol>{</symbol>
+  </classVarDec>
 </class>
