@@ -40,13 +40,6 @@ class CompilationEngine:
         else:
             return None
 
-    def _or_compiling(self, compile_methods) -> List[Element]:
-        for compile_method in compile_methods:
-            curr_elements = compile_method()
-            if curr_elements:
-                return curr_elements
-        return None
-
     def _add_token_if_or_compile(self, expected_type, expected_token, compile_method) -> List[Element]:
         elements_to_add = self._add_token_if(expected_type, expected_token)
         if not elements_to_add:
@@ -67,15 +60,30 @@ class CompilationEngine:
                 return elements_to_add
         return None
 
-    def _asterisk_compiling(self, compile_method) -> List[Element]:  # does not handle cases where it is not LL1
+    def _or_compiling(self, compile_methods) -> List[Element]:
+        for compile_method in compile_methods:
+            curr_elements = compile_method()
+            if curr_elements:
+                return curr_elements
+        return None
+
+    def _asterisk_compiling(self, compile_method) -> List[Element]:
         elements = []
         curr_elements = compile_method()
-        while bool(curr_elements):
+        while curr_elements:
             elements += curr_elements
             curr_elements = compile_method()
         return elements
 
-    def add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
+    def question_mark_compiling(self, compile_method) -> List[Element]:
+        elements = compile_method()
+        if elements:
+            extra_elements = self._asterisk_compiling()
+            if extra_elements:
+                return elements + extra_elements
+        return None
+
+    def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
             return False
         for element in elements:
@@ -87,12 +95,12 @@ class CompilationEngine:
         class_root = Element("class")
 
         is_valid_class = True
-        is_valid_class &= self.add_elements(class_root, self._add_token_if("KEYWORD", "class"))
-        is_valid_class &= self.add_elements(class_root, self._add_token_if("IDENTIFIER"))
-        is_valid_class &= self.add_elements(class_root, self._add_token_if("SYMBOL", "{"))
-        is_valid_class &= self.add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
-        is_valid_class &= self.add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
-        is_valid_class &= self.add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if("KEYWORD", "class"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if("IDENTIFIER"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
+        is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
 
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path, pretty_print=True)
@@ -102,11 +110,11 @@ class CompilationEngine:
         var_dec_root = Element("classVarDec")
 
         valid_var_dec = True
-        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
-        valid_var_dec &= self.add_elements(var_dec_root, self.compile_type())
-        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if("IDENTIFIER"))
-        valid_var_dec &= self.add_elements(var_dec_root, self._asterisk_compiling(self.compile_comma_and_var_name))
-        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if(expected_token=";"))
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
+        valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if("IDENTIFIER"))
+        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self.compile_comma_and_var_name))
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
             return [var_dec_root]
@@ -118,15 +126,15 @@ class CompilationEngine:
         subroutine_root = Element("subroutineDec")
 
         valid_subroutine = True
-        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if_or(
+        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if_or(
             expected_tokens=["constructor", "function", "method"]))
-        valid_subroutine &= self.add_elements(subroutine_root,
-                                              self._add_token_if_or_compile(None, "void", self.compile_type))
-        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if("IDENTIFIER"))
-        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if(expected_token="("))
-        valid_subroutine &= self.add_elements(subroutine_root, self.compile_parameter_list())
-        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if(expected_token=")"))
-        valid_subroutine &= self.add_elements(subroutine_root, self.compile_subroutine_body())
+        valid_subroutine &= self._add_elements(subroutine_root,
+                                               self._add_token_if_or_compile(None, "void", self.compile_type))
+        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if("IDENTIFIER"))
+        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token="("))
+        valid_subroutine &= self._add_elements(subroutine_root, self.compile_parameter_list())
+        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token=")"))
+        valid_subroutine &= self._add_elements(subroutine_root, self.compile_subroutine_body())
 
         if valid_subroutine:
             return [subroutine_root]
@@ -137,7 +145,17 @@ class CompilationEngine:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
-        return []  # TODO: write method
+        parameter_list_root = Element("parameterList")
+
+        valid_parameter_list = True
+        valid_parameter_list &= self._add_elements(parameter_list_root, self.compile_type())
+        valid_parameter_list &= self._add_elements(parameter_list_root,
+                                                   self.question_mark_compiling(self.compile_comma_and_type_and_var_name))
+
+        if valid_parameter_list:
+            return [parameter_list_root]
+        else:
+            return None
 
     def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
@@ -211,3 +229,10 @@ class CompilationEngine:
             return [comma_element, var_name_element]
         return None
 
+    def compile_comma_and_type_and_var_name(self) -> List[Element]:
+        comma_element = self._add_token_if(expected_token=",")
+        type_element = self.compile_type()
+        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        if comma_element and type_element and var_name_element:
+            return [comma_element, type_element, var_name_element]
+        return None

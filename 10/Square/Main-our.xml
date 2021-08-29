@@ -8,11 +8,4 @@
     <identifier>test</identifier>
     <keyword>function</keyword>
   </classVarDec>
-  <subroutineDec>
-    <symbol>{</symbol>
-    <keyword>var</keyword>
-    <identifier>SquareGame</identifier>
-    <identifier>game</identifier>
-    <symbol>;</symbol>
-  </subroutineDec>
 </class>
