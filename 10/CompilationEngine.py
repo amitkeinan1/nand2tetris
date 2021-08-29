@@ -6,7 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import List
 from lxml import etree
-
+from lxml.etree import Element
 from JackTokenizer import JackTokenizer
 
 
@@ -27,25 +27,33 @@ class CompilationEngine:
         self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
 
-    def _add_curr_token(self, root):
-        etree.SubElement(root, self.tokenizer.token_type_repr()).text = self.tokenizer.token_repr()
-        self.tokenizer.advance()
+    def _add_curr_token(self) -> List[Element]:
+        token_element = Element(self.tokenizer.token_type_repr())
+        token_element.text = self.tokenizer.token_repr()
+        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back?? but LL1 so maybe not
+        return [token_element]
 
-    def _add_token_if(self, root, expected_type=None, expected_token=None) -> bool:
+    def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
         if expected_type is None or self.tokenizer.token_type() == expected_type \
                 and expected_token is None or self.tokenizer.curr_token() == expected_token:
-            self._add_curr_token(root)
-            return True
+            return self._add_curr_token()
         else:
-            return False
+            return None
 
-    def _add_token_if_or_compile(self, root, expected_type, expected_token, compile_method):
-        did_add_token = self._add_token_if(root, expected_type, expected_token)
-        if not did_add_token:
-            did_add_token = compile_method(root)
-        return did_add_token
+    def _or_compiling(self, compile_methods) -> List[Element]:
+        for compile_method in compile_methods:
+            curr_elements = compile_method()
+            if curr_elements:
+                return curr_elements
+        return None
 
-    def _add_token_if_or(self, root, expected_types=None, expected_tokens=None) -> bool:
+    def _add_token_if_or_compile(self, expected_type, expected_token, compile_method) -> List[Element]:
+        elements_to_add = self._add_token_if(expected_type, expected_token)
+        if not elements_to_add:
+            elements_to_add = compile_method()
+        return elements_to_add
+
+    def _add_token_if_or(self, expected_types=None, expected_tokens=None) -> List[Element]:
         if expected_types is None and expected_tokens is None:
             raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
         if expected_types is None:
@@ -54,12 +62,12 @@ class CompilationEngine:
             expected_tokens = [None for _ in range(len(expected_types))]
 
         for expected_type, expected_token in zip(expected_types, expected_tokens):
-            did_add_token = self._add_token_if(root, expected_type, expected_token)
-            if did_add_token:
-                return True
-        return False
+            elements_to_add = self._add_token_if(expected_type, expected_token)
+            if elements_to_add:
+                elements_to_add
+        return None
 
-    def _compile_multiple(self, compile_method) -> List[etree.Element]:  # does not handle cases where it is not LL1
+    def _asterisk_compiling(self, compile_method) -> List[Element]:  # does not handle cases where it is not LL1
         elements = []
         curr_elements = compile_method()
         while curr_elements:
@@ -67,53 +75,58 @@ class CompilationEngine:
             curr_elements = compile_method()
         return elements
 
-    def add_multiple_elements(self, root: etree.Element, elements: List[etree.Element]):
+    def add_elements(self, root: Element, elements: List[Element]) -> bool:
+        if elements is None:
+            return False
         for element in elements:
             root.append(element)
+        return True
 
     def compile_class(self) -> bool:
         """Compiles a complete class."""
-        class_root = etree.Element("class")
+        class_root = Element("class")
 
-        self._add_token_if(class_root, "KEYWORD", "class")
-        self._add_token_if(class_root, "IDENTIFIER")
-        self._add_token_if(class_root, "SYMBOL", "{")
-        self.add_multiple_elements(class_root, self._compile_multiple(self.compile_class_var_dec))
-        self.add_multiple_elements(class_root, self._compile_multiple(self.compile_subroutine))
-        self._add_token_if(class_root, "SYMBOL", "{")
+        is_valid_class = True
+        is_valid_class &= self.add_elements(class_root, self._add_token_if("KEYWORD", "class"))
+        is_valid_class &= self.add_elements(class_root, self._add_token_if("IDENTIFIER"))
+        is_valid_class &= self.add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self.add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
+        is_valid_class &= self.add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
+        is_valid_class &= self.add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+
         class_tree = etree.ElementTree(class_root)
-
         class_tree.write(self.output_path, pretty_print=True)
 
-    def compile_class_var_dec(self) -> List[etree.Element]:
+    def compile_class_var_dec(self) -> List[Element]:
         """Compiles a static declaration or a field declaration."""
-        var_dec_root = etree.Element("classVarDec")
+        var_dec_root = Element("classVarDec")
 
         valid_var_dec = True
-        valid_var_dec &= self._add_token_if_or(var_dec_root, expected_tokens=["static", "field"])
-        valid_var_dec &= self.compile_type(var_dec_root)
-        valid_var_dec &= self._add_token_if(var_dec_root, "IDENTIFIER")
+        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
+        valid_var_dec &= self.add_elements(var_dec_root, self.compile_type())
+        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if("IDENTIFIER"))
         # TODO: add multiple commas
-        valid_var_dec &= self._add_token_if(var_dec_root, expected_token=";")
+        valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
             return [var_dec_root]
         else:
             return None
 
-    def compile_subroutine(self) -> List[etree.Element]:
+    def compile_subroutine(self) -> List[Element]:
         """Compiles a complete method, function, or constructor."""
-        subroutine_root = etree.Element("subroutineDec")
+        subroutine_root = Element("subroutineDec")
 
         valid_subroutine = True
-        valid_subroutine &= self._add_token_if_or(subroutine_root,
-                                                  expected_tokens=["constructor", "function", "method"])
-        valid_subroutine &= self._add_token_if_or_compile(subroutine_root, None, "void", self.compile_type)
-        valid_subroutine &= self._add_token_if(subroutine_root, "IDENTIFIER")
-        valid_subroutine &= self._add_token_if(subroutine_root, expected_token="(")
-        valid_subroutine &= self.compile_parameter_list()
-        valid_subroutine &= self._add_token_if(subroutine_root, expected_token=")")
-        valid_subroutine &= self.compile_subroutine_body()
+        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if_or(
+            expected_tokens=["constructor", "function", "method"]))
+        valid_subroutine &= self.add_elements(subroutine_root,
+                                              self._add_token_if_or_compile(None, "void", self.compile_type))
+        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if("IDENTIFIER"))
+        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if(expected_token="("))
+        valid_subroutine &= self.add_elements(subroutine_root, self.compile_parameter_list())
+        valid_subroutine &= self.add_elements(subroutine_root, self._add_token_if(expected_token=")"))
+        valid_subroutine &= self.add_elements(subroutine_root, self.compile_subroutine_body())
 
         if valid_subroutine:
             return [subroutine_root]
@@ -124,7 +137,7 @@ class CompilationEngine:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
-        return True  # TODO: write method
+        return []  # TODO: write method
 
     def compile_var_dec(self) -> bool:
         """Compiles a var declaration."""
@@ -185,9 +198,8 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
-    def compile_type(self, root) -> bool:
-        did_add_token = self._add_token_if_or(root, [None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
-        return did_add_token
+    def compile_type(self) -> List[Element]:
+        return self._add_token_if_or([None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self):
-        return True  # TODO: add method
+        return []  # TODO: add method
