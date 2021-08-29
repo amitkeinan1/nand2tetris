@@ -31,7 +31,7 @@ class CompilationEngine:
     def _add_curr_token(self) -> List[Element]:
         token_element = Element(self.tokenizer.token_type_repr())
         token_element.text = self.tokenizer.token_repr()
-        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back?? but LL1 so maybe not
+        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? maybe handle with compile safely
         return [token_element]
 
     def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
@@ -106,7 +106,8 @@ class CompilationEngine:
         is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
 
         class_tree = etree.ElementTree(class_root)
-        class_tree.write(self.output_path, pretty_print=True)
+        class_tree.write(self.output_path,
+                         pretty_print=True)  # TODO: this should not be here, it should return elements
 
     def compile_class_var_dec(self) -> List[Element]:
         """Compiles a static declaration or a field declaration."""
@@ -115,7 +116,7 @@ class CompilationEngine:
         valid_var_dec = True
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if("IDENTIFIER"))
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(TokenTypes.IDENTIFIER))
         valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self.compile_comma_and_var_name))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
@@ -133,7 +134,7 @@ class CompilationEngine:
             expected_tokens=["constructor", "function", "method"]))
         valid_subroutine &= self._add_elements(subroutine_root,
                                                self._add_token_if_or_compile(None, "void", self.compile_type))
-        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if("IDENTIFIER"))
+        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(TokenTypes.IDENTIFIER))
         valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token="("))
         valid_subroutine &= self._add_elements(subroutine_root, self.compile_parameter_list())
         valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token=")"))
@@ -220,22 +221,30 @@ class CompilationEngine:
         pass
 
     def compile_type(self) -> List[Element]:
-        return self._add_token_if_or([None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
+        return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self) -> List[Element]:
         return []  # TODO: add method
 
     def compile_comma_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
-        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         if comma_element and var_name_element:
-            return [comma_element, var_name_element]
+            return comma_element + var_name_element
         return None
 
     def compile_comma_and_type_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
         type_element = self.compile_type()
-        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         if comma_element and type_element and var_name_element:
-            return [comma_element, type_element, var_name_element]
+            return comma_element + type_element + var_name_element
         return None
+
+
+if __name__ == '__main__':
+    root = Element("root")
+    c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
+    c._add_elements(root, c.compile_comma_and_var_name())
+    class_tree = etree.ElementTree(root)
+    class_tree.write(c.output_path, pretty_print=True)
