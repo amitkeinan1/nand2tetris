@@ -105,7 +105,7 @@ class CompilationEngine:
         valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
         valid_var_dec &= self.add_elements(var_dec_root, self.compile_type())
         valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if("IDENTIFIER"))
-        # TODO: add multiple commas
+        valid_var_dec &= self.add_elements(var_dec_root, self._asterisk_compiling(self.compile_comma_and_var_name))
         valid_var_dec &= self.add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
@@ -203,3 +203,11 @@ class CompilationEngine:
 
     def compile_subroutine_body(self) -> List[Element]:
         return []  # TODO: add method
+
+    def compile_comma_and_var_name(self) -> List[Element]:
+        comma_element = self._add_token_if(expected_token=",")
+        var_name_element = self._add_token_if(expected_type="IDENTIFIER")
+        if comma_element and var_name_element:
+            return [comma_element, var_name_element]
+        return None
+

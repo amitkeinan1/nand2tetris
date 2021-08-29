@@ -6,12 +6,13 @@
     <keyword>static</keyword>
     <keyword>boolean</keyword>
     <identifier>test</identifier>
-    <symbol>;</symbol>
-  </classVarDec>
-  <classVarDec>
     <keyword>function</keyword>
-    <keyword>void</keyword>
-    <identifier>main</identifier>
-    <symbol>(</symbol>
   </classVarDec>
+  <subroutineDec>
+    <symbol>{</symbol>
+    <keyword>var</keyword>
+    <identifier>SquareGame</identifier>
+    <identifier>game</identifier>
+    <symbol>;</symbol>
+  </subroutineDec>
 </class>
