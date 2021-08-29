@@ -126,8 +126,10 @@ class JackTokenizer:
         return self.tokens[self.curr_index][1:-1]
 
 
+
+
 if __name__ == '__main__':
-    with open("Square/Main.jack") as stream:
+    with open("TokenizerTest/condition.jack") as stream:
         t = JackTokenizer(stream)
         print(t.tokens[t.curr_index])
         print(t.token_type())
