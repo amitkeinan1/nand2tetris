@@ -8,12 +8,10 @@
     <identifier>test</identifier>
     <symbol>;</symbol>
   </classVarDec>
-  <subroutineDec>
+  <classVarDec>
     <keyword>function</keyword>
     <keyword>void</keyword>
     <identifier>main</identifier>
     <symbol>(</symbol>
-    <symbol>)</symbol>
-  </subroutineDec>
-  <symbol>{</symbol>
+  </classVarDec>
 </class>
