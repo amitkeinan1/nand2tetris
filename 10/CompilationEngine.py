@@ -75,14 +75,14 @@ class CompilationEngine:
             curr_elements = compile_method()
         return elements
 
-    def add_elements(self, root: Element, elements: List[Element]) -> bool:
+    def add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
             return False
         for element in elements:
             root.append(element)
         return True
 
-    def compile_class(self) -> bool:
+    def compile_class(self) -> List[Element]:
         """Compiles a complete class."""
         class_root = Element("class")
 
@@ -133,54 +133,54 @@ class CompilationEngine:
         else:
             return None
 
-    def compile_parameter_list(self) -> bool:
+    def compile_parameter_list(self) -> List[Element]:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
         return []  # TODO: write method
 
-    def compile_var_dec(self) -> bool:
+    def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
         pass
 
-    def compile_statements(self) -> bool:
+    def compile_statements(self) -> List[Element]:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
         # Your code goes here!
         pass
 
-    def compile_do(self) -> bool:
+    def compile_do(self) -> List[Element]:
         """Compiles a do statement."""
         # Your code goes here!
         pass
 
-    def compile_let(self) -> bool:
+    def compile_let(self) -> List[Element]:
         """Compiles a let statement."""
         # Your code goes here!
         pass
 
-    def compile_while(self) -> bool:
+    def compile_while(self) -> List[Element]:
         """Compiles a while statement."""
         # Your code goes here!
         pass
 
-    def compile_return(self) -> bool:
+    def compile_return(self) -> List[Element]:
         """Compiles a return statement."""
         # Your code goes here!
         pass
 
-    def compile_if(self) -> bool:
+    def compile_if(self) -> List[Element]:
         """Compiles a if statement, possibly with a trailing else clause."""
         # Your code goes here!
         pass
 
-    def compile_expression(self) -> bool:
+    def compile_expression(self) -> List[Element]:
         """Compiles an expression."""
         # Your code goes here!
         pass
 
-    def compile_term(self) -> bool:
+    def compile_term(self) -> List[Element]:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -193,7 +193,7 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
-    def compile_expression_list(self) -> bool:
+    def compile_expression_list(self) -> List[Element]:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # Your code goes here!
         pass
@@ -201,5 +201,5 @@ class CompilationEngine:
     def compile_type(self) -> List[Element]:
         return self._add_token_if_or([None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
 
-    def compile_subroutine_body(self):
+    def compile_subroutine_body(self) -> List[Element]:
         return []  # TODO: add method
