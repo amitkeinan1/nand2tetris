@@ -9,7 +9,8 @@ import typing
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
-from config import KEY_WORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
+from jack_syntax import KEY_WORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
+from config import TokenTypes
 
 
 class JackTokenizer:
@@ -28,10 +29,16 @@ class JackTokenizer:
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
         self.curr_index = 0
-        self._type_to_repr_method = {"KEYWORD": self.keyword, "SYMBOL": self.symbol, "INT_CONST": self.int_val,
-                                     "STRING_CONST": self.string_val, "IDENTIFIER": self.identifier}
-        self._type_to_type_repr = {"KEYWORD": "keyword", "SYMBOL": "symbol", "INT_CONST": "integerConstant",
-                                     "STRING_CONST": "stringConstant", "IDENTIFIER": "identifier"}
+        self._type_to_repr_method = {TokenTypes.KEYWORD: self.keyword,
+                                     TokenTypes.SYMBOL: self.symbol,
+                                     TokenTypes.INT_CONST: self.int_val,
+                                     TokenTypes.STRING_CONST: self.string_val,
+                                     TokenTypes.IDENTIFIER: self.identifier}
+        self._type_to_type_repr = {TokenTypes.KEYWORD: "keyword",
+                                   TokenTypes.SYMBOL: "symbol",
+                                   TokenTypes.INT_CONST: "integerConstant",
+                                   TokenTypes.STRING_CONST: "stringConstant",
+                                   TokenTypes.IDENTIFIER: "identifier"}
 
     def has_more_tokens(self) -> bool:
         """Do we have more tokens in the input?
@@ -59,23 +66,24 @@ class JackTokenizer:
     def curr_token(self):
         return self.tokens[self.curr_index]
 
-    def token_type(self) -> str:
+    def token_type(self) -> TokenTypes:
         """
         Returns:
             str: the type of the current token, can be
-            "KEYWORD", "SYMBOL", "IDENTIFIER", "INT_CONST", "STRING_CONST"
+            TokenTypes.KEYWORD, TokenTypes.SYMBOL, TokenTypes.IDENTIFIER, TokenTypes.INT_CONST, TokenTypes.STRING_CONST
         """
         curr_token = self.curr_token()
         if curr_token in KEY_WORDS:
-            return "KEYWORD"
+            # return TokenTypes.KEYWORD
+            return TokenTypes.KEYWORD
         elif curr_token in SYMBOLS:
-            return "SYMBOL"
+            return TokenTypes.SYMBOL
         elif curr_token.isdigit() and 0 <= int(curr_token) <= 32767:
-            return "INT_CONST"
+            return TokenTypes.INT_CONST
         elif JackTokenizer._is_string_const(curr_token):
-            return "STRING_CONST"
+            return TokenTypes.STRING_CONST
         elif JackTokenizer._is_identifier(curr_token):
-            return "IDENTIFIER"
+            return TokenTypes.IDENTIFIER
         else:
             raise Exception(f"token {curr_token} is not valid.")
 
@@ -83,7 +91,7 @@ class JackTokenizer:
         """
         Returns:
             str: the keyword which is the current token.
-            Should be called only when token_type() is "KEYWORD".
+            Should be called only when token_type() is TokenTypes.KEYWORD.
             Can return "CLASS", "METHOD", "FUNCTION", "CONSTRUCTOR", "INT", 
             "BOOLEAN", "CHAR", "VOID", "VAR", "STATIC", "FIELD", "LET", "DO", 
             "IF", "ELSE", "WHILE", "RETURN", "TRUE", "FALSE", "NULL", "THIS"
@@ -94,7 +102,7 @@ class JackTokenizer:
         """
         Returns:
             str: the character which is the current token.
-            Should be called only when token_type() is "SYMBOL".
+            Should be called only when token_type() is TokenTypes.SYMBOL.
         """
         return self.tokens[self.curr_index]
 
@@ -102,7 +110,7 @@ class JackTokenizer:
         """
         Returns:
             str: the identifier which is the current token.
-            Should be called only when token_type() is "IDENTIFIER".
+            Should be called only when token_type() is TokenTypes.IDENTIFIER.
         """
         return self.tokens[self.curr_index]
 
@@ -110,7 +118,7 @@ class JackTokenizer:
         """
         Returns:
             str: the integer value of the current token.
-            Should be called only when token_type() is "INT_CONST".
+            Should be called only when token_type() is TokenTypes.INT_CONST.
         """
         return int(self.tokens[self.curr_index])
 
@@ -118,7 +126,7 @@ class JackTokenizer:
         """
         Returns:
             str: the string value of the current token, without the double 
-            quotes. Should be called only when token_type() is "STRING_CONST".
+            quotes. Should be called only when token_type() is TokenTypes.STRING_CONST.
         """
         return self.tokens[self.curr_index][1:-1]
 

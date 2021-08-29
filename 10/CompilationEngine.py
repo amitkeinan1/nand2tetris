@@ -8,6 +8,7 @@ from typing import List
 from lxml import etree
 from lxml.etree import Element
 from JackTokenizer import JackTokenizer
+from config import TokenTypes
 
 
 # TODO: code duplication between compilation methods because of boolean inner var, we can wrap it
@@ -48,7 +49,9 @@ class CompilationEngine:
 
     def _add_token_if_or(self, expected_types=None, expected_tokens=None) -> List[Element]:
         if expected_types is None and expected_tokens is None:
-            raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
+            raise ValueError("At least one of the arguments: expected_types and expected_tokens should not be None")
+        if expected_types is not None and expected_tokens is not None and (len(expected_types) != len(expected_tokens)):
+            raise ValueError("When providing both expected_types and expected_tokens they must have the same length")
         if expected_types is None:
             expected_types = [None for _ in range(len(expected_tokens))]
         if expected_tokens is None:
@@ -88,12 +91,12 @@ class CompilationEngine:
         class_root = Element("class")
 
         is_valid_class = True
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("KEYWORD", "class"))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("IDENTIFIER"))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.KEYWORD, "class"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.IDENTIFIER))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
 
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path, pretty_print=True)
