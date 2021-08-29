@@ -8,7 +8,7 @@ import typing
 from lxml import etree
 
 from JackTokenizer import JackTokenizer
-
+from config import TokenTypes
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -45,7 +45,9 @@ class CompilationEngine:
 
     def _add_token_if_or(self, root, expected_types=None, expected_tokens=None) -> bool:
         if expected_types is None and expected_tokens is None:
-            raise Exception("At least one of the arguments: expected_types and expected_tokens should not be None")
+            raise ValueError("At least one of the arguments: expected_types and expected_tokens should not be None")
+        if expected_types is not None and expected_tokens is not None and (len(expected_types) != len(expected_tokens)):
+            raise ValueError("When providing both expected_types and expected_tokens they must have the same length")
         if expected_types is None:
             expected_types = [None for _ in range(len(expected_tokens))]
         if expected_tokens is None:
@@ -93,13 +95,13 @@ class CompilationEngine:
 
         self._add_token_if_or(subroutine_root, expected_tokens=["constructor", "function", "method"])
         self._add_token_if_or_compile(subroutine_root, None, "void", self.compile_type)
-        self._add_token_if(subroutine_root, "IDENTIFIER")
+        self._add_token_if(subroutine_root, TokenTypes.IDENTIFIER)
         self._add_token_if(subroutine_root, expected_token="(")
         self.compile_parameter_list(subroutine_root)
         self._add_token_if(subroutine_root, expected_token=")")
         self.compile_subroutine_body(subroutine_root)
 
-    def compile_parameter_list(self, root) -> bool:
+    def compile_parameter_list(self) -> bool:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
@@ -165,8 +167,8 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
-    def compile_type(self, root):
-        self._add_token_if_or(root, [None, None, None, "IDENTIFIER"], ["int", "char", "boolean", None])
+    def compile_type(self, root) -> bool:
+        return self._add_token_if_or(root, [None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self, root):
         pass

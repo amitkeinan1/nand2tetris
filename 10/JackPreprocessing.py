@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from config import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
+from jack_syntax import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
 
 
 def _remove_comments(text: str) -> str:
