@@ -104,7 +104,7 @@ class CompilationEngine:
             root.append(element)
         return True
 
-    def compile_class(self) -> List[Element]:
+    def compile_class(self) -> List[Element]:  # TODO: it should return elements
         """Compiles a complete class."""
         class_root = Element("class")
 
@@ -118,7 +118,7 @@ class CompilationEngine:
 
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path,
-                         pretty_print=True)  # TODO: this should not be here, it should return elements
+                         pretty_print=True)  # TODO: lxml cannot close and open empty elements and create new lines
 
     def compile_class_var_dec(self) -> List[Element]:
         """Compiles a static declaration or a field declaration."""
@@ -156,26 +156,23 @@ class CompilationEngine:
         else:
             return None
 
-    def _inner_compile_parameter_list(self) -> List[Element]:  # TODO: add question mark on everything
+    def _inner_compile_parameter_list(self) -> List[Element]:
         """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
         """
-        parameter_list_root = Element("parameterList")
+        type_element = self.compile_type()
+        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        more_var_name_elements = self._asterisk_compiling(self.compile_comma_and_type_and_var_name)
 
-        valid_parameter_list = True
-        valid_parameter_list &= self._add_elements(parameter_list_root, self.compile_type())
-        valid_parameter_list &= self._add_elements(parameter_list_root,
-                                                   self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
-        valid_parameter_list &= self._add_elements(parameter_list_root,
-                                                   self._asterisk_compiling(self.compile_comma_and_type_and_var_name))
-
-        if valid_parameter_list:
-            return [parameter_list_root]
+        if type_element and var_name_element and more_var_name_elements:
+            return type_element + var_name_element + more_var_name_elements
         else:
             return None
 
     def compile_parameter_list(self) -> List[Element]:
-        return self._question_mark_compiling(self._inner_compile_parameter_list)
+        parameter_list_root = Element("parameterList")
+        self._add_elements(parameter_list_root, self._question_mark_compiling(self._inner_compile_parameter_list))
+        return [parameter_list_root]
 
     def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
@@ -193,12 +190,17 @@ class CompilationEngine:
         else:
             return None
 
+    def compile_statement(self):
+        return self._or_compiling(
+            [self.compile_let, self.compile_if, self.complie_while, self.compile_do, self.compile_return])
+
     def compile_statements(self) -> List[Element]:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        # Your code goes here!
-        pass
+        statements_root = Element("statements")
+        self._add_elements(self._asterisk_compiling(self.compile_statement()))
+        return statements_root
 
     def compile_do(self) -> List[Element]:
         """Compiles a do statement."""
@@ -228,7 +230,7 @@ class CompilationEngine:
         let_root = Element("letStatement")
         valid_let_statement = True
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
-        valid_let_statement &= self._add_elements(let_root, self._compile_array_accessor()) # TODO: make optional
+        valid_let_statement &= self._add_elements(let_root, self._compile_array_accessor())  # TODO: make optional
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
         valid_let_statement &= self._add_elements(let_root, self.compile_expression())
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token=";"))
@@ -292,7 +294,20 @@ class CompilationEngine:
         return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self) -> List[Element]:
-        return []  # TODO: add method
+        subroutine_body_root = Element("subroutineBody")
+
+        valid_subroutine_body = True
+        valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="{"))
+        valid_subroutine_body &= self._add_elements(subroutine_body_root,
+                                                    self._asterisk_compiling(self.compile_var_dec()))
+        valid_subroutine_body &= self._add_elements(subroutine_body_root,
+                                                    self._asterisk_compiling(self.compile_statements()))
+        valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="}"))
+
+        if valid_subroutine_body:
+            return [subroutine_body_root]
+        else:
+            return None
 
     def compile_comma_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
@@ -313,7 +328,7 @@ class CompilationEngine:
 if __name__ == '__main__':
     root = Element("root")
     c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
-    c._add_elements(root, c._asterisk_compiling(c.compile_comma_and_var_name))
+    c._add_elements(root, c.compile_parameter_list())
     # c._add_elements(root, c.compile_class_var_dec())
     class_tree = etree.ElementTree(root)
-    class_tree.write(c.output_path, pretty_print=True)
+    class_tree.write(c.output_path, pretty_print=True, method="html")
