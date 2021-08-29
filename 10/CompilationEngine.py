@@ -33,15 +33,17 @@ class CompilationEngine:
     # helper methods
 
     def _add_curr_token(self) -> List[Element]:
-        if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
+        if self.tokenizer.curr_index == len(
+                self.tokenizer.tokens):  # TODO: this is kinda patch but this is from the last stuff t fix, unless it causes bugs
             return None
         token_element = Element(self.tokenizer.token_type_repr())
         token_element.text = self.tokenizer.token_repr()
-        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? maybe handle with compile_safely
+        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? I think methods like compile_safely are the key
         return [token_element]
 
     def _add_token_if(self, expected_type=None, expected_token=None) -> List[Element]:
-        if self.tokenizer.curr_index == len(self.tokenizer.tokens):  # TODO: this is kinda patch
+        if self.tokenizer.curr_index == len(
+                self.tokenizer.tokens):  # TODO: this is kinda patch but this is from the last stuff t fix, unless it causes bugs
             return None
         if (expected_type is None or self.tokenizer.token_type() == expected_type) and (
                 expected_token is None or self.tokenizer.curr_token() == expected_token):
@@ -66,7 +68,7 @@ class CompilationEngine:
             expected_tokens = [None for _ in range(len(expected_types))]
 
         for expected_type, expected_token in zip(expected_types, expected_tokens):
-            elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it compile_safely
+            # elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it "compile_safely"
             if elements_to_add:
                 return elements_to_add
         return None
@@ -84,7 +86,6 @@ class CompilationEngine:
             if curr_elements:
                 return curr_elements
         return None
-
 
     def _asterisk_compiling(self, compile_method) -> List[Element]:
         elements = []
@@ -222,6 +223,7 @@ class CompilationEngine:
             return None
 
     def _compile_subroutine_call(self) -> List[Element]:
+        # TODO
         pass
 
     def _compile_array_accessor(self) -> List[Element]:
@@ -355,11 +357,13 @@ class CompilationEngine:
         part of this term and should not be advanced over.
         """
         # Your code goes here!
+        # TODO
         pass
 
     def compile_expression_list(self) -> List[Element]:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # Your code goes here!
+        # TODO
         pass
 
     def compile_type(self) -> List[Element]:
