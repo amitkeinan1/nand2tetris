@@ -91,12 +91,12 @@ class CompilationEngine:
         class_root = Element("class")
 
         is_valid_class = True
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("KEYWORD", "class"))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("IDENTIFIER"))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.KEYWORD, "class"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.IDENTIFIER))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
         is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if("SYMBOL", "{"))
+        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
 
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path, pretty_print=True)
