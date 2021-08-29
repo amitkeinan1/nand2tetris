@@ -62,7 +62,7 @@ class JackTokenizer:
                 return False
         return True
 
-    def token_type(self) -> str:
+    def token_type(self) -> str:  # TODO rewrite with regexes
         """
         Returns:
             str: the type of the current token, can be
@@ -124,8 +124,6 @@ class JackTokenizer:
             quotes. Should be called only when token_type() is "STRING_CONST".
         """
         return self.tokens[self.curr_index][1:-1]
-
-
 
 
 if __name__ == '__main__':
