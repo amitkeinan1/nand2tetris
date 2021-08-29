@@ -77,7 +77,7 @@ class CompilationEngine:
 
         class_tree.write(self.output_path, pretty_print=True)
 
-    def compile_class_var_dec(self, root) -> None:
+    def compile_class_var_dec(self, root) -> bool:
         """Compiles a static declaration or a field declaration."""
         var_dec_root = etree.SubElement(root, "classVarDec")
 
@@ -87,67 +87,67 @@ class CompilationEngine:
         # TODO: add multiple commas
         self._add_token_if(var_dec_root, expected_token=";")
 
-    def compile_subroutine(self, root) -> None:
+    def compile_subroutine(self, root) -> bool:
         """Compiles a complete method, function, or constructor."""
         subroutine_root = etree.SubElement(root, "subroutineDec")
 
-        self._add_token_if_or(subroutine_root, expected_tokens=["constructor","function", "method"])
-        # TODO: add void | type
+        self._add_token_if_or(subroutine_root, expected_tokens=["constructor", "function", "method"])
+        self._add_token_if_or_compile(subroutine_root, None, "void", self.compile_type)
         self._add_token_if(subroutine_root, "IDENTIFIER")
         self._add_token_if(subroutine_root, expected_token="(")
         self.compile_parameter_list(subroutine_root)
         self._add_token_if(subroutine_root, expected_token=")")
         self.compile_subroutine_body(subroutine_root)
 
-    def compile_parameter_list(self) -> None:
+    def compile_parameter_list(self, root) -> bool:
         """Compiles a (possibly empty) parameter list, not including the 
         enclosing "()".
         """
         # Your code goes here!
         pass
 
-    def compile_var_dec(self) -> None:
+    def compile_var_dec(self) -> bool:
         """Compiles a var declaration."""
         pass
 
-    def compile_statements(self) -> None:
+    def compile_statements(self) -> bool:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
         # Your code goes here!
         pass
 
-    def compile_do(self) -> None:
+    def compile_do(self) -> bool:
         """Compiles a do statement."""
         # Your code goes here!
         pass
 
-    def compile_let(self) -> None:
+    def compile_let(self) -> bool:
         """Compiles a let statement."""
         # Your code goes here!
         pass
 
-    def compile_while(self) -> None:
+    def compile_while(self) -> bool:
         """Compiles a while statement."""
         # Your code goes here!
         pass
 
-    def compile_return(self) -> None:
+    def compile_return(self) -> bool:
         """Compiles a return statement."""
         # Your code goes here!
         pass
 
-    def compile_if(self) -> None:
+    def compile_if(self) -> bool:
         """Compiles a if statement, possibly with a trailing else clause."""
         # Your code goes here!
         pass
 
-    def compile_expression(self) -> None:
+    def compile_expression(self) -> bool:
         """Compiles an expression."""
         # Your code goes here!
         pass
 
-    def compile_term(self) -> None:
+    def compile_term(self) -> bool:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -160,7 +160,7 @@ class CompilationEngine:
         # Your code goes here!
         pass
 
-    def compile_expression_list(self) -> None:
+    def compile_expression_list(self) -> bool:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # Your code goes here!
         pass
