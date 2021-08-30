@@ -211,22 +211,21 @@ class CompilationEngine:
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
         var_dec_root = Element("varDec")
-        valid_var_dec = True
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token="var"))
-        valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
-        valid_var_dec &= self._add_elements(var_dec_root,
-                                            self._asterisk_compiling_with_args(self._sequence_compiling_with_kwargs,
-                                                                               [(self._add_token_if,
-                                                                                 {'expected_token': ','}),
-                                                                                (self._add_token_if, {
-                                                                                    'expected_type': TokenTypes.IDENTIFIER})]))
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "var"}),
+            (self.compile_type, {}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._asterisk_compiling_with_args, {"compile_method": self._sequence_compiling_with_kwargs,
+                                                  "compile_methods_and_kwargs":
+                                                      [(self._add_token_if,
+                                                        {'expected_token': ','}),
+                                                       (self._add_token_if, {
+                                                           'expected_type':
+                                                               TokenTypes.IDENTIFIER})]}),
+            (self._add_token_if, {"expected_token": ";"})
+        ])
 
-        if valid_var_dec:
-            return [var_dec_root]
-        else:
-            return None
+        return self._add_elements_2(var_dec_root, elements)
 
     def compile_statement(self):
         return self._or_compiling(
@@ -237,20 +236,17 @@ class CompilationEngine:
         "{}".
         """
         statements_root = Element("statements")
-        self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement))
-        return statements_root
+        return self._add_elements_2(statements_root, self._asterisk_compiling(self.compile_statement))
 
     def compile_do(self) -> Union[List[Element], None]:
         """Compiles a do statement."""
         do_root = Element("doStatement")
-        valid_do_statement = True
-        valid_do_statement &= self._add_elements(do_root, self._add_token_if(expected_token="do"))
-        valid_do_statement &= self._add_elements(do_root, self._compile_subroutine_call())
-
-        if valid_do_statement:
-            return [do_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "do"}),
+            (self._compile_subroutine_call, {})
+        ]
+        )
+        return self._add_elements_2(do_root, elements)
 
     def _compile_normal_subroutine_call(self) -> Union[List[Element], None]:
 
@@ -290,19 +286,15 @@ class CompilationEngine:
         # 'let' varName ('[' expression ']')? '=' expression ';'
         let_root = Element("letStatement")
         valid_let_statement = True
-        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
-        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
-        valid_let_statement &= self._add_elements(let_root, self._question_mark_compiling(
-            self._compile_array_accessor))
-        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
-        valid_let_statement &= self._add_elements(let_root, self.compile_expression())
-        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token=";"))
-
-        if valid_let_statement:
-            return [let_root]
-        else:
-            return None
-
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "let"}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
+            (self._add_token_if, {"expected_token": "="}),
+            (self.compile_expression, {}),
+            (self._add_token_if, {"expected_token": ";"})
+        ])
+        return self._add_elements_2(let_root, elements)
     def compile_while(self) -> Union[List[Element], None]:
         """Compiles a while statement."""
         while_root = Element("whileStatement")
