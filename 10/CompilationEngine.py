@@ -294,12 +294,12 @@ class CompilationEngine:
         return self._or_compiling([self._compile_normal_subroutine_call, self._compile_class_subroutine_call])
 
     def _compile_array_accessor(self) -> Union[List[Element], None]:
-        left_bracket_element = self._add_token_if(expected_token="[")
-        expression_element = self.compile_expression()
-        right_bracket_element = self._add_token_if(expected_token="]")
-        if left_bracket_element and expression_element and right_bracket_element:
-            return left_bracket_element + expression_element + right_bracket_element
-        return None
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "["}),
+            (self.compile_expression, {}),
+            (self._add_token_if, {"expected_token": "]"})
+        ])
+
 
     def compile_let(self) -> Union[List[Element], None]:
         """Compiles a let statement."""
