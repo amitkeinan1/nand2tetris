@@ -300,7 +300,6 @@ class CompilationEngine:
             (self._add_token_if, {"expected_token": "]"})
         ])
 
-
     def compile_let(self) -> Union[List[Element], None]:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
@@ -439,17 +438,20 @@ class CompilationEngine:
             self._add_token_if(expected_type=TokenTypes.STRING_CONST),
             self._compile_keyword_constant(),
             self._add_token_if(expected_type=TokenTypes.IDENTIFIER),
-            self._sequence_compiling([
-                self._add_token_if(expected_token='['),
-                self.compile_expression(),
-                self._add_token_if(expected_token=']')
+            self._sequence_compiling_with_kwargs([
+                (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+                (self._add_token_if, {"expected_token": '['}),
+                (self.compile_expression, {}),
+                (self._add_token_if, {"expected_token": ']'})
             ]),
-            self._compile_subroutine_call(),
-            self._sequence_compiling([self._add_token_if(expected_token='('),
-                                      self.compile_expression(),
-                                      self._add_token_if(expected_token=')')]),
-            self._sequence_compiling([self._compile_unary_op(), self.compile_term()])
-            # TODO: can we handle recursion?
+            self._compile_subroutine_call,
+            self._sequence_compiling_with_kwargs([
+                (self._add_token_if, {"expected_token": '('}),
+                (self.compile_expression, {}),
+                (self._add_token_if, {"expected_token": ')'})
+            ]),
+            self._sequence_compiling_with_kwargs([(self._compile_unary_op, {}), (self.compile_term, {})])
+            # TODO: can we handle recursion? NO
         ])
 
     def _inner_compile_expression_list(self) -> List[Element]:
