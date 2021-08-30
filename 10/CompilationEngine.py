@@ -6,7 +6,6 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import List, Callable, Tuple, Union
 
-from lxml import etree
 from lxml.etree import Element
 
 from JackTokenizer import JackTokenizer
@@ -352,35 +351,27 @@ class CompilationEngine:
             (self.compile_statements, {}),
             (self._add_token_if, {"expected_token": "}"})])
 
-        if else_elements and left_bracket_elements and statements_expression and right_bracket_elements:
-            return else_elements + left_bracket_elements + statements_expression + right_bracket_elements
-        else:
-            return None
-
     def compile_if(self) -> Union[List[Element], None]:
         """Compiles a if statement, possibly with a trailing else clause."""
         if_root = Element("ifStatement")
 
-        valid_if_statement = True
+        elements = self._sequence_compiling_with_kwargs([
+            # 'if' '(' expression ')'
+            (self._add_token_if, {'expected_token': "if"}),
+            (self._add_token_if, {'expected_token': "("}),
+            (self.compile_expression, {}),
+            (self._add_token_if, {'expected_token': ")"}),
 
-        # 'if' '(' expression ')'
-        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="if"))
-        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="("))
-        valid_if_statement &= self._add_elements(if_root, self.compile_expression())
-        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token=")"))
+            # '{' statements '}'
+            (self._add_token_if, {'expected_token': "{"}),
+            (self.compile_statements(), {}),
+            (self._add_token_if, {'expected_token': "}"}),
 
-        # '{' statements '}'
-        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="{"))
-        valid_if_statement &= self._add_elements(if_root, self.compile_statement())
-        valid_if_statement &= self._add_elements(if_root, self._add_token_if(expected_token="}"))
+            # ('else' '{' statements '}')?
+            (self._question_mark_compiling, {'compile_method': self._compile_else})
+        ])
 
-        # ('else' '{' statements '}')?
-        valid_if_statement &= self._add_elements(if_root, self._question_mark_compiling(self._compile_else))
-
-        if valid_if_statement:
-            return [if_root]
-        else:
-            return None
+        return self._add_elements_2(if_root, elements)
 
     def _compile_op(self) -> Union[List[Element], None]:
         return self._add_token_if_or(expected_tokens=OPERATORS)
@@ -398,16 +389,11 @@ class CompilationEngine:
     def compile_expression(self) -> Union[List[Element], None]:
         """Compiles an expression."""
         expression_root = Element("expression")
-
-        valid_expression = True
-
-        valid_expression &= self._add_elements(expression_root, self.compile_term())
-        valid_expression &= self._add_elements(expression_root, self._asterisk_compiling(self._compile_op_term))
-
-        if valid_expression:
-            return [expression_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self.compile_term, {}),
+            (self._asterisk_compiling, {'compile_method': self._compile_op_term})
+        ])
+        return self._add_elements_2(expression_root, elements)
 
     def compile_term(self) -> Union[List[Element], None]:
         """Compiles a term. 
