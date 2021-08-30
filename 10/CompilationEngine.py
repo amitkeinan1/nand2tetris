@@ -201,14 +201,11 @@ class CompilationEngine:
         enclosing "()".
         """
         # (type varName) (',' type varName)*
-        type_element = self.compile_type()
-        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        more_var_name_elements = self._asterisk_compiling(self._compile_comma_and_type_and_var_name)
-
-        if type_element and var_name_element and more_var_name_elements:
-            return type_element + var_name_element + more_var_name_elements
-        else:
-            return None
+        return self._sequence_compiling_with_kwargs([
+            (self.compile_type, {}),
+            (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER}),
+            (self._asterisk_compiling, {'compile_method': self._compile_comma_and_type_and_var_name})
+        ])
 
     def compile_parameter_list(self) -> Union[List[Element], None]:
         # ((type varName) (',' type varName)*)?
@@ -272,22 +269,16 @@ class CompilationEngine:
         )
 
     def _compile_class_subroutine_call(self) -> Union[List[Element], None]:
-
         # (className | varName) '.' subroutineName '(' expressionList ')'
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER}),
+            (self._add_token_if, {'expected_token': '.'}),
+            (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER}),
+            (self._add_token_if, {'expected_token': '('}),
+            (self.compile_expression_list, {}),
+            (self._add_token_if, {expected_token: ')'})
 
-        class_or_var_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        period_elements = self._add_token_if(expected_token='.')
-        subroutine_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        left_bracket_2_elements = self._add_token_if(expected_token='(')
-        expression_list_elements = self.compile_expression_list()
-        right_bracket_2_elements = self._add_token_if(expected_token=')')
-
-        elements_lists = [class_or_var_name_elements, period_elements, subroutine_name_elements,
-                          left_bracket_2_elements, expression_list_elements, right_bracket_2_elements]
-        if not None in elements_lists:
-            return [elem for elements in elements_lists for elem in elements]
-        else:
-            return None
+        ])
 
     def _compile_subroutine_call(self) -> Union[List[Element], None]:
         # normalSubroutineCall | classSubroutineCall
