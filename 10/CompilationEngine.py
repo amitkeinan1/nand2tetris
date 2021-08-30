@@ -101,6 +101,7 @@ class CompilationEngine:
     def _asterisk_compiling_with_args(self, compile_method: Callable, *args, **kwargs) -> List[Element]:
         def injected_compile_method():
             return compile_method(*args, **kwargs)
+
         return self._asterisk_compiling(injected_compile_method)
 
     def _question_mark_compiling(self, compile_method) -> List[Element]:
@@ -218,8 +219,10 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
         valid_var_dec &= self._add_elements(var_dec_root,
                                             self._asterisk_compiling_with_args(self._sequence_compiling_with_kwargs,
-                                                                               [(self._add_token_if, {'expected_token': ','}),
-                                                                                (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER})]))
+                                                                               [(self._add_token_if,
+                                                                                 {'expected_token': ','}),
+                                                                                (self._add_token_if, {
+                                                                                    'expected_type': TokenTypes.IDENTIFIER})]))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
@@ -291,12 +294,12 @@ class CompilationEngine:
         return self._or_compiling([self._compile_normal_subroutine_call, self._compile_class_subroutine_call])
 
     def _compile_array_accessor(self) -> Union[List[Element], None]:
-        left_bracket_element = self._add_token_if(expected_token="[")
-        expression_element = self.compile_expression()
-        right_bracket_element = self._add_token_if(expected_token="]")
-        if left_bracket_element and expression_element and right_bracket_element:
-            return [left_bracket_element, expression_element, right_bracket_element]
-        return None
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "["}),
+            (self.compile_expression, {}),
+            (self._add_token_if, {"expected_token": "]"})
+        ])
+
 
     def compile_let(self) -> Union[List[Element], None]:
         """Compiles a let statement."""
@@ -498,4 +501,3 @@ class CompilationEngine:
         if comma_element and type_element and var_name_element:
             return comma_element + type_element + var_name_element
         return None
-
