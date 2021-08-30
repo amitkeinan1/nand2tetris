@@ -112,7 +112,7 @@ class CompilationEngine:
 
     # compile methods
 
-    def compile_class(self) -> List[Element]:  # TODO: it should return elements
+    def compile_class(self) -> List[Element]:
         """Compiles a complete class."""
         class_root = Element("class")
 
@@ -127,6 +127,10 @@ class CompilationEngine:
         class_tree = etree.ElementTree(class_root)
         class_tree.write(self.output_path,
                          pretty_print=True)  # TODO: lxml cannot close and open empty elements and create new lines
+        if is_valid_class:
+            return [class_root]
+        else:
+            return None
 
     def compile_class_var_dec(self) -> List[Element]:
         """Compiles a static declaration or a field declaration."""
@@ -239,7 +243,8 @@ class CompilationEngine:
         let_root = Element("letStatement")
         valid_let_statement = True
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
-        valid_let_statement &= self._add_elements(let_root, self._compile_array_accessor())  # TODO: make optional
+        valid_let_statement &= self._add_elements(let_root, self._question_mark_compiling(
+            self._compile_array_accessor))
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
         valid_let_statement &= self._add_elements(let_root, self.compile_expression())
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token=";"))
