@@ -264,16 +264,12 @@ class CompilationEngine:
     def _compile_normal_subroutine_call(self) -> Union[List[Element], None]:
 
         # subroutineName '(' expressionList ')'
-
-        subroutine_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        left_bracket_element = self._add_token_if(expected_token='(')
-        expression_list_element = self.compile_expression_list()
-        right_bracket_element = self._add_token_if(expected_token=')')
-
-        if subroutine_name_element and left_bracket_element and expression_list_element + right_bracket_element:
-            return subroutine_name_element + left_bracket_element + expression_list_element + right_bracket_element
-        else:
-            return None
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._add_token_if, {"expected_token": '('}),
+            (self.compile_expression_list, {}),
+            (self._add_token_if, {"expected_token": ')'})]
+        )
 
     def _compile_class_subroutine_call(self) -> Union[List[Element], None]:
 
@@ -357,10 +353,11 @@ class CompilationEngine:
     def _compile_else(self) -> Union[List[Element], None]:
 
         # ('else' '{' statements '}')
-        else_elements = self._add_token_if(expected_token="else")
-        left_bracket_elements = self._add_token_if(expected_token="{")
-        statements_expression = self.compile_statements()
-        right_bracket_elements = self._add_token_if(expected_token="}")
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": "else"}),
+            (self._add_token_if, {"expected_token": "{"}),
+            (self.compile_statements, {}),
+            (self._add_token_if, {"expected_token": "}"})])
 
         if else_elements and left_bracket_elements and statements_expression and right_bracket_elements:
             return else_elements + left_bracket_elements + statements_expression + right_bracket_elements
@@ -403,13 +400,7 @@ class CompilationEngine:
 
     def _compile_op_term(self) -> Union[List[Element], None]:
         # op term
-        op_elements = self._compile_op()
-        term_elements = self.compile_term()
-
-        if op_elements and term_elements:
-            return op_elements + term_elements
-        else:
-            return None
+        return self._sequence_compiling([self._compile_op, self.compile_term])
 
     def compile_expression(self) -> Union[List[Element], None]:
         """Compiles an expression."""
@@ -499,16 +490,14 @@ class CompilationEngine:
             return None
 
     def _compile_comma_and_var_name(self) -> Union[List[Element], None]:
-        comma_element = self._add_token_if(expected_token=",")
-        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        if comma_element and var_name_element:
-            return comma_element + var_name_element
-        return None
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": ","}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER})
+        ])
 
     def _compile_comma_and_type_and_var_name(self) -> Union[List[Element], None]:
-        comma_element = self._add_token_if(expected_token=",")
-        type_element = self.compile_type()
-        var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        if comma_element and type_element and var_name_element:
-            return comma_element + type_element + var_name_element
-        return None
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": ","}),
+            (self.compile_type, {}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER})
+        ])
