@@ -75,21 +75,21 @@ class CompilationEngine:
                 return elements_to_add
         return None
 
-    def _compile_safely(self, compile_method):
+    def _compile_safely(self, compile_method: Callable):
         initial_token_index = self.tokenizer.curr_index
         res = compile_method()
         if not res:
             self.tokenizer.curr_index = initial_token_index
         return res
 
-    def _or_compiling(self, compile_methods) -> Union[List[Element], None]:
+    def _or_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
         for compile_method in compile_methods:
             curr_elements = self._compile_safely(compile_method)
             if curr_elements:
                 return curr_elements
         return None
 
-    def _asterisk_compiling(self, compile_method) -> List[Element]:
+    def _asterisk_compiling(self, compile_method: Callable) -> List[Element]:
         elements = []
         curr_elements = self._compile_safely(compile_method)
         while curr_elements:
@@ -104,14 +104,14 @@ class CompilationEngine:
 
         return self._asterisk_compiling(injected_compile_method)
 
-    def _question_mark_compiling(self, compile_method) -> List[Element]:
+    def _question_mark_compiling(self, compile_method: Callable) -> List[Element]:
         curr_elements = self._compile_safely(compile_method)
         if curr_elements:
             return curr_elements
         else:
             return []
 
-    def _sequence_compiling(self, compile_methods) -> Union[List[Element], None]:
+    def _sequence_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
         elements_lists = [self._compile_safely(compile_method) for compile_method in compile_methods]
         if None not in elements_lists:
             return [elem for elements in elements_lists for elem in elements]
