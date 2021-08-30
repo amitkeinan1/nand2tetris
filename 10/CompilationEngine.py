@@ -200,15 +200,18 @@ class CompilationEngine:
 
     def compile_var_dec(self) -> List[Element]:
         """Compiles a var declaration."""
-
+        # 'var' type varName (',' varName)* ';'
         var_dec_root = Element("varDec")
         valid_var_dec = True
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token="var"))
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_elements(var_dec_root,
-                                                                             self._asterisk_compiling(
-                                                                                 self._compile_comma_and_type_and_var_name)))
+        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
+        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self._sequence_compiling([
+            self._add_token_if(expected_token=','),
+            self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        ])))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
+
         if valid_var_dec:
             return [var_dec_root]
         else:
