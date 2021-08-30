@@ -4,8 +4,7 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import List, Callable, Tuple
-from typing import List, Union
+from typing import List, Callable, Tuple, Union
 
 from lxml import etree
 from lxml.etree import Element
