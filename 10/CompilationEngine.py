@@ -4,7 +4,7 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import List
+from typing import List, Callable, Tuple
 
 from lxml import etree
 from lxml.etree import Element
@@ -112,6 +112,11 @@ class CompilationEngine:
         else:
             return None
 
+    def _sequence_compiling_with_kwargs(self, compile_methods_and_kwargs: List[Tuple[Callable, dict]]) -> List[Element]:
+        compile_methods = [lambda: method_and_kwargs[0](**method_and_kwargs[1]) for method_and_kwargs in
+                           compile_methods_and_kwargs]
+        return self._sequence_compiling(compile_methods)
+
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
             return False
@@ -206,10 +211,11 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token="var"))
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
-        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self._sequence_compiling([
-            self._add_token_if(expected_token=','),
-            self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        ])))
+        valid_var_dec &= self._add_elements(var_dec_root,
+                                            self._asterisk_compiling(self._sequence_compiling_with_kwargs([
+                                                (self._add_token_if, {'expected_token': ','}),
+                                                (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER})
+                                            ])))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
