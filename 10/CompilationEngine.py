@@ -121,7 +121,8 @@ class CompilationEngine:
 
     # compile methods
 
-    def compile_class(self) -> List[Element]:
+    def compile_class(self) -> List[
+        Element]:  # TODO: this class should be normal compile method that returns a list of elements and it should have a wrapper
         """Compiles a complete class."""
         class_root = Element("class")
 
