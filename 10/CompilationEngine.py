@@ -17,6 +17,9 @@ from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 # TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
 #  we can wrap the methods. update: I wrote sequence compiling and it solves much from the problem.
 
+
+
+
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
@@ -33,6 +36,9 @@ class CompilationEngine:
         self.output_path = output_path
 
     # helper methods
+    @staticmethod
+    def _compile_callable_wrapper(compile_method: Callable, *args, **kwargs) -> Callable:
+        return lambda: compile_method(*args, **kwargs)
 
     def _add_curr_token(self) -> Union[List[Element], None]:
         if self.tokenizer.curr_index == len(
@@ -434,23 +440,23 @@ class CompilationEngine:
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
         return self._or_compiling([
-            self._add_token_if(expected_type=TokenTypes.INT_CONST),
-            self._add_token_if(expected_type=TokenTypes.STRING_CONST),
-            self._compile_keyword_constant(),
-            self._add_token_if(expected_type=TokenTypes.IDENTIFIER),
-            self._sequence_compiling_with_kwargs([
+            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.INT_CONST),
+            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.STRING_CONST),
+            self._compile_keyword_constant,
+            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.IDENTIFIER),
+            self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
                 (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
                 (self._add_token_if, {"expected_token": '['}),
                 (self.compile_expression, {}),
                 (self._add_token_if, {"expected_token": ']'})
             ]),
             self._compile_subroutine_call,
-            self._sequence_compiling_with_kwargs([
+            self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
                 (self._add_token_if, {"expected_token": '('}),
                 (self.compile_expression, {}),
                 (self._add_token_if, {"expected_token": ')'})
             ]),
-            self._sequence_compiling_with_kwargs([(self._compile_unary_op, {}), (self.compile_term, {})])
+            self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
             # TODO: can we handle recursion? NO
         ])
 
