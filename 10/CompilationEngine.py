@@ -98,6 +98,11 @@ class CompilationEngine:
 
         return elements
 
+    def _asterisk_compiling_with_args(self, compile_method: Callable, *args, **kwargs) -> List[Element]:
+        def injected_compile_method():
+            return compile_method(*args, **kwargs)
+        return self._asterisk_compiling(injected_compile_method)
+
     def _question_mark_compiling(self, compile_method) -> List[Element]:
         curr_elements = self._compile_safely(compile_method)
         if curr_elements:
@@ -107,7 +112,7 @@ class CompilationEngine:
 
     def _sequence_compiling(self, compile_methods) -> Union[List[Element], None]:
         elements_lists = [self._compile_safely(compile_method) for compile_method in compile_methods]
-        if not None in elements_lists:
+        if None not in elements_lists:
             return [elem for elements in elements_lists for elem in elements]
         else:
             return None
@@ -126,7 +131,7 @@ class CompilationEngine:
 
     # compile methods
 
-    def compile_class(self) -> Union[List[Element], None]: # TODO: this class should be normal compile method that
+    def compile_class(self) -> Union[List[Element], None]:  # TODO: this class should be normal compile method that
         # returns a list of elements and it should have a wrapper
         """Compiles a complete class."""
         class_root = Element("class")
@@ -212,10 +217,9 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
         valid_var_dec &= self._add_elements(var_dec_root,
-                                            self._asterisk_compiling(self._sequence_compiling_with_kwargs([
-                                                (self._add_token_if, {'expected_token': ','}),
-                                                (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER})
-                                            ])))
+                                            self._asterisk_compiling_with_args(self._sequence_compiling_with_kwargs,
+                                                                               [(self._add_token_if, {'expected_token': ','}),
+                                                                                (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER})]))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
@@ -470,9 +474,9 @@ class CompilationEngine:
         valid_subroutine_body = True
         valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="{"))
         valid_subroutine_body &= self._add_elements(subroutine_body_root,
-                                                    self._asterisk_compiling(self.compile_var_dec()))
+                                                    self._asterisk_compiling(self.compile_var_dec))
         valid_subroutine_body &= self._add_elements(subroutine_body_root,
-                                                    self._asterisk_compiling(self.compile_statements()))
+                                                    self._asterisk_compiling(self.compile_statements))
         valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="}"))
 
         if valid_subroutine_body:
