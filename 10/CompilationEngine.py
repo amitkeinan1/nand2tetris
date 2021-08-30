@@ -125,8 +125,8 @@ class CompilationEngine:
         return [elem for elements in elements_lists for elem in elements]
 
     def _sequence_compiling_with_kwargs(self, compile_methods_and_kwargs: List[Tuple[Callable, dict]]) -> List[Element]:
-        compile_methods = [lambda: method_and_kwargs[0](**method_and_kwargs[1]) for method_and_kwargs in
-                           compile_methods_and_kwargs]
+        compile_methods = [lambda method_and_kwargs=method_and_kwargs: method_and_kwargs[0](**method_and_kwargs[1]) for
+                           method_and_kwargs in compile_methods_and_kwargs]
         return self._sequence_compiling(compile_methods)
 
     def _add_elements(self, root: Element, elements: List[Element]) -> Union[List[Element], None]:
