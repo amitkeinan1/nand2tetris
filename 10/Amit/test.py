@@ -95,7 +95,7 @@ def test_expression_list():
 def test_nums():
     root = Element("root")
     c = CompilationEngine("nums.jack", "Main.xml")
-    c._add_elements(root, c._sequence_compiling([c._compile_op, c._compile_op]))
+    c._add_elements_2_2(root, c._sequence_compiling([c._compile_op, c._compile_op]))
     class_tree = etree.ElementTree(root)
     class_tree.write(c.output_path, pretty_print=True)
 

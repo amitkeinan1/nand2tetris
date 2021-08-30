@@ -129,14 +129,7 @@ class CompilationEngine:
                            compile_methods_and_kwargs]
         return self._sequence_compiling(compile_methods)
 
-    def _add_elements(self, root: Element, elements: List[Element]) -> bool:
-        if elements is None:
-            return False
-        for element in elements:
-            root.append(element)
-        return True
-
-    def _add_elements_2(self, root: Element, elements: List[Element]) -> Union[List[Element], None]:
+    def _add_elements(self, root: Element, elements: List[Element]) -> Union[List[Element], None]:
         if elements is None:
             return None
         for element in elements:
@@ -159,7 +152,7 @@ class CompilationEngine:
                 (self._add_token_if, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
             ]
         )
-        return self._add_elements_2(class_root, elements)
+        return self._add_elements(class_root, elements)
 
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
@@ -172,7 +165,7 @@ class CompilationEngine:
             (self._asterisk_compiling, {"compile_method": self._compile_comma_and_var_name}),
             (self._add_token_if, {"expected_token": ";"})
         ])
-        return self._add_elements_2(var_dec_root, elements)
+        return self._add_elements(var_dec_root, elements)
 
     def compile_subroutine(self) -> Union[List[Element], None]:
         """Compiles a complete method, function, or constructor."""
@@ -188,7 +181,7 @@ class CompilationEngine:
             (self._add_token_if, {"expected_token": ")"}),
             (self.compile_subroutine_body, {})
         ])
-        return self._add_elements_2(subroutine_root, elements)
+        return self._add_elements(subroutine_root, elements)
 
     def _inner_compile_parameter_list(self) -> Union[List[Element], None]:
         """Compiles a (possibly empty) parameter list, not including the
@@ -205,7 +198,7 @@ class CompilationEngine:
         # ((type varName) (',' type varName)*)?
         parameter_list_root = Element("parameterList")
         elements = self._question_mark_compiling(self._inner_compile_parameter_list)
-        return self._add_elements_2(parameter_list_root, elements)
+        return self._add_elements(parameter_list_root, elements)
 
     def compile_var_dec(self) -> Union[List[Element], None]:
         """Compiles a var declaration."""
@@ -225,7 +218,7 @@ class CompilationEngine:
             (self._add_token_if, {"expected_token": ";"})
         ])
 
-        return self._add_elements_2(var_dec_root, elements)
+        return self._add_elements(var_dec_root, elements)
 
     def compile_statement(self):
         return self._or_compiling(
@@ -236,7 +229,7 @@ class CompilationEngine:
         "{}".
         """
         statements_root = Element("statements")
-        return self._add_elements_2(statements_root, self._asterisk_compiling(self.compile_statement))
+        return self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement))
 
     def compile_do(self) -> Union[List[Element], None]:
         """Compiles a do statement."""
@@ -246,7 +239,7 @@ class CompilationEngine:
             (self._compile_subroutine_call, {})
         ]
         )
-        return self._add_elements_2(do_root, elements)
+        return self._add_elements(do_root, elements)
 
     def _compile_normal_subroutine_call(self) -> Union[List[Element], None]:
 
@@ -294,7 +287,7 @@ class CompilationEngine:
             (self.compile_expression, {}),
             (self._add_token_if, {"expected_token": ";"})
         ])
-        return self._add_elements_2(let_root, elements)
+        return self._add_elements(let_root, elements)
     def compile_while(self) -> Union[List[Element], None]:
         """Compiles a while statement."""
         while_root = Element("whileStatement")
@@ -307,7 +300,7 @@ class CompilationEngine:
             (self.compile_statements, {}),
             (self._add_token_if, {'expected_token': "}"})
         ])
-        return self._add_elements_2(while_root, elements)
+        return self._add_elements(while_root, elements)
 
     def compile_return(self) -> Union[List[Element], None]:
         """Compiles a return statement."""
@@ -319,7 +312,7 @@ class CompilationEngine:
             (self._add_token_if, {'expected_token': ";"})
         ])
 
-        return self._add_elements_2(return_root, elements)
+        return self._add_elements(return_root, elements)
 
     def _compile_else(self) -> Union[List[Element], None]:
 
@@ -350,7 +343,7 @@ class CompilationEngine:
             (self._question_mark_compiling, {'compile_method': self._compile_else})
         ])
 
-        return self._add_elements_2(if_root, elements)
+        return self._add_elements(if_root, elements)
 
     def _compile_op(self) -> Union[List[Element], None]:
         return self._add_token_if_or(expected_tokens=OPERATORS)
@@ -372,7 +365,7 @@ class CompilationEngine:
             (self.compile_term, {}),
             (self._asterisk_compiling, {'compile_method': self._compile_op_term})
         ])
-        return self._add_elements_2(expression_root, elements)
+        return self._add_elements(expression_root, elements)
 
     def compile_term(self) -> Union[List[Element], None]:
         """Compiles a term. 
@@ -427,7 +420,7 @@ class CompilationEngine:
         # (expression (',' expression)* )?
         expression_list_root = Element("expressionList")
         elements = self._question_mark_compiling(self._inner_compile_expression_list)
-        return self._add_elements_2(expression_list_root, elements)
+        return self._add_elements(expression_list_root, elements)
 
     def compile_type(self) -> Union[List[Element], None]:
         return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
@@ -440,7 +433,7 @@ class CompilationEngine:
             (self.compile_statements, {}),
             (self._add_token_if, {'expected_token': "}"})
         ])
-        return self._add_elements_2(subroutine_body_root, elements)
+        return self._add_elements(subroutine_body_root, elements)
 
     def _compile_comma_and_var_name(self) -> Union[List[Element], None]:
         return self._sequence_compiling_with_kwargs([
