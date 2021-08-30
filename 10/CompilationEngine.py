@@ -137,28 +137,30 @@ class CompilationEngine:
             root.append(element)
         return True
 
+    def _add_elements_2(self, root: Element, elements: List[Element]) -> Union[List[Element], None]:
+        if elements is None:
+            return None
+        for element in elements:
+            root.append(element)
+        return [root]
+
     # compile methods
 
     def compile_class(self) -> Union[List[Element], None]:  # TODO: this class should be normal compile method that
         # returns a list of elements and it should have a wrapper
         """Compiles a complete class."""
         class_root = Element("class")
-
-        is_valid_class = True
-        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.KEYWORD, "class"))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.IDENTIFIER))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "{"))
-        is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_class_var_dec))
-        is_valid_class &= self._add_elements(class_root, self._asterisk_compiling(self.compile_subroutine))
-        is_valid_class &= self._add_elements(class_root, self._add_token_if(TokenTypes.SYMBOL, "}"))
-
-        class_tree = etree.ElementTree(class_root)
-        class_tree.write(self.output_path,
-                         pretty_print=True)  # TODO: lxml cannot close and open empty elements and create new lines
-        if is_valid_class:
-            return [class_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs(
+            [
+                (self._add_token_if, {"expected_type": TokenTypes.KEYWORD, "expected_token": "class"}),
+                (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+                (self._add_token_if, {"expected_type": TokenTypes.SYMBOL, "expected_token": "{"}),
+                (self._asterisk_compiling, {"compile_method": self.compile_class_var_dec}),
+                (self._asterisk_compiling, {"compile_method": self.compile_subroutine}),
+                (self._add_token_if, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
+            ]
+        )
+        return self._add_elements_2(class_root, elements)
 
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
