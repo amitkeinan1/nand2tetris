@@ -101,6 +101,7 @@ class CompilationEngine:
     def _asterisk_compiling_with_args(self, compile_method: Callable, *args, **kwargs) -> List[Element]:
         def injected_compile_method():
             return compile_method(*args, **kwargs)
+
         return self._asterisk_compiling(injected_compile_method)
 
     def _question_mark_compiling(self, compile_method) -> List[Element]:
@@ -218,8 +219,10 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
         valid_var_dec &= self._add_elements(var_dec_root,
                                             self._asterisk_compiling_with_args(self._sequence_compiling_with_kwargs,
-                                                                               [(self._add_token_if, {'expected_token': ','}),
-                                                                                (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER})]))
+                                                                               [(self._add_token_if,
+                                                                                 {'expected_token': ','}),
+                                                                                (self._add_token_if, {
+                                                                                    'expected_type': TokenTypes.IDENTIFIER})]))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
@@ -475,8 +478,7 @@ class CompilationEngine:
         valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="{"))
         valid_subroutine_body &= self._add_elements(subroutine_body_root,
                                                     self._asterisk_compiling(self.compile_var_dec))
-        valid_subroutine_body &= self._add_elements(subroutine_body_root,
-                                                    self._asterisk_compiling(self.compile_statements))
+        valid_subroutine_body &= self._add_elements(subroutine_body_root, self.compile_statements())
         valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="}"))
 
         if valid_subroutine_body:
@@ -498,4 +500,3 @@ class CompilationEngine:
         if comma_element and type_element and var_name_element:
             return comma_element + type_element + var_name_element
         return None
-
