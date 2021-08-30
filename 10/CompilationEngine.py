@@ -336,7 +336,7 @@ class CompilationEngine:
 
             # '{' statements '}'
             (self._add_token_if, {'expected_token': "{"}),
-            (self.compile_statements(), {}),
+            (self.compile_statements, {}),
             (self._add_token_if, {'expected_token': "}"}),
 
             # ('else' '{' statements '}')?
