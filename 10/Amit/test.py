@@ -102,7 +102,7 @@ def test_nums():
 
 if __name__ == '__main__':
     # test_nums()
-    test_expression_list()
+    # test_expression_list()
     # test_class_subroutine_call()
     # test_subroutine_call()
     # test_term()
@@ -111,4 +111,4 @@ if __name__ == '__main__':
     # test_statements()
     # test_subroutine_body()
     # test_subroutine()
-    # test_subroutines()
+    test_subroutines()

@@ -66,6 +66,12 @@ class JackTokenizer:
     def curr_token(self):
         return self.tokens[self.curr_index]
 
+    def next_token(self):
+        if self.has_more_tokens():
+            return self.tokens[self.curr_index + 1]
+        else:
+            return False
+
     def token_type(self) -> TokenTypes:
         """
         Returns:

@@ -4,8 +4,9 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import List, Callable, Tuple, Union
+from typing import List, Callable, Tuple, Union, Dict
 
+from lxml import etree
 from lxml.etree import Element
 
 from JackTokenizer import JackTokenizer
@@ -43,7 +44,7 @@ class CompilationEngine:
             return None
         token_element = Element(self.tokenizer.token_type_repr())
         token_element.text = self.tokenizer.token_repr()
-        self.tokenizer.advance()  # TODO: maybe sometimes we want to take it back? I think methods like compile_safely are the key
+        self.tokenizer.advance()
         return [token_element]
 
     def _add_token_if(self, expected_type=None, expected_token=None) -> Union[List[Element], None]:
@@ -73,7 +74,7 @@ class CompilationEngine:
             expected_tokens = [None for _ in range(len(expected_types))]
 
         for expected_type, expected_token in zip(expected_types, expected_tokens):
-            elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it "compile_safely"
+            elements_to_add = self._add_token_if(expected_type, expected_token)
             if elements_to_add:
                 return elements_to_add
         return None
@@ -86,6 +87,13 @@ class CompilationEngine:
         return res
 
     def _or_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
+        for compile_method in compile_methods:
+            curr_elements = self._compile_safely(compile_method)
+            if curr_elements:
+                return curr_elements
+        return None
+
+    def _look_ahead_switch_compiling(self, compile_methods: Dict[Callable, str]) -> Union[List[Element], None]:
         for compile_method in compile_methods:
             curr_elements = self._compile_safely(compile_method)
             if curr_elements:
@@ -136,10 +144,13 @@ class CompilationEngine:
             root.append(element)
         return [root]
 
-    # compile methods
+    def super_duper(self): # TODO rename when done
+        root = self.compile_class()
+        tree = etree.ElementTree(root)
+        tree.write(self.output_path, pretty_print=True)
 
-    def compile_class(self) -> Union[List[Element], None]:  # TODO: this class should be normal compile method that
-        # returns a list of elements and it should have a wrapper
+    # compile methods
+    def compile_class(self) -> Element:
         """Compiles a complete class."""
         class_root = Element("class")
         elements = self._sequence_compiling_with_kwargs(
@@ -152,7 +163,8 @@ class CompilationEngine:
                 (self._add_token_if, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
             ]
         )
-        return self._add_elements(class_root, elements)
+        self._add_elements(class_root, elements)
+        return class_root
 
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
@@ -236,7 +248,8 @@ class CompilationEngine:
         do_root = Element("doStatement")
         elements = self._sequence_compiling_with_kwargs([
             (self._add_token_if, {"expected_token": "do"}),
-            (self._compile_subroutine_call, {})
+            (self._compile_subroutine_call, {}),
+            (self._add_token_if, {"expected_token": ";"})
         ]
         )
         return self._add_elements(do_root, elements)
@@ -288,6 +301,7 @@ class CompilationEngine:
             (self._add_token_if, {"expected_token": ";"})
         ])
         return self._add_elements(let_root, elements)
+
     def compile_while(self) -> Union[List[Element], None]:
         """Compiles a while statement."""
         while_root = Element("whileStatement")
@@ -379,26 +393,32 @@ class CompilationEngine:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
-        return self._or_compiling([
-            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.INT_CONST),
-            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.STRING_CONST),
-            self._compile_keyword_constant,
-            self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.IDENTIFIER),
-            self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
-                (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
-                (self._add_token_if, {"expected_token": '['}),
-                (self.compile_expression, {}),
-                (self._add_token_if, {"expected_token": ']'})
-            ]),
-            self._compile_subroutine_call,
-            self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
-                (self._add_token_if, {"expected_token": '('}),
-                (self.compile_expression, {}),
-                (self._add_token_if, {"expected_token": ')'})
-            ]),
-            self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
-            # TODO: can we handle recursion? NO
-        ])
+        next_token = self.tokenizer.next_token()
+        if self.tokenizer.token_type() == TokenTypes.IDENTIFIER and next_token:
+            if next_token == "[":
+                return self._sequence_compiling_with_kwargs([
+                    (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+                    (self._add_token_if, {"expected_token": '['}),
+                    (self.compile_expression, {}),
+                    (self._add_token_if, {"expected_token": ']'})
+                ])
+            elif next_token == "." or next_token == "(":
+                return self._compile_subroutine_call()
+            else:
+                return self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        else:
+            return self._or_compiling([
+                self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.INT_CONST),
+                self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.STRING_CONST),
+                self._compile_keyword_constant,
+                self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
+                    (self._add_token_if, {"expected_token": '('}),
+                    (self.compile_expression, {}),
+                    (self._add_token_if, {"expected_token": ')'})
+                ]),
+                self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
+                # TODO: can we handle recursion? YES
+            ])
 
     def _inner_compile_expression_list(self) -> List[Element]:
         # expression (',' expression)*
