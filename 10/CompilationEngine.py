@@ -306,19 +306,16 @@ class CompilationEngine:
     def compile_while(self) -> Union[List[Element], None]:
         """Compiles a while statement."""
         while_root = Element("whileStatement")
-        valid_while_statement = True
-        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="while"))
-        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="("))
-        valid_while_statement &= self._add_elements(while_root, self.compile_expression())
-        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token=")"))
-        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="{"))
-        valid_while_statement &= self._add_elements(while_root, self.compile_statements())
-        valid_while_statement &= self._add_elements(while_root, self._add_token_if(expected_token="}"))
-
-        if valid_while_statement:
-            return [while_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {'expected_token': "while"}),
+            (self._add_token_if, {'expected_token': "("}),
+            (self.compile_expression, {}),
+            (self._add_token_if, {'expected_token': ")"}),
+            (self._add_token_if, {'expected_token': "{"}),
+            (self.compile_statements, {}),
+            (self._add_token_if, {'expected_token': "}"})
+        ])
+        return self._add_elements_2(while_root, elements)
 
     def compile_return(self) -> Union[List[Element], None]:
         """Compiles a return statement."""
