@@ -239,7 +239,7 @@ class CompilationEngine:
         "{}".
         """
         statements_root = Element("statements")
-        self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement()))
+        self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement))
         return statements_root
 
     def compile_do(self) -> Union[List[Element], None]:
@@ -342,7 +342,7 @@ class CompilationEngine:
         valid_return_statement = True
         valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token="return"))
         valid_return_statement &= self._add_elements(return_root,
-                                                     self._question_mark_compiling(self.compile_expression()))
+                                                     self._question_mark_compiling(self.compile_expression))
         valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token=";"))
 
         if valid_return_statement:
@@ -456,13 +456,15 @@ class CompilationEngine:
 
     def _inner_compile_expression_list(self) -> List[Element]:
         # expression (',' expression)*
-        return self._sequence_compiling([
-            self._add_token_if('('),
-            self.compile_expression(),
-            self._asterisk_compiling([
-                self._add_token_if(expected_token=','),
-                self.compile_expression()
-            ])
+        return self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {"expected_token": '('}),
+            (self.compile_expression(), {}),
+            self._asterisk_compiling_with_args(
+                self._sequence_compiling_with_kwargs,
+                [
+                    (self._add_token_if, {"expected_token": ','},),
+                    (self.compile_expression, {})
+                ])
         ])
 
     def compile_expression_list(self) -> List[Element]:
