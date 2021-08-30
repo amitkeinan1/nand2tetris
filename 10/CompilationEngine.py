@@ -18,8 +18,6 @@ from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 #  we can wrap the methods. update: I wrote sequence compiling and it solves much from the problem.
 
 
-
-
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
@@ -81,7 +79,7 @@ class CompilationEngine:
                 return elements_to_add
         return None
 
-    def _compile_safely(self, compile_method: Callable):
+    def _compile_safely(self, compile_method: Callable) -> Union[List[Element], None]:
         initial_token_index = self.tokenizer.curr_index
         res = compile_method()
         if not res:
@@ -391,16 +389,16 @@ class CompilationEngine:
         else:
             return None
 
-    def _compile_op(self):
+    def _compile_op(self) -> Union[List[Element], None]:
         return self._add_token_if_or(expected_tokens=OPERATORS)
 
-    def _compile_unary_op(self):
+    def _compile_unary_op(self) -> Union[List[Element], None]:
         return self._add_token_if_or(expected_tokens=UNARY_OPERATORS)
 
-    def _compile_keyword_constant(self):
+    def _compile_keyword_constant(self) -> Union[List[Element], None]:
         return self._add_token_if_or(expected_tokens=KEYWORD_CONSTANTS)
 
-    def _compile_op_term(self):
+    def _compile_op_term(self) -> Union[List[Element], None]:
         # op term
         op_elements = self._compile_op()
         term_elements = self.compile_term()
@@ -460,14 +458,16 @@ class CompilationEngine:
     def _inner_compile_expression_list(self) -> List[Element]:
         # expression (',' expression)*
         return self._sequence_compiling_with_kwargs([
-            (self._add_token_if, {"expected_token": '('}),
-            (self.compile_expression(), {}),
-            self._asterisk_compiling_with_args(
-                self._sequence_compiling_with_kwargs,
-                [
-                    (self._add_token_if, {"expected_token": ','},),
-                    (self.compile_expression, {})
-                ])
+            (self.compile_expression, {}),
+            (self._asterisk_compiling_with_args,
+             {
+                 "compile_method": self._sequence_compiling_with_kwargs,
+                 "compile_methods_and_kwargs": [
+                     (self._add_token_if, {"expected_token": ','},),
+                     (self.compile_expression, {})
+                 ]
+             }
+             )
         ])
 
     def compile_expression_list(self) -> List[Element]:
