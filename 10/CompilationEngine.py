@@ -180,7 +180,7 @@ class CompilationEngine:
 
         elements = self._sequence_compiling_with_kwargs([
             (self._add_token_if_or, {"expected_tokens": ["constructor", "function", "method"]}),
-            (self._add_token_if_or_compile, {"expected_type": None, "expected_token": "void", "compile_method": 
+            (self._add_token_if_or_compile, {"expected_type": None, "expected_token": "void", "compile_method":
                 self.compile_type}),
             (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
             (self._add_token_if, {"expected_token": "("}),
@@ -322,18 +322,15 @@ class CompilationEngine:
 
     def compile_return(self) -> Union[List[Element], None]:
         """Compiles a return statement."""
-        return_root = Element("whileStatement")
+        return_root = Element("returnStatement")
 
-        valid_return_statement = True
-        valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token="return"))
-        valid_return_statement &= self._add_elements(return_root,
-                                                     self._question_mark_compiling(self.compile_expression))
-        valid_return_statement &= self._add_elements(return_root, self._add_token_if(expected_token=";"))
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {'expected_token': "return"}),
+            (self._question_mark_compiling, {'compile_method': self.compile_expression}),
+            (self._add_token_if, {'expected_token': ";"})
+        ])
 
-        if valid_return_statement:
-            return [return_root]
-        else:
-            return None
+        return self._add_elements_2(return_root, elements)
 
     def _compile_else(self) -> Union[List[Element], None]:
 
