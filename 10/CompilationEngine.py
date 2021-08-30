@@ -11,7 +11,7 @@ from lxml.etree import Element
 
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
-from jack_syntax import OPERATORS
+from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 
 
 # TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
@@ -149,7 +149,7 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(TokenTypes.IDENTIFIER))
-        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self.compile_comma_and_var_name))
+        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self._compile_comma_and_var_name))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
 
         if valid_var_dec:
@@ -183,7 +183,7 @@ class CompilationEngine:
         """
         type_element = self.compile_type()
         var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        more_var_name_elements = self._asterisk_compiling(self.compile_comma_and_type_and_var_name)
+        more_var_name_elements = self._asterisk_compiling(self._compile_comma_and_type_and_var_name)
 
         if type_element and var_name_element and more_var_name_elements:
             return type_element + var_name_element + more_var_name_elements
@@ -204,7 +204,7 @@ class CompilationEngine:
         valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
         valid_var_dec &= self._add_elements(var_dec_root, self._add_elements(var_dec_root,
                                                                              self._asterisk_compiling(
-                                                                                 self.compile_comma_and_type_and_var_name)))
+                                                                                 self._compile_comma_and_type_and_var_name)))
         valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
         if valid_var_dec:
             return [var_dec_root]
@@ -371,6 +371,12 @@ class CompilationEngine:
     def _compile_op(self):
         return self._add_token_if_or(expected_tokens=OPERATORS)
 
+    def _compile_unary_op(self):
+        return self._add_token_if_or(expected_tokens=UNARY_OPERATORS)
+
+    def _compile_keyword_constant(self):
+        return self._add_token_if_or(expected_tokens=KEYWORD_CONSTANTS)
+
     def _compile_op_term(self):
         # op term
         op_elements = self._compile_op()
@@ -405,9 +411,25 @@ class CompilationEngine:
         to distinguish between the three possibilities. Any other token is not
         part of this term and should not be advanced over.
         """
-        # Your code goes here!
-        # TODO
-        pass
+        # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
+        # '(' expression ')' | unaryOp term
+        self._or_compiling([
+            self._add_token_if(expected_type=TokenTypes.INT_CONST),
+            self._add_token_if(expected_type=TokenTypes.STRING_CONST),
+            self._compile_keyword_constant(),
+            self._add_token_if(expected_type=TokenTypes.IDENTIFIER),
+            self._sequence_compiling([
+                self._add_token_if(expected_token='['),
+                self.compile_expression(),
+                self._add_token_if(expected_token=']')
+            ]),
+            self._compile_subroutine_call(),
+            self._sequence_compiling([self._add_token_if(expected_token='('),
+                                      self.compile_expression(),
+                                      self._add_token_if(expected_token=')')]),
+            self._sequence_compiling([self._compile_unary_op(), self.compile_term()])
+            # TODO: can we handle recursion?
+        ])
 
     def compile_expression_list(self) -> List[Element]:
         """Compiles a (possibly empty) comma-separated list of expressions."""
@@ -434,14 +456,14 @@ class CompilationEngine:
         else:
             return None
 
-    def compile_comma_and_var_name(self) -> List[Element]:
+    def _compile_comma_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
         var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         if comma_element and var_name_element:
             return comma_element + var_name_element
         return None
 
-    def compile_comma_and_type_and_var_name(self) -> List[Element]:
+    def _compile_comma_and_type_and_var_name(self) -> List[Element]:
         comma_element = self._add_token_if(expected_token=",")
         type_element = self.compile_type()
         var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)

@@ -9,7 +9,7 @@ import typing
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
-from jack_syntax import KEY_WORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
+from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 from config import TokenTypes
 
 
@@ -73,7 +73,7 @@ class JackTokenizer:
             TokenTypes.KEYWORD, TokenTypes.SYMBOL, TokenTypes.IDENTIFIER, TokenTypes.INT_CONST, TokenTypes.STRING_CONST
         """
         curr_token = self.curr_token()
-        if curr_token in KEY_WORDS:
+        if curr_token in KEYWORDS:
             # return TokenTypes.KEYWORD
             return TokenTypes.KEYWORD
         elif curr_token in SYMBOLS:
