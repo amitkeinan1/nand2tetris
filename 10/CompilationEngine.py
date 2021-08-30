@@ -81,7 +81,7 @@ class CompilationEngine:
     def _compile_safely(self, compile_method: Callable) -> Union[List[Element], None]:
         initial_token_index = self.tokenizer.curr_index
         res = compile_method()
-        if not res:
+        if res is None:
             self.tokenizer.curr_index = initial_token_index
         return res
 
