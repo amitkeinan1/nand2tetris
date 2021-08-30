@@ -204,8 +204,8 @@ class CompilationEngine:
     def compile_parameter_list(self) -> Union[List[Element], None]:
         # ((type varName) (',' type varName)*)?
         parameter_list_root = Element("parameterList")
-        self._add_elements(parameter_list_root, self._question_mark_compiling(self._inner_compile_parameter_list))
-        return [parameter_list_root]
+        elements = self._question_mark_compiling(self._inner_compile_parameter_list)
+        return self._add_elements_2(parameter_list_root, elements)
 
     def compile_var_dec(self) -> Union[List[Element], None]:
         """Compiles a var declaration."""
