@@ -499,10 +499,3 @@ class CompilationEngine:
             return comma_element + type_element + var_name_element
         return None
 
-
-if __name__ == '__main__':
-    root = Element("root")
-    c = CompilationEngine("Amit/Main.jack", "Amit/Main.xml")
-    c._add_elements(root, c.compile_subroutine_body())
-    class_tree = etree.ElementTree(root)
-    class_tree.write(c.output_path, pretty_print=True)
