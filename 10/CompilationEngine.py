@@ -298,14 +298,16 @@ class CompilationEngine:
         expression_element = self.compile_expression()
         right_bracket_element = self._add_token_if(expected_token="]")
         if left_bracket_element and expression_element and right_bracket_element:
-            return [left_bracket_element, expression_element, right_bracket_element]
+            return left_bracket_element + expression_element + right_bracket_element
         return None
 
     def compile_let(self) -> Union[List[Element], None]:
         """Compiles a let statement."""
+        # 'let' varName ('[' expression ']')? '=' expression ';'
         let_root = Element("letStatement")
         valid_let_statement = True
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
+        valid_let_statement &= self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         valid_let_statement &= self._add_elements(let_root, self._question_mark_compiling(
             self._compile_array_accessor))
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
