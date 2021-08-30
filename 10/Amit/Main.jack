@@ -1,1 +1,2 @@
-word2 word3
+var SquareGame game;
+let game = SquareGame.new();
