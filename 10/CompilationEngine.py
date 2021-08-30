@@ -15,7 +15,7 @@ from jack_syntax import OPERATORS
 
 
 # TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
-#  we can wrap the methods
+#  we can wrap the methods. update: I wrote sequence compiling and it solves much from the problem.
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
