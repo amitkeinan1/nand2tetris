@@ -461,26 +461,21 @@ class CompilationEngine:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # (expression (',' expression)* )?
         expression_list_root = Element("expressionList")
-        self._add_elements(expression_list_root, self._question_mark_compiling(self._inner_compile_expression_list))
-        return [expression_list_root]
+        elements = self._question_mark_compiling(self._inner_compile_expression_list)
+        return self._add_elements_2(expression_list_root, elements)
 
     def compile_type(self) -> Union[List[Element], None]:
         return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self) -> Union[List[Element], None]:
         subroutine_body_root = Element("subroutineBody")
-
-        valid_subroutine_body = True
-        valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="{"))
-        valid_subroutine_body &= self._add_elements(subroutine_body_root,
-                                                    self._asterisk_compiling(self.compile_var_dec))
-        valid_subroutine_body &= self._add_elements(subroutine_body_root, self.compile_statements())
-        valid_subroutine_body &= self._add_elements(subroutine_body_root, self._add_token_if(expected_token="}"))
-
-        if valid_subroutine_body:
-            return [subroutine_body_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if, {'expected_token': "{"}),
+            (self._asterisk_compiling, {'compile_method': self.compile_var_dec}),
+            (self.compile_statements, {}),
+            (self._add_token_if, {'expected_token': "}"})
+        ])
+        return self._add_elements_2(subroutine_body_root, elements)
 
     def _compile_comma_and_var_name(self) -> Union[List[Element], None]:
         return self._sequence_compiling_with_kwargs([
