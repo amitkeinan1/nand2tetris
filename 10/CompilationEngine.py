@@ -270,7 +270,7 @@ class CompilationEngine:
             (self._add_token_if, {'expected_type': TokenTypes.IDENTIFIER}),
             (self._add_token_if, {'expected_token': '('}),
             (self.compile_expression_list, {}),
-            (self._add_token_if, {expected_token: ')'})
+            (self._add_token_if, {'expected_token': ')'})
 
         ])
 
