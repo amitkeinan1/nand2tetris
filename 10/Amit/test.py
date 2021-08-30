@@ -92,10 +92,19 @@ def test_expression_list():
     class_tree.write(c.output_path, pretty_print=True)
 
 
+def test_comma_expression():
+    root = Element("root")
+    c = CompilationEngine("comma_expression.jack", "Main.xml")
+    c._add_elements(root, c._compile_comma_expression())
+    class_tree = etree.ElementTree(root)
+    class_tree.write(c.output_path, pretty_print=True)
+
+
 if __name__ == '__main__':
+    test_comma_expression()
     # test_expression_list()
     # test_class_subroutine_call()
-    test_subroutine_call()
+    # test_subroutine_call()
     # test_term()
     # test_expression()
     # test_let()
