@@ -272,17 +272,14 @@ class CompilationEngine:
 
         # (className | varName) '.' subroutineName '(' expressionList ')'
 
-        left_bracket_1_elements = self._add_token_if(expected_token='(')
         class_or_var_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
-        right_bracket_1_elements = self._add_token_if(expected_token=')')
         period_elements = self._add_token_if(expected_token='.')
         subroutine_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         left_bracket_2_elements = self._add_token_if(expected_token='(')
         expression_list_elements = self.compile_expression_list()
         right_bracket_2_elements = self._add_token_if(expected_token=')')
 
-        elements_lists = [left_bracket_1_elements, class_or_var_name_elements, right_bracket_1_elements,
-                          period_elements, subroutine_name_elements,
+        elements_lists = [class_or_var_name_elements, period_elements, subroutine_name_elements,
                           left_bracket_2_elements, expression_list_elements, right_bracket_2_elements]
         if not None in elements_lists:
             return [elem for elements in elements_lists for elem in elements]
