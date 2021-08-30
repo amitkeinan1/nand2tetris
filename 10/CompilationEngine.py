@@ -105,6 +105,13 @@ class CompilationEngine:
         else:
             return []
 
+    def _sequence_compiling(self, compile_methods):
+        elements_lists = [self._compile_safely(compile_method) for compile_method in compile_methods]
+        if not None in elements_lists:
+            return [elem for elements in elements_lists for elem in elements]
+        else:
+            return None
+
     def _add_elements(self, root: Element, elements: List[Element]) -> List[Element]:
         if elements is None:
             return False
