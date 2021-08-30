@@ -165,37 +165,30 @@ class CompilationEngine:
         """Compiles a static declaration or a field declaration."""
         var_dec_root = Element("classVarDec")
 
-        valid_var_dec = True
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if_or(expected_tokens=["static", "field"]))
-        valid_var_dec &= self._add_elements(var_dec_root, self.compile_type())
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(TokenTypes.IDENTIFIER))
-        valid_var_dec &= self._add_elements(var_dec_root, self._asterisk_compiling(self._compile_comma_and_var_name))
-        valid_var_dec &= self._add_elements(var_dec_root, self._add_token_if(expected_token=";"))
-
-        if valid_var_dec:
-            return [var_dec_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if_or, {"expected_tokens": ["static", "field"]}),
+            (self.compile_type, {}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._asterisk_compiling, {"compile_method": self._compile_comma_and_var_name}),
+            (self._add_token_if, {"expected_token": ";"})
+        ])
+        return self._add_elements_2(var_dec_root, elements)
 
     def compile_subroutine(self) -> Union[List[Element], None]:
         """Compiles a complete method, function, or constructor."""
         subroutine_root = Element("subroutineDec")
 
-        valid_subroutine = True
-        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if_or(
-            expected_tokens=["constructor", "function", "method"]))
-        valid_subroutine &= self._add_elements(subroutine_root,
-                                               self._add_token_if_or_compile(None, "void", self.compile_type))
-        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(TokenTypes.IDENTIFIER))
-        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token="("))
-        valid_subroutine &= self._add_elements(subroutine_root, self.compile_parameter_list())
-        valid_subroutine &= self._add_elements(subroutine_root, self._add_token_if(expected_token=")"))
-        valid_subroutine &= self._add_elements(subroutine_root, self.compile_subroutine_body())
-
-        if valid_subroutine:
-            return [subroutine_root]
-        else:
-            return None
+        elements = self._sequence_compiling_with_kwargs([
+            (self._add_token_if_or, {"expected_tokens": ["constructor", "function", "method"]}),
+            (self._add_token_if_or_compile, {"expected_type": None, "expected_token": "void", "compile_method": 
+                self.compile_type}),
+            (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._add_token_if, {"expected_token": "("}),
+            (self.compile_parameter_list, {}),
+            (self._add_token_if, {"expected_token": ")"}),
+            (self.compile_subroutine_body, {})
+        ])
+        return self._add_elements_2(subroutine_root, elements)
 
     def _inner_compile_parameter_list(self) -> Union[List[Element], None]:
         """Compiles a (possibly empty) parameter list, not including the
