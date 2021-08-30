@@ -116,11 +116,14 @@ class CompilationEngine:
             return []
 
     def _sequence_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
-        elements_lists = [self._compile_safely(compile_method) for compile_method in compile_methods]
-        if None not in elements_lists:
-            return [elem for elements in elements_lists for elem in elements]
-        else:
-            return None
+        elements_lists = []
+        for compile_method in compile_methods:
+            elements = self._compile_safely(compile_method)
+            if elements is not None:
+                elements_lists.append(elements)
+            else:
+                return None
+        return [elem for elements in elements_lists for elem in elements]
 
     def _sequence_compiling_with_kwargs(self, compile_methods_and_kwargs: List[Tuple[Callable, dict]]) -> List[Element]:
         compile_methods = [lambda: method_and_kwargs[0](**method_and_kwargs[1]) for method_and_kwargs in

@@ -1,8 +1,4 @@
 <root>
-  <identifier>SquareGame</identifier>
-  <symbol>.</symbol>
-  <identifier>new</identifier>
-  <symbol>(</symbol>
-  <expressionList/>
-  <symbol>)</symbol>
+  <symbol>+</symbol>
+  <symbol>=</symbol>
 </root>
