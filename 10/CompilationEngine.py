@@ -181,6 +181,7 @@ class CompilationEngine:
         """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
         """
+        # (type varName) (',' type varName)*
         type_element = self.compile_type()
         var_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         more_var_name_elements = self._asterisk_compiling(self._compile_comma_and_type_and_var_name)
@@ -191,6 +192,7 @@ class CompilationEngine:
             return None
 
     def compile_parameter_list(self) -> List[Element]:
+        # ((type varName) (',' type varName)*)?
         parameter_list_root = Element("parameterList")
         self._add_elements(parameter_list_root, self._question_mark_compiling(self._inner_compile_parameter_list))
         return [parameter_list_root]
@@ -244,7 +246,7 @@ class CompilationEngine:
         expression_list_element = self.compile_expression_list()
         right_bracket_element = self._add_token_if(expected_token=')')
 
-        if subroutine_name_element and left_bracket_1_element and expression_list_element + right_bracket_element:
+        if subroutine_name_element and left_bracket_element and expression_list_element + right_bracket_element:
             return subroutine_name_element + left_bracket_element + expression_list_element + right_bracket_element
         else:
             return None
@@ -431,11 +433,23 @@ class CompilationEngine:
             # TODO: can we handle recursion?
         ])
 
+    def _inner_compile_expression_list(self) -> List[Element]:
+        # expression (',' expression)*
+        return self._sequence_compiling([
+            self._add_token_if('('),
+            self.compile_expression(),
+            self._asterisk_compiling([
+                self._add_token_if(expected_token=','),
+                self.compile_expression()
+            ])
+        ])
+
     def compile_expression_list(self) -> List[Element]:
         """Compiles a (possibly empty) comma-separated list of expressions."""
-        # Your code goes here!
-        # TODO
-        pass
+        # (expression (',' expression)* )?
+        expression_list_root = Element("expressionList")
+        self._add_elements(expression_list_root, self._question_mark_compiling(self._inner_compile_expression_list))
+        return [expression_list_root]
 
     def compile_type(self) -> List[Element]:
         return self._add_token_if_or([None, None, None, TokenTypes.IDENTIFIER], ["int", "char", "boolean", None])
