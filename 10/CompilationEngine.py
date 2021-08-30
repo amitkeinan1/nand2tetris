@@ -307,7 +307,7 @@ class CompilationEngine:
         let_root = Element("letStatement")
         valid_let_statement = True
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="let"))
-        valid_let_statement &= self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_type=TokenTypes.IDENTIFIER))
         valid_let_statement &= self._add_elements(let_root, self._question_mark_compiling(
             self._compile_array_accessor))
         valid_let_statement &= self._add_elements(let_root, self._add_token_if(expected_token="="))
