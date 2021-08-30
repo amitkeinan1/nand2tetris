@@ -5,8 +5,10 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import List
+
 from lxml import etree
 from lxml.etree import Element
+
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
 from jack_syntax import OPERATORS
@@ -68,7 +70,7 @@ class CompilationEngine:
             expected_tokens = [None for _ in range(len(expected_types))]
 
         for expected_type, expected_token in zip(expected_types, expected_tokens):
-            # elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it "compile_safely"
+            elements_to_add = self._add_token_if(expected_type, expected_token)  # TODO: make it "compile_safely"
             if elements_to_add:
                 return elements_to_add
         return None
@@ -226,9 +228,44 @@ class CompilationEngine:
         else:
             return None
 
+    def _compile_normal_subroutine_call(self) -> List[Element]:
+
+        # subroutineName '(' expressionList ')'
+
+        subroutine_name_element = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        left_bracket_element = self._add_token_if(expected_token='(')
+        expression_list_element = self.compile_expression_list()
+        right_bracket_element = self._add_token_if(expected_token=')')
+
+        if subroutine_name_element and left_bracket_1_element and expression_list_element + right_bracket_element:
+            return subroutine_name_element + left_bracket_element + expression_list_element + right_bracket_element
+        else:
+            return None
+
+    def _compile_class_subroutine_call(self) -> List[Element]:
+
+        # (className | varName) '.' subroutineName '(' expressionList ')'
+
+        left_bracket_1_elements = self._add_token_if(expected_token='(')
+        class_or_var_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        right_bracket_1_elements = self._add_token_if(expected_token=')')
+        period_elements = self._add_token_if(expected_token='.')
+        subroutine_name_elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+        left_bracket_2_elements = self._add_token_if(expected_token='(')
+        expression_list_elements = self.compile_expression_list()
+        right_bracket_2_elements = self._add_token_if(expected_token=')')
+
+        elements_lists = [left_bracket_1_elements, class_or_var_name_elements, right_bracket_1_elements,
+                          period_elements, subroutine_name_elements,
+                          left_bracket_2_elements, expression_list_elements, right_bracket_2_elements]
+        if not None in elements_lists:
+            return [elem for elements in elements_lists for elem in elements]
+        else:
+            return None
+
     def _compile_subroutine_call(self) -> List[Element]:
-        # TODO
-        pass
+        # normalSubroutineCall | classSubroutineCall
+        return self._or_compiling([self._compile_normal_subroutine_call, self._compile_class_subroutine_call])
 
     def _compile_array_accessor(self) -> List[Element]:
         left_bracket_element = self._add_token_if(expected_token="[")
