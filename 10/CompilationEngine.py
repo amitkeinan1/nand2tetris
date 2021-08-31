@@ -43,6 +43,7 @@ class CompilationEngine:
             f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
 
     def compile(self):
+        """ the main compile class. uses compile_class for the logic and write the contents to a file."""
         root = self.compile_class()
         if root is None:
             raise Exception("class could not be compiled.")
