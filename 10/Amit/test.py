@@ -105,7 +105,7 @@ if __name__ == '__main__':
     # test_expression_list()
     # test_class_subroutine_call()
     # test_subroutine_call()
-    # test_term()
+    test_term()
     # test_expression()
     # test_let()
     # test_statements()
