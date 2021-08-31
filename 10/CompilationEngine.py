@@ -6,14 +6,15 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import List, Callable, Tuple, Union, Dict
 
-from xml.dom import minidom
 from lxml import etree
 from lxml.etree import Element
+from xml.dom import minidom
 
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from utils import xml_write_patch
+
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -39,7 +40,7 @@ class CompilationEngine:
         if self.tokenizer.curr_index == len(self.tokenizer.tokens):
             return None
         token_element = Element(self.tokenizer.token_type_repr())
-        token_element.text = self.tokenizer.token_repr()
+        token_element.text = f" {self.tokenizer.token_repr()} "
         self.tokenizer.advance()
         return [token_element]
 
@@ -139,18 +140,21 @@ class CompilationEngine:
             root.append(element)
         return [root]
 
-    def compile(self):
-        root = self.compile_class()
-        if root is None:
-            raise Exception("class could not be compiled.")
-        tree: etree.ElementTree = etree.ElementTree(root)
+    def _write_xml(self, xml_root):
+        tree: etree.ElementTree = etree.ElementTree(xml_root)
         tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
         minidom_tree = minidom.parseString(tree_string)
         minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
 
         lines = minidom_tree.toprettyxml().split("\n")[1:]
         with open(self.output_path, 'w') as f:
-            f.writelines([line + '\n' for line in lines])
+            f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
+
+    def compile(self):
+        root = self.compile_class()
+        if root is None:
+            raise Exception("class could not be compiled.")
+        self._write_xml(root)
 
     # compile methods
     def compile_class(self) -> Element:
