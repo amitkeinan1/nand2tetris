@@ -29,12 +29,14 @@
           <identifier>game</identifier>
           <symbol>=</symbol>
           <expression>
-            <identifier>SquareGame</identifier>
-            <symbol>.</symbol>
-            <identifier>new</identifier>
-            <symbol>(</symbol>
-            <expressionList/>
-            <symbol>)</symbol>
+            <term>
+              <identifier>SquareGame</identifier>
+              <symbol>.</symbol>
+              <identifier>new</identifier>
+              <symbol>(</symbol>
+              <expressionList/>
+              <symbol>)</symbol>
+            </term>
           </expression>
           <symbol>;</symbol>
         </letStatement>
@@ -100,7 +102,9 @@
           <keyword>if</keyword>
           <symbol>(</symbol>
           <expression>
-            <keyword>false</keyword>
+            <term>
+              <keyword>false</keyword>
+            </term>
           </expression>
           <symbol>)</symbol>
           <symbol>{</symbol>
@@ -110,7 +114,9 @@
               <identifier>s</identifier>
               <symbol>=</symbol>
               <expression>
-                <stringConstant>string constant</stringConstant>
+                <term>
+                  <stringConstant>string constant</stringConstant>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>
@@ -119,7 +125,9 @@
               <identifier>s</identifier>
               <symbol>=</symbol>
               <expression>
-                <keyword>null</keyword>
+                <term>
+                  <keyword>null</keyword>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>
@@ -128,17 +136,23 @@
               <identifier>a</identifier>
               <symbol>[</symbol>
               <expression>
-                <integerConstant>1</integerConstant>
+                <term>
+                  <integerConstant>1</integerConstant>
+                </term>
               </expression>
               <symbol>]</symbol>
               <symbol>=</symbol>
               <expression>
-                <identifier>a</identifier>
-                <symbol>[</symbol>
-                <expression>
-                  <integerConstant>2</integerConstant>
-                </expression>
-                <symbol>]</symbol>
+                <term>
+                  <identifier>a</identifier>
+                  <symbol>[</symbol>
+                  <expression>
+                    <term>
+                      <integerConstant>2</integerConstant>
+                    </term>
+                  </expression>
+                  <symbol>]</symbol>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>
@@ -152,14 +166,22 @@
               <identifier>i</identifier>
               <symbol>=</symbol>
               <expression>
-                <identifier>i</identifier>
+                <term>
+                  <identifier>i</identifier>
+                </term>
                 <symbol>*</symbol>
-                <symbol>(</symbol>
-                <expression>
-                  <symbol>-</symbol>
-                  <identifier>j</identifier>
-                </expression>
-                <symbol>)</symbol>
+                <term>
+                  <symbol>(</symbol>
+                  <expression>
+                    <term>
+                      <symbol>-</symbol>
+                      <term>
+                        <identifier>j</identifier>
+                      </term>
+                    </term>
+                  </expression>
+                  <symbol>)</symbol>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>
@@ -168,14 +190,22 @@
               <identifier>j</identifier>
               <symbol>=</symbol>
               <expression>
-                <identifier>j</identifier>
+                <term>
+                  <identifier>j</identifier>
+                </term>
                 <symbol>/</symbol>
-                <symbol>(</symbol>
-                <expression>
-                  <symbol>-</symbol>
-                  <integerConstant>2</integerConstant>
-                </expression>
-                <symbol>)</symbol>
+                <term>
+                  <symbol>(</symbol>
+                  <expression>
+                    <term>
+                      <symbol>-</symbol>
+                      <term>
+                        <integerConstant>2</integerConstant>
+                      </term>
+                    </term>
+                  </expression>
+                  <symbol>)</symbol>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>
@@ -184,9 +214,13 @@
               <identifier>i</identifier>
               <symbol>=</symbol>
               <expression>
-                <identifier>i</identifier>
+                <term>
+                  <identifier>i</identifier>
+                </term>
                 <symbol>|</symbol>
-                <identifier>j</identifier>
+                <term>
+                  <identifier>j</identifier>
+                </term>
               </expression>
               <symbol>;</symbol>
             </letStatement>

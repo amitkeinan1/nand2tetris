@@ -393,21 +393,22 @@ class CompilationEngine:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
+        term_root = Element("term")
         next_token = self.tokenizer.next_token()
         if self.tokenizer.token_type() == TokenTypes.IDENTIFIER and next_token:
             if next_token == "[":
-                return self._sequence_compiling_with_kwargs([
+                elements =  self._sequence_compiling_with_kwargs([
                     (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
                     (self._add_token_if, {"expected_token": '['}),
                     (self.compile_expression, {}),
                     (self._add_token_if, {"expected_token": ']'})
                 ])
             elif next_token == "." or next_token == "(":
-                return self._compile_subroutine_call()
+                elements =  self._compile_subroutine_call()
             else:
-                return self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+                elements =  self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         else:
-            return self._or_compiling([
+            elements =  self._or_compiling([
                 self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.INT_CONST),
                 self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.STRING_CONST),
                 self._compile_keyword_constant,
@@ -419,6 +420,7 @@ class CompilationEngine:
                 self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
                 # TODO: can we handle recursion? YES
             ])
+        return self._add_elements(term_root, elements)
 
     def _inner_compile_expression_list(self) -> List[Element]:
         # expression (',' expression)*
