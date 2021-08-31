@@ -146,7 +146,8 @@ class CompilationEngine:
         minidom_tree = minidom.parseString(tree_string)
         minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
 
-        lines = minidom_tree.toprettyxml().split("\n")[1:]
+        lines = minidom_tree.toprettyxml().split("\n")[
+                1:-1]  # remove first and last line to be exactly consistent with the given tests format
         with open(self.output_path, 'w') as f:
             f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
 
