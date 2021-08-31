@@ -148,15 +148,9 @@ class CompilationEngine:
         minidom_tree = minidom.parseString(tree_string)
         minidom_tree.firstChild.__class__.writexml = xml_write_patcher(minidom_tree.firstChild.__class__.writexml)
 
+        lines = minidom_tree.toprettyxml().split("\n")[1:]
         with open(self.output_path, 'w') as f:
-            f.write(minidom_tree.toprettyxml())
-
-
-            # f.write(xml.dom.minidom.parseString(etree.tostring(tree, method="c14n")).toprettyxml())
-        # dom =
-        # pretty_xml_as_string = dom.
-        # tree.write(self.output_path, pretty_print=True)
-        # tree.write_c14n(self.output_path)
+            f.writelines([line + '\n' for line in lines])
 
     # compile methods
     def compile_class(self) -> Element:
