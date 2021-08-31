@@ -6,11 +6,12 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import re
 import typing
+
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
-from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 from config import TokenTypes
+from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 
 
 class JackTokenizer:
