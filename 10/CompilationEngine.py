@@ -13,7 +13,7 @@ from lxml.etree import Element
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
-from utils import xml_write_patcher
+from utils import xml_write_patch
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -146,7 +146,7 @@ class CompilationEngine:
         tree: etree.ElementTree = etree.ElementTree(root)
         tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
         minidom_tree = minidom.parseString(tree_string)
-        minidom_tree.firstChild.__class__.writexml = xml_write_patcher(minidom_tree.firstChild.__class__.writexml)
+        minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
 
         lines = minidom_tree.toprettyxml().split("\n")[1:]
         with open(self.output_path, 'w') as f:

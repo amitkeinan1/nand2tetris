@@ -4,6 +4,9 @@ from lxml.etree import Element
 if __name__ == '__main__':
     root = Element("root")
     empty_element = Element("empty")
+    empty_element.text=''
+    empty_element_2 = Element("empty")
+    empty_element.append(empty_element_2)
     root.append(empty_element)
     class_tree = etree.ElementTree(root)
     class_tree.write("output1.xml", pretty_print=True)  # work
