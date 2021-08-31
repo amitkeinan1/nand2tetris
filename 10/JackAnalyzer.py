@@ -38,5 +38,5 @@ if "__main__" == __name__:
         filename, extension = os.path.splitext(input_path)
         if extension.lower() != ".jack":
             continue
-        output_path = filename + "-our" + ".xml"  # TODO: remove "our" after testing
+        output_path = filename + ".xml"  # TODO: remove "our" after testing
         analyze_file(input_path, output_path)
