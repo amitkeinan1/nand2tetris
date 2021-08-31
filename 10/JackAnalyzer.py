@@ -19,7 +19,7 @@ def analyze_file(
         input_file (typing.TextIO): the file to analyze.
         output_file (typing.TextIO): writes all output to this file.
     """
-    compiler = CompilationEngine(input_path, output_path+"2")
+    compiler = CompilationEngine(input_path, output_path)
     compiler.compile()
 
 
