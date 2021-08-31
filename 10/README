@@ -20,7 +20,3 @@ JackPreprocessing.py - handles preprocessing of jack code streams: mainly remove
 jack_syntax.py - this file contains string constants and regular expressions for some parts of the jack language syntax
 config.py - this file contains constant definitions that are used for internally by the compiler (i.e. token types)
 xml_utils.py - this file include utilities for handling xml files
-
-Remarks
--------
-we
