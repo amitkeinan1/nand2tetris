@@ -75,7 +75,7 @@ def _split_to_tokens(text):
             code_part_text = _seperate_symbols(code_part_text)
             code_part_text = _remove_new_lines(code_part_text)
             code_part_text = _remove_redundant_whitespaces(code_part_text)
-            part_tokens = code_part_text.split(' ')
+            part_tokens = code_part_text.split()
         tokens += part_tokens
     return tokens
 

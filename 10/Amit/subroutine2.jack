@@ -1,5 +1,4 @@
-class Main {
+
     function void main() {
 	let length = Keyboard.readInt("HOW MANY NUMBERS? ");
     }
-}
