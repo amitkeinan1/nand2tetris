@@ -29,7 +29,9 @@
           <identifier>game</identifier>
           <symbol>=</symbol>
           <expression>
-            <identifier>game</identifier>
+            <term>
+              <identifier>game</identifier>
+            </term>
           </expression>
           <symbol>;</symbol>
         </letStatement>
@@ -81,7 +83,9 @@
           <keyword>if</keyword>
           <symbol>(</symbol>
           <expression>
-            <identifier>b</identifier>
+            <term>
+              <identifier>b</identifier>
+            </term>
           </expression>
           <symbol>)</symbol>
           <symbol>{</symbol>
