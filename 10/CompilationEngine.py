@@ -291,7 +291,6 @@ class CompilationEngine:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         let_root = Element("letStatement")
-        valid_let_statement = True
         elements = self._sequence_compiling_with_kwargs([
             (self._add_token_if, {"expected_token": "let"}),
             (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
