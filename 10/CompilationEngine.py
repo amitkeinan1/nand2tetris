@@ -146,6 +146,8 @@ class CompilationEngine:
 
     def super_duper(self):  # TODO rename when done
         root = self.compile_class()
+        if root is None:
+            raise Exception("class could not be compiled.")
         tree = etree.ElementTree(root)
         tree.write(self.output_path, pretty_print=True)
 
