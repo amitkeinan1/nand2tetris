@@ -31,6 +31,23 @@ class CompilationEngine:
         self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
 
+    def _write_xml(self, xml_root):
+        tree: etree.ElementTree = etree.ElementTree(xml_root)
+        tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
+        minidom_tree = minidom.parseString(tree_string)
+        minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
+
+        lines = minidom_tree.toprettyxml().split("\n")[
+                1:-1]  # remove first and last line to be exactly consistent with the given tests format
+        with open(self.output_path, 'w') as f:
+            f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
+
+    def compile(self):
+        root = self.compile_class()
+        if root is None:
+            raise Exception("class could not be compiled.")
+        self._write_xml(root)
+
     # helper methods
     @staticmethod
     def _compile_callable_wrapper(compile_method: Callable, *args, **kwargs) -> Callable:
@@ -139,23 +156,6 @@ class CompilationEngine:
         for element in elements:
             root.append(element)
         return [root]
-
-    def _write_xml(self, xml_root):
-        tree: etree.ElementTree = etree.ElementTree(xml_root)
-        tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
-        minidom_tree = minidom.parseString(tree_string)
-        minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
-
-        lines = minidom_tree.toprettyxml().split("\n")[
-                1:-1]  # remove first and last line to be exactly consistent with the given tests format
-        with open(self.output_path, 'w') as f:
-            f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
-
-    def compile(self):
-        root = self.compile_class()
-        if root is None:
-            raise Exception("class could not be compiled.")
-        self._write_xml(root)
 
     # compile methods
     def compile_class(self) -> Element:
