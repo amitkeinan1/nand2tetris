@@ -9,8 +9,8 @@ from typing import Union
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
-from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 from config import TokenTypes
+from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 
 
 class JackTokenizer:
@@ -80,7 +80,6 @@ class JackTokenizer:
         """
         curr_token = self.curr_token()
         if curr_token in KEYWORDS:
-            # return TokenTypes.KEYWORD
             return TokenTypes.KEYWORD
         elif curr_token in SYMBOLS:
             return TokenTypes.SYMBOL

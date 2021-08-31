@@ -6,9 +6,8 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import os
 import sys
-import typing
+
 from CompilationEngine import CompilationEngine
-from JackTokenizer import JackTokenizer
 
 
 def analyze_file(input_path: str, output_path: str) -> None:

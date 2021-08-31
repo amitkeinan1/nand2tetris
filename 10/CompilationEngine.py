@@ -32,6 +32,7 @@ class CompilationEngine:
         self.output_path = output_path
 
     def _write_xml(self, xml_root):
+        """ takes an xml root and write its tree to xml file in the required format. """
         tree: etree.ElementTree = etree.ElementTree(xml_root)
         tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
         minidom_tree = minidom.parseString(tree_string)
@@ -40,7 +41,8 @@ class CompilationEngine:
         lines = minidom_tree.toprettyxml().split("\n")[
                 1:-1]  # remove first and last line to be exactly consistent with the given tests format
         with open(self.output_path, 'w') as f:
-            f.writelines([line.replace("\t", "  ") + '\n' for line in lines])
+            f.writelines([line.replace("\t", "  ") + '\n' for line in lines])  # replace tabs with double spaces to
+            # be exactly consistent with the given tests format
 
     def compile(self):
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
@@ -170,6 +172,7 @@ class CompilationEngine:
     # compile methods
     def compile_class(self) -> Element:
         """Compiles a complete class."""
+        # 'class' className '{' classVarDec* subroutineDec* '}'
         class_root = Element("class")
         elements = self._sequence_compiling_with_kwargs(
             [
@@ -190,6 +193,7 @@ class CompilationEngine:
 
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
+        # ('static' | 'field') type varName (',' varName)* ';'
         var_dec_root = Element("classVarDec")
 
         elements = self._sequence_compiling_with_kwargs([
