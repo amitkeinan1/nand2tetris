@@ -5,7 +5,7 @@ and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import re
-import typing
+from typing import Union
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
@@ -18,13 +18,13 @@ class JackTokenizer:
     into Jack language tokens, as specified by the Jack grammar.
     """
 
-    def __init__(self, input_path: str) -> None:
-        """Opens the input stream and gets ready to tokenize it.
+    def __init__(self, input_file_path: str) -> None:
+        """Opens the input path and gets ready to tokenize it.
 
         Args:
-            input_stream (typing.TextIO): input stream.
+            input_file_path (str): input file path.
         """
-        with open(input_path, 'r') as jack_file:
+        with open(input_file_path, 'r') as jack_file:
             jack_code = jack_file.read()
         self.tokens = get_tokens(jack_code)
         self.tokens_num = len(self.tokens)
@@ -66,7 +66,7 @@ class JackTokenizer:
     def curr_token(self):
         return self.tokens[self.curr_index]
 
-    def next_token(self):
+    def next_token(self) -> Union[str, bool]:
         if self.has_more_tokens():
             return self.tokens[self.curr_index + 1]
         else:
@@ -75,8 +75,8 @@ class JackTokenizer:
     def token_type(self) -> TokenTypes:
         """
         Returns:
-            str: the type of the current token, can be
-            TokenTypes.KEYWORD, TokenTypes.SYMBOL, TokenTypes.IDENTIFIER, TokenTypes.INT_CONST, TokenTypes.STRING_CONST
+            TokenTypes: the type of the current token, can be one of:
+            `KEYWORD`, `SYMBOL`, `IDENTIFIER`, `INT_CONST`, `STRING_CONST`
         """
         curr_token = self.curr_token()
         if curr_token in KEYWORDS:
@@ -136,10 +136,10 @@ class JackTokenizer:
         """
         return self.tokens[self.curr_index][1:-1]
 
-    def token_repr(self):
+    def token_repr(self) -> str:
         return str(self._type_to_repr_method[self.token_type()]())
 
-    def token_type_repr(self):
+    def token_type_repr(self) -> str:
         return self._type_to_type_repr[self.token_type()]
 
     def tokenize(self, output_path: str) -> None:
@@ -152,9 +152,3 @@ class JackTokenizer:
 
         tokens_tree = ET.ElementTree(tokens_root)
         tokens_tree.write(output_path, pretty_print=True)
-
-
-if __name__ == '__main__':
-    with open("TokenizerTest/condition.jack") as stream:
-        t = JackTokenizer(stream)
-        t.tokenize("tokens.xml")
