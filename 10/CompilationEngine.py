@@ -6,13 +6,14 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 from typing import List, Callable, Tuple, Union, Dict
 
+from xml.dom import minidom
 from lxml import etree
 from lxml.etree import Element
 
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
-
+from utils import xml_write_patcher
 
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -142,8 +143,20 @@ class CompilationEngine:
         root = self.compile_class()
         if root is None:
             raise Exception("class could not be compiled.")
-        tree = etree.ElementTree(root)
-        tree.write(self.output_path, pretty_print=True)
+        tree: etree.ElementTree = etree.ElementTree(root)
+        tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
+        minidom_tree = minidom.parseString(tree_string)
+        minidom_tree.firstChild.__class__.writexml = xml_write_patcher(minidom_tree.firstChild.__class__.writexml)
+
+        with open(self.output_path, 'w') as f:
+            f.write(minidom_tree.toprettyxml())
+
+
+            # f.write(xml.dom.minidom.parseString(etree.tostring(tree, method="c14n")).toprettyxml())
+        # dom =
+        # pretty_xml_as_string = dom.
+        # tree.write(self.output_path, pretty_print=True)
+        # tree.write_c14n(self.output_path)
 
     # compile methods
     def compile_class(self) -> Element:
