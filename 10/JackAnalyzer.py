@@ -11,13 +11,13 @@ from CompilationEngine import CompilationEngine
 from JackTokenizer import JackTokenizer
 
 
-def analyze_file(
-        input_path: str, output_path: str) -> None:
+def analyze_file(input_path: str, output_path: str) -> None:
     """Analyzes a single file.
 
     Args:
         input_file (typing.TextIO): the file to analyze.
         output_file (typing.TextIO): writes all output to this file.
+        :param output_path:
     """
     compiler = CompilationEngine(input_path, output_path)
     compiler.compile()

@@ -13,7 +13,7 @@ from xml.dom import minidom
 from JackTokenizer import JackTokenizer
 from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
-from utils import xml_write_patch
+from xml_utils import xml_write_patch
 
 
 class CompilationEngine:
