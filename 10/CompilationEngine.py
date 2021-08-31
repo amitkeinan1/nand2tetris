@@ -144,7 +144,7 @@ class CompilationEngine:
             root.append(element)
         return [root]
 
-    def super_duper(self): # TODO rename when done
+    def super_duper(self):  # TODO rename when done
         root = self.compile_class()
         tree = etree.ElementTree(root)
         tree.write(self.output_path, pretty_print=True)
@@ -163,8 +163,12 @@ class CompilationEngine:
                 (self._add_token_if, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
             ]
         )
-        self._add_elements(class_root, elements)
-        return class_root
+
+        res = self._add_elements(class_root, elements)
+        if res is None:
+            return None
+        else:
+            return res[0]
 
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
@@ -396,18 +400,18 @@ class CompilationEngine:
         next_token = self.tokenizer.next_token()
         if self.tokenizer.token_type() == TokenTypes.IDENTIFIER and next_token:
             if next_token == "[":
-                elements =  self._sequence_compiling_with_kwargs([
+                elements = self._sequence_compiling_with_kwargs([
                     (self._add_token_if, {"expected_type": TokenTypes.IDENTIFIER}),
                     (self._add_token_if, {"expected_token": '['}),
                     (self.compile_expression, {}),
                     (self._add_token_if, {"expected_token": ']'})
                 ])
             elif next_token == "." or next_token == "(":
-                elements =  self._compile_subroutine_call()
+                elements = self._compile_subroutine_call()
             else:
-                elements =  self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
+                elements = self._add_token_if(expected_type=TokenTypes.IDENTIFIER)
         else:
-            elements =  self._or_compiling([
+            elements = self._or_compiling([
                 self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.INT_CONST),
                 self._compile_callable_wrapper(self._add_token_if, expected_type=TokenTypes.STRING_CONST),
                 self._compile_keyword_constant,
