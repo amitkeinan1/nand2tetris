@@ -3,6 +3,8 @@ def xml_write_patch(method):
     Full Disclosure: this patch method was taken from stack overflow:
     `https://stackoverflow.com/questions/16813938/
      python-print-pretty-xml-create-opening-and-closing-tags-for-empty-tags-text`
+     it is used to allow pretty line by line printing of xml's in which empty elements appear with an opening tag and a
+     closing tag, as expected by the tests, and not a single self-closing tag.
     """
     def patch_method(self, *args, **kwargs):
         old = self.childNodes
