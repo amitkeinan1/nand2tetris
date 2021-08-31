@@ -20,7 +20,7 @@ def analyze_file(
         output_file (typing.TextIO): writes all output to this file.
     """
     compiler = CompilationEngine(input_path, output_path)
-    compiler.super_duper()
+    compiler.compile()
 
 
 if "__main__" == __name__:

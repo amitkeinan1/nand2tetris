@@ -14,10 +14,6 @@ from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 
 
-# TODO: there are two types of compile methods and inside the groups they all look the same, this s code duplication,
-#  we can wrap the methods. update: I wrote sequence compiling and it solves much from the problem.
-
-
 class CompilationEngine:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
@@ -39,8 +35,7 @@ class CompilationEngine:
         return lambda: compile_method(*args, **kwargs)
 
     def _add_curr_token(self) -> Union[List[Element], None]:
-        if self.tokenizer.curr_index == len(
-                self.tokenizer.tokens):  # TODO: this is kinda patch but this is from the last stuff t fix, unless it causes bugs
+        if self.tokenizer.curr_index == len(self.tokenizer.tokens):
             return None
         token_element = Element(self.tokenizer.token_type_repr())
         token_element.text = self.tokenizer.token_repr()
@@ -48,8 +43,7 @@ class CompilationEngine:
         return [token_element]
 
     def _add_token_if(self, expected_type=None, expected_token=None) -> Union[List[Element], None]:
-        if self.tokenizer.curr_index == len(
-                self.tokenizer.tokens):  # TODO: this is kinda patch but this is from the last stuff t fix, unless it causes bugs
+        if self.tokenizer.curr_index == len(self.tokenizer.tokens):
             return None
         if (expected_type is None or self.tokenizer.token_type() == expected_type) and (
                 expected_token is None or self.tokenizer.curr_token() == expected_token):
@@ -144,7 +138,7 @@ class CompilationEngine:
             root.append(element)
         return [root]
 
-    def super_duper(self):  # TODO rename when done
+    def compile(self):
         root = self.compile_class()
         if root is None:
             raise Exception("class could not be compiled.")
@@ -423,7 +417,6 @@ class CompilationEngine:
                     (self._add_token_if, {"expected_token": ')'})
                 ]),
                 self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
-                # TODO: can we handle recursion? YES
             ])
         return self._add_elements(term_root, elements)
 
