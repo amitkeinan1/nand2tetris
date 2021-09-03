@@ -30,9 +30,9 @@
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier> SquareGame </identifier>
+              <identifier-class-0-usage> SquareGame </identifier-class-0-usage>
               <symbol> . </symbol>
-              <identifier> new </identifier>
+              <identifier-subroutine-0-usage> new </identifier-subroutine-0-usage>
               <symbol> ( </symbol>
               <expressionList/>
               <symbol> ) </symbol>
@@ -42,7 +42,7 @@
         </letStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier> game </identifier>
+          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
           <symbol> . </symbol>
           <identifier-subroutine-0-usage> run </identifier-subroutine-0-usage>
           <symbol> ( </symbol>
@@ -52,7 +52,7 @@
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier> game </identifier>
+          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
           <symbol> . </symbol>
           <identifier-subroutine-0-usage> dispose </identifier-subroutine-0-usage>
           <symbol> ( </symbol>
@@ -144,7 +144,7 @@
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> a </identifier>
+                  <identifier-VAR-3-usage> a </identifier-VAR-3-usage>
                   <symbol> [ </symbol>
                   <expression>
                     <term>
@@ -167,7 +167,7 @@
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> i </identifier>
+                  <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
                 </term>
                 <symbol> * </symbol>
                 <term>
@@ -176,7 +176,7 @@
                     <term>
                       <symbol> - </symbol>
                       <term>
-                        <identifier> j </identifier>
+                        <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
                       </term>
                     </term>
                   </expression>
@@ -191,7 +191,7 @@
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> j </identifier>
+                  <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
                 </term>
                 <symbol> / </symbol>
                 <term>
@@ -215,11 +215,11 @@
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier> i </identifier>
+                  <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
                 </term>
                 <symbol> | </symbol>
                 <term>
-                  <identifier> j </identifier>
+                  <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
                 </term>
               </expression>
               <symbol> ; </symbol>
