@@ -58,7 +58,7 @@ class CodeWriter:
         for class_var in class_xml.find(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
         for subroutine_dec in class_xml.find(f"./{SUBROUTINE_DEC_TAG}"):
-            self.write_subroutine_code(subroutine_dec)
+            self.write_subroutine_dec_code(subroutine_dec)
 
     def write_class_var_dec_code(self, var_dec: Element) -> None:  # TODO
         """Compiles a static declaration or a field declaration."""
@@ -74,7 +74,7 @@ class CodeWriter:
         ])
         return self._add_elements(var_dec_root, elements)
 
-    def write_subroutine_code(self, subroutine_dec: Element) -> None:  # TODO
+    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:  # TODO
         """Compiles a complete method, function, or constructor."""
         subroutine_root = Element("subroutineDec")
 
@@ -140,16 +140,12 @@ class CodeWriter:
         statements_root = Element("statements")
         return self._add_elements(statements_root, self._asterisk_compiling(self.write_statement_code))
 
-    def write_do_code(self) -> Union[List[Element], None]:  # TODO
+    def write_do_code(self, do_statement: Element) -> None:  # TODO
         """Compiles a do statement."""
-        do_root = Element("doStatement")
-        elements = self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {"expected_token": "do"}),
-            (self._compile_subroutine_call, {}),
-            (self._get_curr_token_if_condition, {"expected_token": ";"})
-        ]
-        )
-        return self._add_elements(do_root, elements)
+        self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
+        method_name = ""  # TODO: extract method name
+        args_num = len(do_statement.find(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
+        self.vm_writer.write_call(method_name, args_num)
 
     def _compile_normal_subroutine_call(self) -> Union[List[Element], None]:
 
@@ -329,18 +325,18 @@ class CodeWriter:
              )
         ])
 
-    def write_expression_list_code(self) -> List[Element]:  # TODO
+    def write_expression_list_code(self, expression_list: Element) -> None:  # TODO
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # (expression (',' expression)* )?
         expression_list_root = Element("expressionList")
         elements = self._question_mark_compiling(self._inner_compile_expression_list)
         return self._add_elements(expression_list_root, elements)
 
-    def compile_type(self) -> Union[List[Element], None]: # TODO
+    def compile_type(self) -> Union[List[Element], None]:  # TODO
         return self.get_curr_token_if_one_of_conditions([None, None, None, TokenTypes.IDENTIFIER],
                                                         ["int", "char", "boolean", None])
 
-    def write_subroutine_body_code(self) -> Union[List[Element], None]: # TODO
+    def write_subroutine_body_code(self) -> Union[List[Element], None]:  # TODO
         subroutine_body_root = Element("subroutineBody")
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "{"}),
