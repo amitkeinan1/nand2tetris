@@ -208,8 +208,7 @@ class CodeWriter:
         self.vm_writer.write_label(start_label)  # label L1
         # !(cond):
         condition = while_statement.find(EXPRESSION_TAG)
-        self.write_expression_code(condition)
-        self.vm_writer.write_arithmetic("NOT")
+        self._negate_and_push_condition(condition)
 
         self.vm_writer.write_if(out_label)  # if-goto L2
         self.write_statements_code(while_statement.find(STATEMENTS_TAG))  # execute s
@@ -224,36 +223,22 @@ class CodeWriter:
             self.write_expression_code(return_expression)
         self.vm_writer.write_return()
 
-    def _compile_else(self) -> Union[List[Element], None]:
-
-        # ('else' '{' statements '}')
-        return self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {"expected_token": "else"}),
-            (self._get_curr_token_if_condition, {"expected_token": "{"}),
-            (self.write_statements_code, {}),
-            (self._get_curr_token_if_condition, {"expected_token": "}"})])
-
-    def write_if_code(self, if_statement: Element) -> None:  # TODO
+    def write_if_code(self, if_statement: Element) -> None:
         """Compiles a if statement, possibly with a trailing else clause."""
-        if_root = Element("ifStatement")
+        false_label = self._generate_label("if-L1") # TODO: what if there's no else statement
+        true_label = self._generate_label("if-L2")
+        statements = if_statement.findall(STATEMENTS_TAG)
 
-        elements = self._sequence_compiling_with_kwargs([
-            # 'if' '(' expression ')'
-            (self._get_curr_token_if_condition, {'expected_token': "if"}),
-            (self._get_curr_token_if_condition, {'expected_token': "("}),
-            (self.write_expression_code, {}),
-            (self._get_curr_token_if_condition, {'expected_token': ")"}),
+        # !(cond):
+        condition = if_statement.find(EXPRESSION_TAG)
+        self._negate_and_push_condition(condition)
 
-            # '{' statements '}'
-            (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self.write_statements_code, {}),
-            (self._get_curr_token_if_condition, {'expected_token': "}"}),
-
-            # ('else' '{' statements '}')?
-            (self._question_mark_compiling, {'compile_method': self._compile_else})
-        ])
-
-        return self._add_elements(if_root, elements)
+        self.vm_writer.write_if(false_label)  # if-goto L1
+        self.write_statements_code(statements[0])  # execute s1
+        self.vm_writer.write_goto(true_label)  # goto-L2
+        self.vm_writer.write_label(false_label)  # label L1
+        self.write_statements_code(statements[1])  # execute s2 TODO: should it be optional?
+        self.vm_writer.write_label(true_label)  # label L2
 
     def _compile_op(self) -> Union[List[Element], None]:
         return self.get_curr_token_if_one_of_conditions(expected_tokens=OPERATORS)
@@ -347,3 +332,7 @@ class CodeWriter:
         label = f"{name} - {self.labels_count}"
         self.labels_count += 1
         return label
+
+    def _negate_and_push_condition(self, condition_expression):
+        self.write_expression_code(condition_expression)
+        self.vm_writer.write_arithmetic("NOT")
