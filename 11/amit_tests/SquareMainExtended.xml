@@ -11,7 +11,7 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier> main </identifier>
+    <identifier-subroutine-0-definition> main </identifier-subroutine-0-definition>
     <symbol> ( </symbol>
     <parameterList/>
     <symbol> ) </symbol>
@@ -19,8 +19,8 @@
       <symbol> { </symbol>
       <varDec>
         <keyword> var </keyword>
-        <identifier> SquareGame </identifier>
-        <identifier> game </identifier>
+        <identifier-class-0-usage> SquareGame </identifier-class-0-usage>
+        <identifier-VAR-0-definition> game </identifier-VAR-0-definition>
         <symbol> ; </symbol>
       </varDec>
       <statements>
@@ -71,7 +71,7 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier> more </identifier>
+    <identifier-subroutine-0-definition> more </identifier-subroutine-0-definition>
     <symbol> ( </symbol>
     <parameterList/>
     <symbol> ) </symbol>
@@ -80,21 +80,21 @@
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier> i </identifier>
+        <identifier-VAR-0-definition> i </identifier-VAR-0-definition>
         <symbol> , </symbol>
-        <identifier> j </identifier>
+        <identifier-VAR-1-definition> j </identifier-VAR-1-definition>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
-        <identifier> String </identifier>
-        <identifier> s </identifier>
+        <identifier-class-0-usage> String </identifier-class-0-usage>
+        <identifier-VAR-2-definition> s </identifier-VAR-2-definition>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
-        <identifier> Array </identifier>
-        <identifier> a </identifier>
+        <identifier-class-0-usage> Array </identifier-class-0-usage>
+        <identifier-VAR-3-definition> a </identifier-VAR-3-definition>
         <symbol> ; </symbol>
       </varDec>
       <statements>
