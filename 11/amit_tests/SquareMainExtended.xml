@@ -26,7 +26,7 @@
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier> game </identifier>
+          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
           <symbol> = </symbol>
           <expression>
             <term>
@@ -44,7 +44,7 @@
           <keyword> do </keyword>
           <identifier> game </identifier>
           <symbol> . </symbol>
-          <identifier> run </identifier>
+          <identifier-subroutine-0-usage> run </identifier-subroutine-0-usage>
           <symbol> ( </symbol>
           <expressionList/>
           <symbol> ) </symbol>
@@ -54,7 +54,7 @@
           <keyword> do </keyword>
           <identifier> game </identifier>
           <symbol> . </symbol>
-          <identifier> dispose </identifier>
+          <identifier-subroutine-0-usage> dispose </identifier-subroutine-0-usage>
           <symbol> ( </symbol>
           <expressionList/>
           <symbol> ) </symbol>
@@ -111,7 +111,7 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> s </identifier>
+              <identifier-VAR-2-usage> s </identifier-VAR-2-usage>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -122,7 +122,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> s </identifier>
+              <identifier-VAR-2-usage> s </identifier-VAR-2-usage>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -133,7 +133,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> a </identifier>
+              <identifier-VAR-3-usage> a </identifier-VAR-3-usage>
               <symbol> [ </symbol>
               <expression>
                 <term>
@@ -163,7 +163,7 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> i </identifier>
+              <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -187,7 +187,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> j </identifier>
+              <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -211,7 +211,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier> i </identifier>
+              <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
               <symbol> = </symbol>
               <expression>
                 <term>

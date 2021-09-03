@@ -59,6 +59,18 @@ class ExtendedXmlCompiler:
         self.symbol_table.define(var_name, self._get_name(parent[1]), var_kind)
         return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION)
 
+    def _handle_subroutine_call(self, element, index, parent, index_of_call):
+        index_in_call = index - index_of_call
+        is_normal_call = self._get_name(parent[index_of_call + 1]) != '.'
+        if is_normal_call:
+            assert index_in_call == 0
+            return self._generate_tag("subroutine", 0, USAGE)
+        else:
+            if index_in_call == 0:
+                return "identifier"  # TODO
+            if index_in_call == 2:
+                return self._generate_tag("subroutine", 0, USAGE)
+
     # TODO: how can we distinguish between className and varName in subroutine call
     # TODO: add running indexes
     def _get_extended_type(self, element: Element, index: int):
@@ -83,6 +95,17 @@ class ExtendedXmlCompiler:
                 return self._generate_tag("class", 0, USAGE)
             else:
                 return self._handle_var_name_defined(element, parent)
+
+        elif parent_type == LET_TAG:
+            assert index == 1
+            var_name = self._get_name(element)
+            var_kind = self.symbol_table.kind_of(var_name)
+            var_index = self.symbol_table.index_of(var_name)
+            return self._generate_tag(var_kind, var_index, USAGE)
+
+        elif parent_type == DO_TAG:
+            return self._handle_subroutine_call(element, index, parent, 1)
+
 
         else:
             return "identifier"
