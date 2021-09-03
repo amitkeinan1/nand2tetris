@@ -87,12 +87,12 @@ class SymbolTable:
             if the identifier is unknown in the current scope.
         """
         for scope in RESOLUTION_ORDER:
-            symbol = self._table[scope].get(name)
-            if symbol:
+            symbol: Symbol = self._table[scope].get(name)
+            if symbol is not None:
                 return symbol.kind
         return
 
-    def type_of(self, name: str) -> str:
+    def type_of(self, name: str) -> Optional[str]:
         """
         Args:
             name (str):  name of an identifier.
@@ -100,10 +100,13 @@ class SymbolTable:
         Returns:
             str: the type of the named identifier in the current scope.
         """
-        # Your code goes here!
-        pass
+        for scope in RESOLUTION_ORDER:
+            symbol: Symbol = self._table[scope].get(name)
+            if symbol is not None:
+                return symbol.symbol_type
+        return
 
-    def index_of(self, name: str) -> int:
+    def index_of(self, name: str) -> Optional[int]:
         """
         Args:
             name (str):  name of an identifier.
@@ -111,5 +114,8 @@ class SymbolTable:
         Returns:
             int: the index assigned to the named identifier.
         """
-        # Your code goes here!
-        pass
+        for scope in RESOLUTION_ORDER:
+            symbol: Symbol = self._table[scope].get(name)
+            if symbol is not None:
+                return symbol.index
+        return
