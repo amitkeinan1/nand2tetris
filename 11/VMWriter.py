@@ -6,16 +6,20 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import typing
 
+from config import SEGMENTS_NAMES
+
 
 class VMWriter:
     """
     Writes VM commands into a file. Encapsulates the VM command syntax.
     """
 
-    def __init__(self, output_path: str) -> None:
+    def __init__(self, output_stream: typing.TextIO) -> None:
         """Creates a new file and prepares it for writing VM commands."""
-        # Your code goes here!
-        pass
+        self.output_stream = output_stream
+
+    def write_line(self, line):
+        self.output_stream.write(line + "\n")
 
     def write_push(self, segment: str, index: int) -> None:
         """Writes a VM push command.
@@ -25,8 +29,8 @@ class VMWriter:
             "LOCAL", "STATIC", "THIS", "THAT", "POINTER", "TEMP"
             index (int): the index to push to.
         """
-        # Your code goes here!
-        pass
+        segment_name = SEGMENTS_NAMES[segment]
+        self.write_line(f"push {segment_name} {index}")
 
     def write_pop(self, segment: str, index: int) -> None:
         """Writes a VM pop command.
@@ -36,8 +40,8 @@ class VMWriter:
             "LOCAL", "STATIC", "THIS", "THAT", "POINTER", "TEMP".
             index (int): the index to pop from.
         """
-        # Your code goes here!
-        pass
+        segment = SEGMENTS_NAMES[segment]
+        self.write_line(f"pop {segment} {index}")
 
     def write_arithmetic(self, command: str) -> None:
         """Writes a VM arithmetic command.
@@ -46,8 +50,8 @@ class VMWriter:
             command (str): the command to write, can be "ADD", "SUB", "NEG", 
             "EQ", "GT", "LT", "AND", "OR", "NOT".
         """
-        # Your code goes here!
-        pass
+        command = command.lower()
+        self.write_line(command)
 
     def write_label(self, label: str) -> None:
         """Writes a VM label command.
@@ -55,8 +59,7 @@ class VMWriter:
         Args:
             label (str): the label to write.
         """
-        # Your code goes here!
-        pass
+        self.write_line(f"label {label}")
 
     def write_goto(self, label: str) -> None:
         """Writes a VM goto command.
@@ -64,8 +67,7 @@ class VMWriter:
         Args:
             label (str): the label to go to.
         """
-        # Your code goes here!
-        pass
+        self.write_line(f"goto {label}")
 
     def write_if(self, label: str) -> None:
         """Writes a VM if-goto command.
@@ -73,8 +75,7 @@ class VMWriter:
         Args:
             label (str): the label to go to.
         """
-        # Your code goes here!
-        pass
+        self.write_line(f"if-goto {label}")
 
     def write_call(self, name: str, n_args: int) -> None:
         """Writes a VM call command.
@@ -83,8 +84,7 @@ class VMWriter:
             name (str): the name of the function to call.
             n_args (int): the number of arguments the function receives.
         """
-        # Your code goes here!
-        pass
+        self.write_line(f"call {name} {n_args}")
 
     def write_function(self, name: str, n_locals: int) -> None:
         """Writes a VM function command.
@@ -93,15 +93,17 @@ class VMWriter:
             name (str): the name of the function.
             n_locals (int): the number of local variables the function uses.
         """
-        # Your code goes here!
-        pass
+        self.write_line(f"function {name} {n_args}")
 
     def write_return(self) -> None:
         """Writes a VM return command."""
-        # Your code goes here!
-        pass
+        self.write_line("return")
 
-    def close(self) -> None:
-        """Closes the output file."""
-        # Your code goes here!
-        pass
+
+if __name__ == '__main__':
+    # test
+    with open("amit_tests/test_vm_writer.vm", 'w') as output_stream:
+        writer = VMWriter(output_stream)
+        writer.write_push("ARG", 3)
+        writer.write_pop("LOCAL", 5)
+        writer.write_arithmetic("LT")

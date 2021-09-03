@@ -7,3 +7,7 @@ class TokenTypes(Enum):
     INT_CONST = 3
     STRING_CONST = 4
     IDENTIFIER = 5
+
+
+SEGMENTS_NAMES = {"CONST": "constant", "ARG": "argument", "LOCAL": "local", "STATIC": "static", "THIS": "this",
+                  "THAT": "that", "POINTER": "pointer", "TEMP": "temp"}
