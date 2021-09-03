@@ -7,7 +7,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import os
 import sys
 import typing
-from CompilationEngine import CompilationEngine
+from XMLCompiler import XMLCompiler
 from SymbolTable import SymbolTable
 
 
@@ -19,7 +19,7 @@ def compile_file(
         input_file (typing.TextIO): the file to compile.
         output_file (typing.TextIO): writes all output to this file.
     """
-    compiler = CompilationEngine(input_path, output_path)
+    compiler = XMLCompiler(input_path, output_path)
     compiler.compile()
 
 

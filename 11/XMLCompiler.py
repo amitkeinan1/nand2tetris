@@ -18,7 +18,7 @@ from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
 
 
-class CompilationEngine:
+class XMLCompiler:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
     """
