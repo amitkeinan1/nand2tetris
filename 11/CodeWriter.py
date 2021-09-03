@@ -33,6 +33,7 @@ class CodeWriter:
         self.output_path = output_path
         self.symbol_table = SymbolTable()
         self.vm_writer = VMWriter(open(output_path, 'w'))
+        self.labels_count = 0
 
     def _write_xml(self, xml_root):
         """ takes an xml root and write its tree to xml file in the required format. """
@@ -47,7 +48,7 @@ class CodeWriter:
             f.writelines([line.replace("\t", "  ") + '\n' for line in lines])  # replace tabs with double spaces to
             # be exactly consistent with the given tests format
 
-    def write_code(self) -> None:  # TODO
+    def write_code(self) -> None:
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
         self.write_class_code(self.parsed_code.find(CLASS_TAG))
 
@@ -76,6 +77,7 @@ class CodeWriter:
 
     def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:  # TODO
         """Compiles a complete method, function, or constructor."""
+        self.symbol_table.start_subroutine()
         subroutine_root = Element("subroutineDec")
 
         elements = self._sequence_compiling_with_kwargs([
@@ -108,7 +110,7 @@ class CodeWriter:
         elements = self._question_mark_compiling(self._inner_compile_parameter_list)
         return self._add_elements(parameter_list_root, elements)
 
-    def write_var_dec_code(self) -> Union[List[Element], None]:  # TODO
+    def write_var_dec_code(self, var_dec: Element) -> None:  # TODO
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
         var_dec_root = Element("varDec")
@@ -128,11 +130,6 @@ class CodeWriter:
 
         return self._add_elements(var_dec_root, elements)
 
-    def write_statement_code(self):  # TODO
-        return self._or_compiling(
-            [self.write_let_code, self.write_if_code, self.write_while_code, self.write_do_code,
-             self.write_return_code])
-
     def write_statements_code(self, statements: Element) -> None:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
@@ -148,7 +145,6 @@ class CodeWriter:
                 self.write_do_code(statement)
             elif statement.tag == RETURN_TAG:
                 self.write_return_code(statement)
-
 
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
@@ -204,19 +200,21 @@ class CodeWriter:
         ])
         return self._add_elements(let_root, elements)
 
-    def write_while_code(self, while_statement: Element) -> None:  # TODO
+    def write_while_code(self, while_statement: Element) -> None:
         """Compiles a while statement."""
-        while_root = Element("whileStatement")
-        elements = self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {'expected_token': "while"}),
-            (self._get_curr_token_if_condition, {'expected_token': "("}),
-            (self.write_expression_code, {}),
-            (self._get_curr_token_if_condition, {'expected_token': ")"}),
-            (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self.write_statements_code, {}),
-            (self._get_curr_token_if_condition, {'expected_token': "}"})
-        ])
-        return self._add_elements(while_root, elements)
+        start_label = self._generate_label("while-L1")
+        out_label = self._generate_label("while-L2")
+
+        self.vm_writer.write_label(start_label)  # label L1
+        # !(cond):
+        condition = while_statement.find(EXPRESSION_TAG)
+        self.write_expression_code(condition)
+        self.vm_writer.write_arithmetic("NOT")
+
+        self.vm_writer.write_if(out_label)  # if-goto L2
+        self.write_statements_code(while_statement.find(STATEMENTS_TAG))  # execute s
+        self.vm_writer.write_goto(start_label)  # goto L1
+        self.vm_writer.write_label(out_label)  # label L2
 
     def write_return_code(self, return_statement: Element) -> None:
         """Compiles a return statement."""
@@ -320,41 +318,16 @@ class CodeWriter:
             ])
         return self._add_elements(term_root, elements)
 
-    def _inner_compile_expression_list(self) -> List[Element]:
-        # expression (',' expression)*
-        return self._sequence_compiling_with_kwargs([
-            (self.write_expression_code, {}),
-            (self._asterisk_compiling_with_args,
-             {
-                 "compile_method": self._sequence_compiling_with_kwargs,
-                 "compile_methods_and_kwargs": [
-                     (self._get_curr_token_if_condition, {"expected_token": ','},),
-                     (self.write_expression_code, {})
-                 ]
-             }
-             )
-        ])
-
-    def write_expression_list_code(self, expression_list: Element) -> None:  # TODO
+    def write_expression_list_code(self, expression_list: Element) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # (expression (',' expression)* )?
-        expression_list_root = Element("expressionList")
-        elements = self._question_mark_compiling(self._inner_compile_expression_list)
-        return self._add_elements(expression_list_root, elements)
+        for expression in expression_list.findall(EXPRESSION_TAG):
+            self.write_expression_code(expression)
 
-    def compile_type(self) -> Union[List[Element], None]:  # TODO
-        return self.get_curr_token_if_one_of_conditions([None, None, None, TokenTypes.IDENTIFIER],
-                                                        ["int", "char", "boolean", None])
-
-    def write_subroutine_body_code(self) -> Union[List[Element], None]:  # TODO
-        subroutine_body_root = Element("subroutineBody")
-        elements = self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self._asterisk_compiling, {'compile_method': self.write_var_dec_code}),
-            (self.write_statements_code, {}),
-            (self._get_curr_token_if_condition, {'expected_token': "}"})
-        ])
-        return self._add_elements(subroutine_body_root, elements)
+    def write_subroutine_body_code(self, subroutine: Element) -> None:
+        for var_dec in subroutine.findall(VAR_DEC_TAG):
+            self.write_var_dec_code(var_dec)
+        self.write_statements_code(subroutine.find(STATEMENTS_TAG))
 
     def _compile_comma_and_var_name(self) -> Union[List[Element], None]:
         return self._sequence_compiling_with_kwargs([
@@ -368,3 +341,9 @@ class CodeWriter:
             (self.compile_type, {}),
             (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER})
         ])
+
+    # helper methods
+    def _generate_label(self, name: str) -> str:
+        label = f"{name} - {self.labels_count}"
+        self.labels_count += 1
+        return label
