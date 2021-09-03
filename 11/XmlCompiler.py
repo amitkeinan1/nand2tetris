@@ -18,12 +18,12 @@ from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
 
 
-class XMLCompiler:
+class XmlCompiler:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
     """
 
-    def __init__(self, input_path: str, output_path: str) -> None:
+    def __init__(self, input_path: str, output_path: Optional[str]) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()

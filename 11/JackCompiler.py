@@ -7,7 +7,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import os
 import sys
 import typing
-from XMLCompiler import XMLCompiler
+from XmlCompiler import XmlCompiler
 from SymbolTable import SymbolTable
 from CodeWriter import CodeWriter
 
@@ -20,7 +20,7 @@ def compile_file(
         input_file (typing.TextIO): the file to compile.
         output_file (typing.TextIO): writes all output to this file.
     """
-    compiler = XMLCompiler(input_path, output_path)
+    compiler = XmlCompiler(input_path, output_path)
     tree = compiler.compile(write_to_file=False)
     writer = CodeWriter(tree, output_path)
 

@@ -9,8 +9,13 @@ class TokenTypes(Enum):
     IDENTIFIER = 5
 
 
+DEFINITION = "definition"
+USAGE = "usage"
+
 SEGMENTS_NAMES = {"CONST": "constant", "ARG": "argument", "LOCAL": "local", "STATIC": "static", "THIS": "this",
                   "THAT": "that", "POINTER": "pointer", "TEMP": "temp"}
+
+VAR_KINDS = {"static": "STATIC", "field": "FIELD", "argument": "ARG", "var": "VAR"}
 
 
 class IdentifierTypes(Enum):
