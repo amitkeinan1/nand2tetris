@@ -133,18 +133,28 @@ class CodeWriter:
             [self.write_let_code, self.write_if_code, self.write_while_code, self.write_do_code,
              self.write_return_code])
 
-    def write_statements_code(self) -> List[Element]:  # TODO
+    def write_statements_code(self, statements: Element) -> None:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        statements_root = Element("statements")
-        return self._add_elements(statements_root, self._asterisk_compiling(self.write_statement_code))
+        for statement in statements.findall():
+            if statement.tag == LET_TAG:
+                self.write_let_code(statement)
+            elif statement.tag == IF_TAG:
+                self.write_if_code(statement)
+            elif statement.tag == WHILE_TAG:
+                self.write_while_code(statement)
+            elif statement.tag == DO_TAG:
+                self.write_do_code(statement)
+            elif statement.tag == RETURN_TAG:
+                self.write_return_code(statement)
 
-    def write_do_code(self, do_statement: Element) -> None:  # TODO
+
+    def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         method_name = ""  # TODO: extract method name
-        args_num = len(do_statement.find(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
+        args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
 
     def _compile_normal_subroutine_call(self) -> Union[List[Element], None]:
@@ -180,7 +190,7 @@ class CodeWriter:
             (self._get_curr_token_if_condition, {"expected_token": "]"})
         ])
 
-    def write_let_code(self) -> Union[List[Element], None]:  # TODO
+    def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         let_root = Element("letStatement")
@@ -194,7 +204,7 @@ class CodeWriter:
         ])
         return self._add_elements(let_root, elements)
 
-    def write_while_code(self) -> Union[List[Element], None]:  # TODO
+    def write_while_code(self, while_statement: Element) -> None:  # TODO
         """Compiles a while statement."""
         while_root = Element("whileStatement")
         elements = self._sequence_compiling_with_kwargs([
@@ -225,7 +235,7 @@ class CodeWriter:
             (self.write_statements_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": "}"})])
 
-    def write_if_code(self) -> Union[List[Element], None]:  # TODO
+    def write_if_code(self, if_statement: Element) -> None:  # TODO
         """Compiles a if statement, possibly with a trailing else clause."""
         if_root = Element("ifStatement")
 
