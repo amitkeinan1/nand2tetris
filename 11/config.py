@@ -20,6 +20,7 @@ class IdentifierTypes(Enum):
     ARGUMENT_NAME = 4
     IDENTIFIER = 5
 
+
 CLASS_TAG = "class"
 CLASS_VAR_DEC_TAG = "classVarDec"
 SUBROUTINE_DEC_TAG = "subroutineDec"

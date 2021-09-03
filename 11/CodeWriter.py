@@ -49,30 +49,18 @@ class CodeWriter:
 
     def write_code(self) -> None:  # TODO
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
+        self.write_class_code(self.parsed_code.find(CLASS_TAG))
 
-
-    def write_class_code(self) -> None:  # TODO
+    def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        class_root = Element("class")
-        elements = self._sequence_compiling_with_kwargs(
-            [
-                (self._get_curr_token_if_condition, {"expected_type": TokenTypes.KEYWORD, "expected_token": "class"}),
-                (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
-                (self._get_curr_token_if_condition, {"expected_type": TokenTypes.SYMBOL, "expected_token": "{"}),
-                (self._asterisk_compiling, {"compile_method": self.write_class_var_dec_code}),
-                (self._asterisk_compiling, {"compile_method": self.write_subroutine_code}),
-                (self._get_curr_token_if_condition, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
-            ]
-        )
+        self.symbol_table = SymbolTable()
+        for class_var in class_xml.find(f"./{CLASS_VAR_DEC_TAG}"):
+            self.write_class_var_dec_code(class_var)
+        for subroutine_dec in class_xml.find(f"./{SUBROUTINE_DEC_TAG}"):
+            self.write_subroutine_code(subroutine_dec)
 
-        res = self._add_elements(class_root, elements)
-        if res is None:
-            return None
-        else:
-            return res[0]
-
-    def write_class_var_dec_code(self) -> Union[List[Element], None]:  # TODO
+    def write_class_var_dec_code(self, var_dec: Element) -> None:  # TODO
         """Compiles a static declaration or a field declaration."""
         # ('static' | 'field') type varName (',' varName)* ';'
         var_dec_root = Element("classVarDec")
@@ -86,7 +74,7 @@ class CodeWriter:
         ])
         return self._add_elements(var_dec_root, elements)
 
-    def write_subroutine_code(self) -> Union[List[Element], None]:  # TODO
+    def write_subroutine_code(self, subroutine_dec: Element) -> None:  # TODO
         """Compiles a complete method, function, or constructor."""
         subroutine_root = Element("subroutineDec")
 
