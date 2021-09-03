@@ -8,9 +8,7 @@ import os
 import sys
 import typing
 from CompilationEngine import CompilationEngine
-from JackTokenizer import JackTokenizer
 from SymbolTable import SymbolTable
-from VMWriter import VMWriter
 
 
 def compile_file(

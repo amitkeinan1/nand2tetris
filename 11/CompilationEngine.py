@@ -11,6 +11,8 @@ from lxml.etree import Element
 from xml.dom import minidom
 
 from JackTokenizer import JackTokenizer
+from SymbolTable import SymbolTable
+from VMWriter import VMWriter
 from config import TokenTypes
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
@@ -30,6 +32,8 @@ class CompilationEngine:
         """
         self.tokenizer = JackTokenizer(input_path)
         self.output_path = output_path
+        self.symbol_table = SymbolTable()
+        self.vm_writer = VMWriter(output_path)
 
     def _write_xml(self, xml_root):
         """ takes an xml root and write its tree to xml file in the required format. """

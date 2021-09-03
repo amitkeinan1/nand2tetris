@@ -4,8 +4,29 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-import typing
+from typing import Optional
+from dataclasses import dataclass
 
+
+@dataclass
+class Symbol:
+    name: str
+    symbol_type: str
+    kind: str
+    index: int
+
+
+CLASS_SCOPE = "class"
+SUBROUTINE_SCOPE = "subroutine"
+
+FIELD_KIND = "FIELD"
+STATIC_KIND = "STATIC"
+VAR_KIND = "VAR"
+ARG_KIND = "ARG"
+
+CLASS_KINDS = {FIELD_KIND, STATIC_KIND}
+SUBROUTINE_KINDS = {VAR_KIND, ARG_KIND}
+RESOLUTION_ORDER = [SUBROUTINE_SCOPE, CLASS_SCOPE]
 
 class SymbolTable:
     """A symbol table that associates names with information needed for Jack
@@ -15,15 +36,16 @@ class SymbolTable:
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""
-        # Your code goes here!
-        pass
+        self._table = {CLASS_SCOPE: {}, SUBROUTINE_SCOPE: {}}
+        self._kind_indexes = {FIELD_KIND: 0, STATIC_KIND: 0, VAR_KIND: 0, ARG_KIND: 0}
 
     def start_subroutine(self) -> None:
         """Starts a new subroutine scope (i.e., resets the subroutine's 
         symbol table).
         """
-        # Your code goes here!
-        pass
+        self._table[SUBROUTINE_SCOPE] = {}
+        for kind in SUBROUTINE_KINDS:
+            self._kind_indexes[kind] = 0
 
     def define(self, name: str, type: str, kind: str) -> None:
         """Defines a new identifier of a given name, type and kind and assigns 
@@ -36,8 +58,13 @@ class SymbolTable:
             kind (str): the kind of the new identifier, can be:
             "STATIC", "FIELD", "ARG", "VAR".
         """
-        # Your code goes here!
-        pass
+        symbol_index = self.var_count(kind)
+        self._kind_indexes[kind] += 1
+        symbol = Symbol(name, type, kind, symbol_index)
+        if kind in CLASS_KINDS:
+            self._table[CLASS_SCOPE][name] = symbol
+        else:
+            self._table[SUBROUTINE_SCOPE][name] = symbol
 
     def var_count(self, kind: str) -> int:
         """
@@ -45,13 +72,12 @@ class SymbolTable:
             kind (str): can be "STATIC", "FIELD", "ARG", "VAR".
 
         Returns:
-            int: the number of variables of the given kind already defined in 
+            int: the number of variables of the given kind already defined in
             the current scope.
         """
-        # Your code goes here!
-        pass
+        return self._kind_indexes[kind]
 
-    def kind_of(self, name: str) -> str:
+    def kind_of(self, name: str) -> Optional[str]:
         """
         Args:
             name (str): name of an identifier.
@@ -60,8 +86,11 @@ class SymbolTable:
             str: the kind of the named identifier in the current scope, or None
             if the identifier is unknown in the current scope.
         """
-        # Your code goes here!
-        pass
+        for scope in RESOLUTION_ORDER:
+            symbol = self._table[scope].get(name)
+            if symbol:
+                return symbol.kind
+        return
 
     def type_of(self, name: str) -> str:
         """

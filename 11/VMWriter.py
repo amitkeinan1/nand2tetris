@@ -12,7 +12,7 @@ class VMWriter:
     Writes VM commands into a file. Encapsulates the VM command syntax.
     """
 
-    def __init__(self, output_stream: typing.TextIO) -> None:
+    def __init__(self, output_path: str) -> None:
         """Creates a new file and prepares it for writing VM commands."""
         # Your code goes here!
         pass
