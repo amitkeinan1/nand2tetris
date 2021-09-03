@@ -13,7 +13,7 @@ from xml.dom import minidom
 from JackTokenizer import JackTokenizer
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
-from config import TokenTypes
+from config import *
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
 
@@ -180,7 +180,7 @@ class XMLCompiler:
     def compile_class(self) -> Element:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        class_root = Element("class")
+        class_root = Element(CLASS_TAG)
         elements = self._sequence_compiling_with_kwargs(
             [
                 (self._get_curr_token_if_condition, {"expected_type": TokenTypes.KEYWORD, "expected_token": "class"}),
@@ -201,7 +201,7 @@ class XMLCompiler:
     def compile_class_var_dec(self) -> Union[List[Element], None]:
         """Compiles a static declaration or a field declaration."""
         # ('static' | 'field') type varName (',' varName)* ';'
-        var_dec_root = Element("classVarDec")
+        var_dec_root = Element(CLASS_VAR_DEC_TAG)
 
         elements = self._sequence_compiling_with_kwargs([
             (self.get_curr_token_if_one_of_conditions, {"expected_tokens": ["static", "field"]}),
@@ -214,7 +214,7 @@ class XMLCompiler:
 
     def compile_subroutine(self) -> Union[List[Element], None]:
         """Compiles a complete method, function, or constructor."""
-        subroutine_root = Element("subroutineDec")
+        subroutine_root = Element(SUBROUTINE_DEC_TAG)
 
         elements = self._sequence_compiling_with_kwargs([
             (self.get_curr_token_if_one_of_conditions, {"expected_tokens": ["constructor", "function", "method"]}),
@@ -242,14 +242,14 @@ class XMLCompiler:
 
     def compile_parameter_list(self) -> Union[List[Element], None]:
         # ((type varName) (',' type varName)*)?
-        parameter_list_root = Element("parameterList")
+        parameter_list_root = Element(PARAMETER_LIST_TAG)
         elements = self._question_mark_compiling(self._inner_compile_parameter_list)
         return self._add_elements(parameter_list_root, elements)
 
     def compile_var_dec(self) -> Union[List[Element], None]:
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
-        var_dec_root = Element("varDec")
+        var_dec_root = Element(VAR_DEC_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_token": "var"}),
             (self.compile_type, {}),
@@ -274,12 +274,12 @@ class XMLCompiler:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        statements_root = Element("statements")
+        statements_root = Element(STATEMENTS_TAG)
         return self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement))
 
     def compile_do(self) -> Union[List[Element], None]:
         """Compiles a do statement."""
-        do_root = Element("doStatement")
+        do_root = Element(DO_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_token": "do"}),
             (self._compile_subroutine_call, {}),
@@ -324,7 +324,7 @@ class XMLCompiler:
     def compile_let(self) -> Union[List[Element], None]:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
-        let_root = Element("letStatement")
+        let_root = Element(LET_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_token": "let"}),
             (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
@@ -337,7 +337,7 @@ class XMLCompiler:
 
     def compile_while(self) -> Union[List[Element], None]:
         """Compiles a while statement."""
-        while_root = Element("whileStatement")
+        while_root = Element(WHILE_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "while"}),
             (self._get_curr_token_if_condition, {'expected_token': "("}),
@@ -351,7 +351,7 @@ class XMLCompiler:
 
     def compile_return(self) -> Union[List[Element], None]:
         """Compiles a return statement."""
-        return_root = Element("returnStatement")
+        return_root = Element(RETURN_TAG)
 
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "return"}),
@@ -372,7 +372,7 @@ class XMLCompiler:
 
     def compile_if(self) -> Union[List[Element], None]:
         """Compiles a if statement, possibly with a trailing else clause."""
-        if_root = Element("ifStatement")
+        if_root = Element(IF_TAG)
 
         elements = self._sequence_compiling_with_kwargs([
             # 'if' '(' expression ')'
@@ -407,7 +407,7 @@ class XMLCompiler:
 
     def compile_expression(self) -> Union[List[Element], None]:
         """Compiles an expression."""
-        expression_root = Element("expression")
+        expression_root = Element(EXPRESSION_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self.compile_term, {}),
             (self._asterisk_compiling, {'compile_method': self._compile_op_term})
@@ -426,7 +426,7 @@ class XMLCompiler:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
-        term_root = Element("term")
+        term_root = Element(TERM_TAG)
         next_token = self.tokenizer.next_token()
         if self.tokenizer.token_type() == TokenTypes.IDENTIFIER and next_token:
             if next_token == "[":
@@ -473,7 +473,7 @@ class XMLCompiler:
     def compile_expression_list(self) -> List[Element]:
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # (expression (',' expression)* )?
-        expression_list_root = Element("expressionList")
+        expression_list_root = Element(EXPRESSION_LIST_TAG)
         elements = self._question_mark_compiling(self._inner_compile_expression_list)
         return self._add_elements(expression_list_root, elements)
 
@@ -482,7 +482,7 @@ class XMLCompiler:
                                                         ["int", "char", "boolean", None])
 
     def compile_subroutine_body(self) -> Union[List[Element], None]:
-        subroutine_body_root = Element("subroutineBody")
+        subroutine_body_root = Element(SUBROUTINE_TAG)
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "{"}),
             (self._asterisk_compiling, {'compile_method': self.compile_var_dec}),

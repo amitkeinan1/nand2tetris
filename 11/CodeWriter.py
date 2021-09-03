@@ -13,7 +13,7 @@ from xml.dom import minidom
 from JackTokenizer import JackTokenizer
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
-from config import TokenTypes
+from config import *
 from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
 
@@ -49,7 +49,7 @@ class CodeWriter:
 
     def write_code(self) -> None:  # TODO
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
-        pass
+
 
     def write_class_code(self) -> None:  # TODO
         """Compiles a complete class."""
@@ -227,7 +227,7 @@ class CodeWriter:
     def write_return_code(self, return_statement: Element) -> None:
         """Compiles a return statement."""
         # push result and return
-        return_expression = return_statement.find('expression')
+        return_expression = return_statement.find(EXPRESSION_TAG)
         if return_expression is not None:
             self.write_expression_code(return_expression)
         self.vm_writer.write_return()
