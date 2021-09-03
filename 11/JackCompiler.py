@@ -9,6 +9,7 @@ import sys
 import typing
 from XMLCompiler import XMLCompiler
 from SymbolTable import SymbolTable
+from CodeWriter import CodeWriter
 
 
 def compile_file(
@@ -20,7 +21,8 @@ def compile_file(
         output_file (typing.TextIO): writes all output to this file.
     """
     compiler = XMLCompiler(input_path, output_path)
-    compiler.compile()
+    tree = compiler.compile(write_to_file=False)
+    writer = CodeWriter(tree, output_path)
 
 
 if "__main__" == __name__:

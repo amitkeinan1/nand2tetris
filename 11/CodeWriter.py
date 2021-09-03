@@ -4,7 +4,7 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import List, Callable, Tuple, Union, Optional
+from typing import List, Union
 
 from lxml import etree
 from lxml.etree import Element, ElementTree
@@ -18,26 +18,25 @@ from jack_syntax import OPERATORS, UNARY_OPERATORS, KEYWORD_CONSTANTS
 from xml_utils import xml_write_patch
 
 
-class XMLCompiler:
+class CodeWriter:
     """Gets input from a JackTokenizer and emits its parsed structure into an
     output stream.
     """
 
-    def __init__(self, input_path: str, output_path: str) -> None:
+    def __init__(self, syntax_tree: etree, output_path: str) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
-        :param input_path:
         :param output_path:
         """
-        self.tokenizer = JackTokenizer(input_path)
+        self.parsed_code = syntax_tree
         self.output_path = output_path
         self.symbol_table = SymbolTable()
-        self.vm_writer = VMWriter(output_path)
+        self.vm_writer = VMWriter(open(output_path, 'w'))
 
     def _write_xml(self, xml_root):
         """ takes an xml root and write its tree to xml file in the required format. """
-        tree: ElementTree = ElementTree(xml_root)
+        tree: etree.ElementTree = etree.ElementTree(xml_root)
         tree_string = etree.tostring(tree, method="c14n", xml_declaration=False).decode()
         minidom_tree = minidom.parseString(tree_string)
         minidom_tree.firstChild.__class__.writexml = xml_write_patch(minidom_tree.firstChild.__class__.writexml)
@@ -48,136 +47,11 @@ class XMLCompiler:
             f.writelines([line.replace("\t", "  ") + '\n' for line in lines])  # replace tabs with double spaces to
             # be exactly consistent with the given tests format
 
-    def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
+    def write_code(self) -> None:  # TODO
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
-        root = self.compile_class()
-        if root is None:
-            raise Exception("class could not be compiled.")
-        if write_to_file:
-            self._write_xml(root)
-        else:
-            return ElementTree(root)
+        pass
 
-    # helper methods
-    @staticmethod
-    def _compile_callable_wrapper(compile_method: Callable, *args, **kwargs) -> Callable:
-        return lambda: compile_method(*args, **kwargs)
-
-    def _get_curr_token(self) -> Union[List[Element], None]:
-        """
-        get the current tokenizer token as a single value list contains one xml element
-        """
-        if self.tokenizer.curr_index == len(self.tokenizer.tokens):
-            return None
-        token_element = Element(self.tokenizer.token_type_repr())
-        token_element.text = f" {self.tokenizer.token_repr()} "
-        self.tokenizer.advance()
-        return [token_element]
-
-    def _get_curr_token_if_condition(self, expected_type=None, expected_token=None) -> Union[List[Element], None]:
-
-        if self.tokenizer.curr_index == len(self.tokenizer.tokens):
-            return None
-        if (expected_type is None or self.tokenizer.token_type() == expected_type) and (
-                expected_token is None or self.tokenizer.curr_token() == expected_token):
-            return self._get_curr_token()
-        else:
-            return None
-
-    def _get_curr_token_if_condition_or_compile_method(self, expected_type, expected_token, compile_method) -> Union[
-        List[Element], None]:
-        elements_to_add = self._get_curr_token_if_condition(expected_type, expected_token)
-        if not elements_to_add:
-            elements_to_add = compile_method()
-        return elements_to_add
-
-    def get_curr_token_if_one_of_conditions(self, expected_types=None, expected_tokens=None) -> Union[
-        List[Element], None]:
-        if expected_types is None and expected_tokens is None:
-            raise ValueError("At least one of the arguments: expected_types and expected_tokens should not be None")
-        if expected_types is not None and expected_tokens is not None and (len(expected_types) != len(expected_tokens)):
-            raise ValueError("When providing both expected_types and expected_tokens they must have the same length")
-        if expected_types is None:
-            expected_types = [None for _ in range(len(expected_tokens))]
-        if expected_tokens is None:
-            expected_tokens = [None for _ in range(len(expected_types))]
-
-        for expected_type, expected_token in zip(expected_types, expected_tokens):
-            elements_to_add = self._get_curr_token_if_condition(expected_type, expected_token)
-            if elements_to_add:
-                return elements_to_add
-        return None
-
-    def _compile_safely(self, compile_method: Callable) -> Union[List[Element], None]:
-        """ wrapper method. takes a compile method and calls it safely, that is if it fails it takes the tokenizer
-        back. """
-        initial_token_index = self.tokenizer.curr_index
-        res = compile_method()
-        if res is None:
-            self.tokenizer.curr_index = initial_token_index
-        return res
-
-    def _or_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
-        """ takes list of compile methods that match pattern_1, ..., pattern_n and matches pattern_1 | ... |
-        pattern_n """
-
-        for compile_method in compile_methods:
-            curr_elements = self._compile_safely(compile_method)
-            if curr_elements:
-                return curr_elements
-        return None
-
-    def _asterisk_compiling(self, compile_method: Callable) -> List[Element]:
-        """ takes compile method that matches pattern and matches (pattern)*"""
-        elements = []
-        curr_elements = self._compile_safely(compile_method)
-        while curr_elements:
-            elements += curr_elements
-            curr_elements = self._compile_safely(compile_method)
-
-        return elements
-
-    def _asterisk_compiling_with_args(self, compile_method: Callable, *args, **kwargs) -> List[Element]:
-        def injected_compile_method():
-            return compile_method(*args, **kwargs)
-
-        return self._asterisk_compiling(injected_compile_method)
-
-    def _question_mark_compiling(self, compile_method: Callable) -> List[Element]:
-        """ takes compile method that matches pattern and matches (pattern)?"""
-        curr_elements = self._compile_safely(compile_method)
-        if curr_elements:
-            return curr_elements
-        else:
-            return []
-
-    def _sequence_compiling(self, compile_methods: List[Callable]) -> Union[List[Element], None]:
-        """ compiles a list of compile methods one after the other. """
-        elements_lists = []
-        for compile_method in compile_methods:
-            elements = self._compile_safely(compile_method)
-            if elements is not None:
-                elements_lists.append(elements)
-            else:
-                return None
-        return [elem for elements in elements_lists for elem in elements]
-
-    def _sequence_compiling_with_kwargs(self, compile_methods_and_kwargs: List[Tuple[Callable, dict]]) -> List[Element]:
-        """ wrapper for sequence compiling that enables sending arguments to the compile methods"""
-        compile_methods = [lambda method_and_kwargs=method_and_kwargs: method_and_kwargs[0](**method_and_kwargs[1]) for
-                           method_and_kwargs in compile_methods_and_kwargs]
-        return self._sequence_compiling(compile_methods)
-
-    def _add_elements(self, root: Element, elements: List[Element]) -> Union[List[Element], None]:
-        """ adds a list of elements to tree root if the list is not None"""
-        if elements is None:
-            return None
-        for element in elements:
-            root.append(element)
-        return [root]
-
-    # compile methods
-    def compile_class(self) -> Element:
+    def write_class_code(self) -> None:  # TODO
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
         class_root = Element("class")
@@ -186,8 +60,8 @@ class XMLCompiler:
                 (self._get_curr_token_if_condition, {"expected_type": TokenTypes.KEYWORD, "expected_token": "class"}),
                 (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
                 (self._get_curr_token_if_condition, {"expected_type": TokenTypes.SYMBOL, "expected_token": "{"}),
-                (self._asterisk_compiling, {"compile_method": self.compile_class_var_dec}),
-                (self._asterisk_compiling, {"compile_method": self.compile_subroutine}),
+                (self._asterisk_compiling, {"compile_method": self.write_class_var_dec_code}),
+                (self._asterisk_compiling, {"compile_method": self.write_subroutine_code}),
                 (self._get_curr_token_if_condition, {"expected_type": TokenTypes.SYMBOL, "expected_token": "}"})
             ]
         )
@@ -198,7 +72,7 @@ class XMLCompiler:
         else:
             return res[0]
 
-    def compile_class_var_dec(self) -> Union[List[Element], None]:
+    def write_class_var_dec_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a static declaration or a field declaration."""
         # ('static' | 'field') type varName (',' varName)* ';'
         var_dec_root = Element("classVarDec")
@@ -212,7 +86,7 @@ class XMLCompiler:
         ])
         return self._add_elements(var_dec_root, elements)
 
-    def compile_subroutine(self) -> Union[List[Element], None]:
+    def write_subroutine_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a complete method, function, or constructor."""
         subroutine_root = Element("subroutineDec")
 
@@ -223,13 +97,13 @@ class XMLCompiler:
                  self.compile_type}),
             (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
             (self._get_curr_token_if_condition, {"expected_token": "("}),
-            (self.compile_parameter_list, {}),
+            (self.write_parameter_list_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": ")"}),
-            (self.compile_subroutine_body, {})
+            (self.write_subroutine_body_code, {})
         ])
         return self._add_elements(subroutine_root, elements)
 
-    def _inner_compile_parameter_list(self) -> Union[List[Element], None]:
+    def _inner_compile_parameter_list(self) -> Union[List[Element], None]:  # TODO
         """Compiles a (possibly empty) parameter list, not including the
         enclosing "()".
         """
@@ -240,13 +114,13 @@ class XMLCompiler:
             (self._asterisk_compiling, {'compile_method': self._compile_comma_and_type_and_var_name})
         ])
 
-    def compile_parameter_list(self) -> Union[List[Element], None]:
+    def write_parameter_list_code(self) -> Union[List[Element], None]:  # TODO
         # ((type varName) (',' type varName)*)?
         parameter_list_root = Element("parameterList")
         elements = self._question_mark_compiling(self._inner_compile_parameter_list)
         return self._add_elements(parameter_list_root, elements)
 
-    def compile_var_dec(self) -> Union[List[Element], None]:
+    def write_var_dec_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
         var_dec_root = Element("varDec")
@@ -266,18 +140,19 @@ class XMLCompiler:
 
         return self._add_elements(var_dec_root, elements)
 
-    def compile_statement(self):
+    def write_statement_code(self):  # TODO
         return self._or_compiling(
-            [self.compile_let, self.compile_if, self.compile_while, self.compile_do, self.compile_return])
+            [self.write_let_code, self.write_if_code, self.write_while_code, self.write_do_code,
+             self.write_return_code])
 
-    def compile_statements(self) -> List[Element]:
+    def write_statements_code(self) -> List[Element]:  # TODO
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
         statements_root = Element("statements")
-        return self._add_elements(statements_root, self._asterisk_compiling(self.compile_statement))
+        return self._add_elements(statements_root, self._asterisk_compiling(self.write_statement_code))
 
-    def compile_do(self) -> Union[List[Element], None]:
+    def write_do_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a do statement."""
         do_root = Element("doStatement")
         elements = self._sequence_compiling_with_kwargs([
@@ -294,7 +169,7 @@ class XMLCompiler:
         return self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
             (self._get_curr_token_if_condition, {"expected_token": '('}),
-            (self.compile_expression_list, {}),
+            (self.write_expression_list_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": ')'})]
         )
 
@@ -305,7 +180,7 @@ class XMLCompiler:
             (self._get_curr_token_if_condition, {'expected_token': '.'}),
             (self._get_curr_token_if_condition, {'expected_type': TokenTypes.IDENTIFIER}),
             (self._get_curr_token_if_condition, {'expected_token': '('}),
-            (self.compile_expression_list, {}),
+            (self.write_expression_list_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': ')'})
 
         ])
@@ -317,11 +192,11 @@ class XMLCompiler:
     def _compile_array_accessor(self) -> Union[List[Element], None]:
         return self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_token": "["}),
-            (self.compile_expression, {}),
+            (self.write_expression_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": "]"})
         ])
 
-    def compile_let(self) -> Union[List[Element], None]:
+    def write_let_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         let_root = Element("letStatement")
@@ -330,36 +205,32 @@ class XMLCompiler:
             (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
             (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
             (self._get_curr_token_if_condition, {"expected_token": "="}),
-            (self.compile_expression, {}),
+            (self.write_expression_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": ";"})
         ])
         return self._add_elements(let_root, elements)
 
-    def compile_while(self) -> Union[List[Element], None]:
+    def write_while_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a while statement."""
         while_root = Element("whileStatement")
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "while"}),
             (self._get_curr_token_if_condition, {'expected_token': "("}),
-            (self.compile_expression, {}),
+            (self.write_expression_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': ")"}),
             (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self.compile_statements, {}),
+            (self.write_statements_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': "}"})
         ])
         return self._add_elements(while_root, elements)
 
-    def compile_return(self) -> Union[List[Element], None]:
+    def write_return_code(self, return_statement: Element) -> None:
         """Compiles a return statement."""
-        return_root = Element("returnStatement")
-
-        elements = self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {'expected_token': "return"}),
-            (self._question_mark_compiling, {'compile_method': self.compile_expression}),
-            (self._get_curr_token_if_condition, {'expected_token': ";"})
-        ])
-
-        return self._add_elements(return_root, elements)
+        # push result and return
+        return_expression = return_statement.find('expression')
+        if return_expression is not None:
+            self.write_expression_code(return_expression)
+        self.vm_writer.write_return()
 
     def _compile_else(self) -> Union[List[Element], None]:
 
@@ -367,10 +238,10 @@ class XMLCompiler:
         return self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {"expected_token": "else"}),
             (self._get_curr_token_if_condition, {"expected_token": "{"}),
-            (self.compile_statements, {}),
+            (self.write_statements_code, {}),
             (self._get_curr_token_if_condition, {"expected_token": "}"})])
 
-    def compile_if(self) -> Union[List[Element], None]:
+    def write_if_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a if statement, possibly with a trailing else clause."""
         if_root = Element("ifStatement")
 
@@ -378,12 +249,12 @@ class XMLCompiler:
             # 'if' '(' expression ')'
             (self._get_curr_token_if_condition, {'expected_token': "if"}),
             (self._get_curr_token_if_condition, {'expected_token': "("}),
-            (self.compile_expression, {}),
+            (self.write_expression_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': ")"}),
 
             # '{' statements '}'
             (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self.compile_statements, {}),
+            (self.write_statements_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': "}"}),
 
             # ('else' '{' statements '}')?
@@ -403,18 +274,18 @@ class XMLCompiler:
 
     def _compile_op_term(self) -> Union[List[Element], None]:
         # op term
-        return self._sequence_compiling([self._compile_op, self.compile_term])
+        return self._sequence_compiling([self._compile_op, self.write_term_code])
 
-    def compile_expression(self) -> Union[List[Element], None]:
+    def write_expression_code(self, expression: Element) -> None:  # TODO
         """Compiles an expression."""
         expression_root = Element("expression")
         elements = self._sequence_compiling_with_kwargs([
-            (self.compile_term, {}),
+            (self.write_term_code, {}),
             (self._asterisk_compiling, {'compile_method': self._compile_op_term})
         ])
         return self._add_elements(expression_root, elements)
 
-    def compile_term(self) -> Union[List[Element], None]:
+    def write_term_code(self) -> Union[List[Element], None]:  # TODO
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -433,7 +304,7 @@ class XMLCompiler:
                 elements = self._sequence_compiling_with_kwargs([
                     (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
                     (self._get_curr_token_if_condition, {"expected_token": '['}),
-                    (self.compile_expression, {}),
+                    (self.write_expression_code, {}),
                     (self._get_curr_token_if_condition, {"expected_token": ']'})
                 ])
             elif next_token == "." or next_token == "(":
@@ -448,45 +319,45 @@ class XMLCompiler:
                 self._compile_keyword_constant,
                 self._compile_callable_wrapper(self._sequence_compiling_with_kwargs, [
                     (self._get_curr_token_if_condition, {"expected_token": '('}),
-                    (self.compile_expression, {}),
+                    (self.write_expression_code, {}),
                     (self._get_curr_token_if_condition, {"expected_token": ')'})
                 ]),
-                self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.compile_term])
+                self._compile_callable_wrapper(self._sequence_compiling, [self._compile_unary_op, self.write_term_code])
             ])
         return self._add_elements(term_root, elements)
 
     def _inner_compile_expression_list(self) -> List[Element]:
         # expression (',' expression)*
         return self._sequence_compiling_with_kwargs([
-            (self.compile_expression, {}),
+            (self.write_expression_code, {}),
             (self._asterisk_compiling_with_args,
              {
                  "compile_method": self._sequence_compiling_with_kwargs,
                  "compile_methods_and_kwargs": [
                      (self._get_curr_token_if_condition, {"expected_token": ','},),
-                     (self.compile_expression, {})
+                     (self.write_expression_code, {})
                  ]
              }
              )
         ])
 
-    def compile_expression_list(self) -> List[Element]:
+    def write_expression_list_code(self) -> List[Element]:  # TODO
         """Compiles a (possibly empty) comma-separated list of expressions."""
         # (expression (',' expression)* )?
         expression_list_root = Element("expressionList")
         elements = self._question_mark_compiling(self._inner_compile_expression_list)
         return self._add_elements(expression_list_root, elements)
 
-    def compile_type(self) -> Union[List[Element], None]:
+    def compile_type(self) -> Union[List[Element], None]: # TODO
         return self.get_curr_token_if_one_of_conditions([None, None, None, TokenTypes.IDENTIFIER],
                                                         ["int", "char", "boolean", None])
 
-    def compile_subroutine_body(self) -> Union[List[Element], None]:
+    def write_subroutine_body_code(self) -> Union[List[Element], None]: # TODO
         subroutine_body_root = Element("subroutineBody")
         elements = self._sequence_compiling_with_kwargs([
             (self._get_curr_token_if_condition, {'expected_token': "{"}),
-            (self._asterisk_compiling, {'compile_method': self.compile_var_dec}),
-            (self.compile_statements, {}),
+            (self._asterisk_compiling, {'compile_method': self.write_var_dec_code}),
+            (self.write_statements_code, {}),
             (self._get_curr_token_if_condition, {'expected_token': "}"})
         ])
         return self._add_elements(subroutine_body_root, elements)
