@@ -102,6 +102,8 @@ class CodeWriter:
         method_name = self._get_name(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
+        self.vm_writer.write_pop("TEMP", 0)
+        self.vm_writer.write_push("CONST", 0)
 
     def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
