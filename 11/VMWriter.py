@@ -99,6 +99,9 @@ class VMWriter:
         """Writes a VM return command."""
         self.write_line("return")
 
+    def close_output_stream(self):
+        self.output_stream.close()
+
 
 if __name__ == '__main__':
     # test
