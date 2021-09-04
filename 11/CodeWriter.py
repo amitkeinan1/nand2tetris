@@ -12,7 +12,7 @@ from lxml.etree import Element
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
-from jack_syntax import OPERATORS
+from jack_syntax import OPERATORS, UNARY_OPERATORS
 
 
 class CodeWriter:
@@ -187,12 +187,32 @@ class CodeWriter:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
-        if term.find(INTEGER_CONSTANT_TAG):
+        if term.find(INTEGER_CONSTANT_TAG):  # integerConstant
             self.vm_writer.write_push("CONST", self._get_name(term.find(INTEGER_CONSTANT_TAG)))
-        if term.find(STRING_CONSTANT_TAG):  # TODO
+        elif term.find(STRING_CONSTANT_TAG):  # stringConstant TODO
             pass
-        if term.find(KEYWORD_CONSTANT_TAG):
+        elif term.find(KEYWORD_CONSTANT_TAG):  # keyword
             self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
+        elif term.find("/*[starts-with(local-name(), 'identifier')]"):  # identifiers
+            if len(term.iter()) == 1:  # varName
+                var = term.find("/*[starts-with(local-name(), 'identifier')]")
+                var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
+                self.vm_writer.write_push(var_kind, var_index)
+            elif term.findtext(SYMBOL_TAG) == "[":  # varName '['expression']'
+                array_name = term.find("/*[starts-with(local-name(), 'identifier')]")
+                var_kind, var_index, _, _, = self._get_identifier_details(array_name.tag)
+                self.vm_writer.write_push(var_kind, var_index)
+                self.write_expression_code(term.find(EXPRESSION_TAG))
+                self.write_op("+")
+                self.vm_writer.write_pop("POINTER", 1)
+                self.vm_writer.write_push("THAT", 0)
+            else: # subroutineCall TODO
+                pass
+        elif term.findtext(SYMBOL_TAG) == "(":  # '('expression')'
+            self.write_expression_code(term.find(EXPRESSION_TAG))
+        elif term.findtext(SYMBOL_TAG) in UNARY_OPERATORS: #  unaryOp term
+            self.write_expression_code(term.find(EXPRESSION_TAG))
+            self.write_unary_op(term.findtext(SYMBOL_TAG))
 
     def write_expression_list_code(self, expression_list: Element) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""

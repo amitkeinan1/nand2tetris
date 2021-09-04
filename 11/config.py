@@ -44,7 +44,7 @@ SUBROUTINE_TAG = "subroutineBody"
 SYMBOL_TAG = "symbol"
 INTEGER_CONSTANT_TAG = "integerConstant"
 STRING_CONSTANT_TAG = "stringConstant"
-KEYWORD_CONSTANT_TAG = "keywordConstant"
+KEYWORD_CONSTANT_TAG = "keyword"
 
 op_to_vm_command = {"+": "ADD", "-": "SUB", "==": "EQ", ">": "GT", "<": "LT", "&": "AND",
                     "|": "OR", "!": "NOT"}
