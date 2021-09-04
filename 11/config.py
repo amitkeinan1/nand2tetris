@@ -42,6 +42,9 @@ TERM_TAG = "term"
 EXPRESSION_LIST_TAG = "expressionList"
 SUBROUTINE_TAG = "subroutineBody"
 SYMBOL_TAG = "symbol"
+INTEGER_CONSTANT_TAG = "integerConstant"
+STRING_CONSTANT_TAG = "stringConstant"
+KEYWORD_CONSTANT_TAG = "keywordConstant"
 
 op_to_vm_command = {"+": "ADD", "-": "SUB", "==": "EQ", ">": "GT", "<": "LT", "&": "AND",
                     "|": "OR", "!": "NOT"}

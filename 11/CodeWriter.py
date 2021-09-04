@@ -161,15 +161,15 @@ class CodeWriter:
         self.write_statements_code(statements[1])  # execute s2 TODO: should it be optional?
         self.vm_writer.write_label(true_label)  # label L2
 
-    def write_expression_code(self, expression: Element) -> None:  # TODO
+    def write_expression_code(self, expression: Element) -> None:
         """Compiles an expression."""
         for term in expression.iter("term"):
             self.write_term_code(term)
-        operator = expression.find(SYMBOL_TAG)
+        operator = expression.find(SYMBOL_TAG) # TODO: more than one operator
         if operator is not None:
             self.write_op(operator.text)
 
-    def write_term_code(self, term: Element) -> None:  # TODO
+    def write_term_code(self, term: Element) -> None:
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -181,7 +181,13 @@ class CodeWriter:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
-        pass
+        if term.find(INTEGER_CONSTANT_TAG):
+            self.vm_writer.write_push("CONST", self._get_name(term.find(INTEGER_CONSTANT_TAG)))
+        if term.find(STRING_CONSTANT_TAG):  # TODO
+            pass
+        if term.find(KEYWORD_CONSTANT_TAG):
+            self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
+
 
     def write_expression_list_code(self, expression_list: Element) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""
@@ -202,6 +208,17 @@ class CodeWriter:
 
     def write_unary_op(self, symbol: str):
         self.vm_writer.write_arithmetic(unary_op_to_vm_command[symbol])
+
+    def write_keyword(self, keyword: str):
+        if keyword == "true":
+            self.vm_writer.write_push("CONST", 0)
+            self.vm_writer.write_arithmetic("NEG")
+        if keyword == "false":
+            self.vm_writer.write_push("CONST", 0)
+        if keyword == "null":  # TODO
+            pass
+        if keyword == "this":
+            self.vm_writer.write_push("ARG", 0)
 
     # helper methods
     def _generate_label(self, name: str) -> str:
