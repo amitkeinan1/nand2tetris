@@ -1,11 +1,1 @@
 function main 0
-call game 0
-call game 0
-return
-function more 0
-not
-if-goto if-L1 - 0
-goto if-L2 - 1
-label if-L1 - 0
-label if-L2 - 1
-return

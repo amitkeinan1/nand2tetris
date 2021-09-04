@@ -44,9 +44,7 @@ class CodeWriter:
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
             self.write_subroutine_dec_code(subroutine_dec)
 
-    def write_class_var_dec_code(self, var_dec: Element) -> None:
-        """Compiles a static declaration or a field declaration."""
-        # ('static' | 'field') type varName (',' varName)* ';'
+    def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
             element_type = self._get_type(element)
             element_name = self._get_name(element)
@@ -54,6 +52,11 @@ class CodeWriter:
                 category, index, status, var_type = self._get_identifier_details(element_type)
                 if status == DEFINITION:
                     self.symbol_table.define(element_name, var_type, category)
+
+    def write_class_var_dec_code(self, var_dec: Element) -> None:
+        """Compiles a static declaration or a field declaration."""
+        # ('static' | 'field') type varName (',' varName)* ';'
+        self._write_any_var_dec_code(var_dec)
 
     def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
         """Compiles a complete method, function, or constructor."""
@@ -70,10 +73,10 @@ class CodeWriter:
         # ((type varName) (',' type varName)*)?
         pass
 
-    def write_var_dec_code(self, var_dec: Element) -> None:  # TODO: is there anything to do here?
+    def write_var_dec_code(self, var_dec: Element) -> None:
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
-        pass
+        self._write_any_var_dec_code(var_dec)
 
     def write_statements_code(self, statements: Element) -> None:
         """Compiles a sequence of statements, not including the enclosing 
