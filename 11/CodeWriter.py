@@ -33,7 +33,7 @@ class CodeWriter:
 
     def write_code(self) -> None:
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
-        self.write_class_code(self.parsed_code.find(CLASS_TAG))
+        self.write_class_code(self.parsed_code.getroot())
 
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
