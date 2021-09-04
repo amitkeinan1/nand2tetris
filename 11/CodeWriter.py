@@ -97,13 +97,29 @@ class CodeWriter:
         """Compiles a do statement."""
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         method_name = do_statement.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-usage', 'i')]",
-                                              namespaces={'re': regexpNS}).text
+                                        namespaces={'re': regexpNS}).text
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
 
     def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
-        pass
+        # 'let' varName ('[' expression ']')? '=' expression ';'
+        expressions = let_statement.findall(EXPRESSION_TAG)[-1]
+        right_expression = expressions[-1]
+        self.write_expression_code(right_expression)
+        if len(expressions > 1):  # TODO: array access
+            pass
+        else:
+            var_name = let_statement.find("")
+        elements = self._sequence_compiling_with_kwargs([
+            (self._get_curr_token_if_condition, {"expected_token": "let"}),
+            (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
+            (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
+            (self._get_curr_token_if_condition, {"expected_token": "="}),
+            (self.write_expression_code, {}),
+            (self._get_curr_token_if_condition, {"expected_token": ";"})
+        ])
+        # return self._add_elements(let_root, elements)
 
     def write_while_code(self, while_statement: Element) -> None:
         """Compiles a while statement."""
@@ -147,9 +163,13 @@ class CodeWriter:
 
     def write_expression_code(self, expression: Element) -> None:  # TODO
         """Compiles an expression."""
-        pass
+        for term in expression.iter("term"):
+            self.write_term_code(term)
+        operator = expression.find(SYMBOL_TAG)
+        if operator is not None:
+            self.write_op(operator.text)
 
-    def write_term_code(self) -> Union[List[Element], None]:  # TODO
+    def write_term_code(self, term: Element) -> None:  # TODO
         """Compiles a term. 
         This routine is faced with a slight difficulty when
         trying to decide between some of the alternative parsing rules.
@@ -173,6 +193,15 @@ class CodeWriter:
         for var_dec in subroutine.findall(VAR_DEC_TAG):
             self.write_var_dec_code(var_dec)
         self.write_statements_code(subroutine.find(STATEMENTS_TAG))
+
+    def write_op(self, symbol: str):
+        if symbol in op_to_vm_command.keys():
+            self.vm_writer.write_arithmetic(op_to_vm_command[symbol])
+        else:
+            self.vm_writer.write_call(op_to_os_function[symbol], 2)
+
+    def write_unary_op(self, symbol: str):
+        self.vm_writer.write_arithmetic(unary_op_to_vm_command[symbol])
 
     # helper methods
     def _generate_label(self, name: str) -> str:
