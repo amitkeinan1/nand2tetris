@@ -41,3 +41,9 @@ EXPRESSION_TAG = "expression"
 TERM_TAG = "term"
 EXPRESSION_LIST_TAG = "expressionList"
 SUBROUTINE_TAG = "subroutineBody"
+SYMBOL_TAG = "symbol"
+
+op_to_vm_command = {"+": "ADD", "-": "SUB", "==": "EQ", ">": "GT", "<": "LT", "&": "AND",
+                    "|": "OR", "!": "NOT"}
+op_to_os_function = {"*": "Math.multiply", "/": "Math.divide"}
+unary_op_to_vm_command = {"-": "NEG", "~": "NOT"}
