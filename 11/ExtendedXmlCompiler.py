@@ -90,14 +90,25 @@ class ExtendedXmlCompiler:
             return self._generate_tag("class", 0, DEFINITION)
 
         elif parent_type == CLASS_VAR_DEC_TAG:
-            return self._handle_var_defined(element, parent)
+            if index == 1:
+                return self._generate_tag("class", 0, USAGE)
+            else:
+                return self._handle_var_defined(element, parent)
 
         elif parent_type == SUBROUTINE_DEC_TAG:
             if index == 1:
-                return self._generate_tag("class", 0, DEFINITION)
+                return self._generate_tag("class", 0, USAGE)
             else:
                 self.symbol_table.start_subroutine()
                 return self._generate_tag("subroutine", 0, DEFINITION)
+
+        elif parent_type == PARAMETER_LIST_TAG:
+            if index % 3 == 0:
+                return self._generate_tag("class", 0, USAGE)
+            elif index % 3 == 1:
+                return self._handle_var_used(element)
+            else:
+                raise Exception()
 
         elif parent_type == VAR_DEC_TAG:
             if index == 1:
@@ -129,5 +140,5 @@ class ExtendedXmlCompiler:
 
 
 if __name__ == '__main__':
-    compiler = ExtendedXmlCompiler("amit_tests/SquareMainJack.jack", "amit_tests/SquareMainExtended.xml")
+    compiler = ExtendedXmlCompiler("amit_tests/ArrayJack.jack", "amit_tests/ArrayExtended.xml")
     compiler.compile()
