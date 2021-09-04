@@ -199,18 +199,24 @@ class CodeWriter:
                 var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
                 self.vm_writer.write_push(var_kind, var_index)
             elif term.findtext(SYMBOL_TAG) == "[":  # varName '['expression']'
-                array_name = term.find("/*[starts-with(local-name(), 'identifier')]")
-                var_kind, var_index, _, _, = self._get_identifier_details(array_name.tag)
+                array_name = self._get_name(term.find("/*[starts-with(local-name(), 'identifier')]"))
+                var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(array_name))
                 self.vm_writer.write_push(var_kind, var_index)
                 self.write_expression_code(term.find(EXPRESSION_TAG))
                 self.write_op("+")
                 self.vm_writer.write_pop("POINTER", 1)
                 self.vm_writer.write_push("THAT", 0)
-            else: # subroutineCall TODO
-                pass
+            else:  # subroutineCall
+                self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
+                args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
+                if term.findtext(SYMBOL_TAG) == ".":
+                    function_name = ".".join(map(self._get_name, term.findall("/*[starts-with(local-name(), 'identifier')]")))
+                else:
+                    function_name = self._get_name(term.find("/*[starts-with(local-name(), 'identifier')]"))
+                self.vm_writer.write_call(function_name, args_num)
         elif term.findtext(SYMBOL_TAG) == "(":  # '('expression')'
             self.write_expression_code(term.find(EXPRESSION_TAG))
-        elif term.findtext(SYMBOL_TAG) in UNARY_OPERATORS: #  unaryOp term
+        elif term.findtext(SYMBOL_TAG) in UNARY_OPERATORS:  # unaryOp term
             self.write_expression_code(term.find(EXPRESSION_TAG))
             self.write_unary_op(term.findtext(SYMBOL_TAG))
 
