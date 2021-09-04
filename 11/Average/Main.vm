@@ -1,0 +1,153 @@
+function main 0
+push constant 20
+function String.new 1
+push constant 32
+function String.appendChar 1
+push constant 72
+function String.appendChar 1
+push constant 111
+function String.appendChar 1
+push constant 119
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 109
+function String.appendChar 1
+push constant 97
+function String.appendChar 1
+push constant 110
+function String.appendChar 1
+push constant 121
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 110
+function String.appendChar 1
+push constant 117
+function String.appendChar 1
+push constant 109
+function String.appendChar 1
+push constant 98
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 114
+function String.appendChar 1
+push constant 115
+function String.appendChar 1
+push constant 63
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+call <Element identifier-class-0-usage-UNK at 0x2516dc8> 1
+push local 1
+call <Element identifier-class-0-usage-UNK at 0x2516dc8> 1
+push constant 0
+label while-L1 - 0
+push local 2
+lt
+push local 1
+lt
+not
+if-goto while-L2 - 1
+push constant 18
+function String.new 1
+push constant 32
+function String.appendChar 1
+push constant 69
+function String.appendChar 1
+push constant 110
+function String.appendChar 1
+push constant 116
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 114
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 97
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 110
+function String.appendChar 1
+push constant 117
+function String.appendChar 1
+push constant 109
+function String.appendChar 1
+push constant 98
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 114
+function String.appendChar 1
+push constant 58
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+call <Element identifier-class-0-usage-UNK at 0x2525c88> 1
+push local 3
+add
+push local 0
+push local 2
+add
+pop pointer 1
+push that 0
+add
+push local 2
+add
+push constant 1
+add
+goto while-L1 - 0
+label while-L2 - 1
+push constant 17
+function String.new 1
+push constant 32
+function String.appendChar 1
+push constant 84
+function String.appendChar 1
+push constant 104
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 97
+function String.appendChar 1
+push constant 118
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 114
+function String.appendChar 1
+push constant 97
+function String.appendChar 1
+push constant 103
+function String.appendChar 1
+push constant 101
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 105
+function String.appendChar 1
+push constant 115
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+push constant 32
+function String.appendChar 1
+call Output 1
+pop temp 0
+push local 3
+call Math.divide 2
+push local 1
+call Math.divide 2
+call Output 1
+pop temp 0
+push constant 0
+return

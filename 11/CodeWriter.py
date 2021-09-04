@@ -200,8 +200,7 @@ class CodeWriter:
             self.vm_writer.write_push("CONST", len(string))
             self.vm_writer.write_function("String.new", 1)
             for char in string:
-                self.vm_writer.write_push("CONST", int.from_bytes(char.encode("unicode"), byteorder='small')) # TODO:
-                # is it really small?
+                self.vm_writer.write_push("CONST", ord(char))
                 self.vm_writer.write_function("String.appendChar", 1)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
