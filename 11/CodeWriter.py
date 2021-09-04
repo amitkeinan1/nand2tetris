@@ -107,7 +107,7 @@ class CodeWriter:
         expressions = let_statement.findall(EXPRESSION_TAG)[-1]
         right_expression = expressions[-1]
         self.write_expression_code(right_expression)
-        if len(expressions > 1):  # TODO: array access
+        if len(expressions) > 1:  # TODO: array access
             pass
         else:
             var_name = let_statement.find("")
