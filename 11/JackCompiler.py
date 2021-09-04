@@ -7,22 +7,24 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import os
 import sys
 import typing
-from XmlCompiler import XmlCompiler
-from SymbolTable import SymbolTable
+from ExtendedXmlCompiler import ExtendedXmlCompiler
 from CodeWriter import CodeWriter
+from lxml import etree
 
 
-def compile_file(
-        input_file: typing.TextIO, output_file: typing.TextIO) -> None:
+def compile_file(input_path: str, output_path: str) -> None:
     """Compiles a single file.
 
     Args:
-        input_file (typing.TextIO): the file to compile.
-        output_file (typing.TextIO): writes all output to this file.
+        input_path (str): the path to the file to compile.
+        output_path (str): writes all output to the file in this path.
     """
-    compiler = XmlCompiler(input_path, output_path)
-    tree = compiler.compile(write_to_file=False)
+    temp_path = "temp.xml"  # TODO:change
+    compiler = ExtendedXmlCompiler(input_path, temp_path)
+    compiler.compile()
+    tree = etree.parse(temp_path)
     writer = CodeWriter(tree, output_path)
+    writer.write_code()
 
 
 if "__main__" == __name__:
@@ -41,6 +43,4 @@ if "__main__" == __name__:
         if extension.lower() != ".jack":
             continue
         output_path = filename + ".vm"
-        with open(input_path, 'r') as input_file, \
-                open(output_path, 'w') as output_file:
-            compile_file(input_file, output_file)
+        compile_file(input_path, output_path)

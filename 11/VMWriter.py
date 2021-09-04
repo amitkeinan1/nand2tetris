@@ -103,6 +103,7 @@ class VMWriter:
         self.output_stream.close()
 
 
+# TODO: remove before submission
 if __name__ == '__main__':
     # test
     with open("amit_tests/test_vm_writer.vm", 'w') as output_stream:
