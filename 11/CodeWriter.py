@@ -167,3 +167,10 @@ class CodeWriter:
     def _negate_and_push_condition(self, condition_expression):
         self.write_expression_code(condition_expression)
         self.vm_writer.write_arithmetic("NOT")
+
+
+if __name__ == '__main__':
+    file_name = "SquareMain"
+    syntax_tree = etree.parse(f"amit_tests/{file_name}Simple.xml")
+    code_writer = CodeWriter(syntax_tree, f"amit_tests/{file_name}VM.vm")
+    code_writer.write_code()
