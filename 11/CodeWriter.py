@@ -193,8 +193,8 @@ class CodeWriter:
             pass
         elif term.find(KEYWORD_CONSTANT_TAG):  # keyword
             self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
-        elif term.find("/*[starts-with(local-name(), 'identifier')]"):  # identifiers
-            if len(term.iter()) == 1:  # varName
+        elif self._get_type(term[0]).startswith("identifier"):  # identifiers
+            if len(term) == 1:  # varName
                 var = term.find("/*[starts-with(local-name(), 'identifier')]")
                 var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
                 self.vm_writer.write_push(var_kind, var_index)
