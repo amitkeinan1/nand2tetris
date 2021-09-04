@@ -93,7 +93,7 @@ class VMWriter:
             name (str): the name of the function.
             n_locals (int): the number of local variables the function uses.
         """
-        self.write_line(f"function {name} {n_args}")
+        self.write_line(f"function {name} {n_locals}")
 
     def write_return(self) -> None:
         """Writes a VM return command."""

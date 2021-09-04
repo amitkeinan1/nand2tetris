@@ -41,9 +41,9 @@ class CodeWriter:
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        for class_var in class_xml.find(f"./{CLASS_VAR_DEC_TAG}"):
+        for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
-        for subroutine_dec in class_xml.find(f"./{SUBROUTINE_DEC_TAG}"):
+        for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
             self.write_subroutine_dec_code(subroutine_dec)
 
     def write_class_var_dec_code(self, var_dec: Element) -> None:
@@ -59,13 +59,14 @@ class CodeWriter:
 
     def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
         """Compiles a complete method, function, or constructor."""
-        subroutine_name = subroutine_dec.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-definition', 'i')]",
-                                              namespaces={'re': regexpNS}).text
-        args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG).findall())
+        # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
+        subroutine_name = self._get_name(subroutine_dec[2])
+        args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG))
         self.vm_writer.write_function(subroutine_name, args_num)
         for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
             self.write_var_dec_code(var_dec)
-        self.write_statements_code(subroutine_dec.find(STATEMENTS_TAG))
+            subroutine_dec.find("subroutineBody").find("statements")
+        self.write_statements_code(subroutine_dec.find("subroutineBody").find(STATEMENTS_TAG))
 
     def write_parameter_list_code(self) -> Union[List[Element], None]:  # TODO: is there anything to do here?
         # ((type varName) (',' type varName)*)?
@@ -80,7 +81,7 @@ class CodeWriter:
         """Compiles a sequence of statements, not including the enclosing 
         "{}".
         """
-        for statement in statements.findall():
+        for statement in statements:
             if statement.tag == LET_TAG:
                 self.write_let_code(statement)
             elif statement.tag == IF_TAG:
