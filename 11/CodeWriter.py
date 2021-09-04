@@ -71,7 +71,7 @@ class CodeWriter:
             subroutine_dec.find("subroutineBody").find("statements")
         self.write_statements_code(subroutine_dec.find("subroutineBody").find(STATEMENTS_TAG))
 
-    def write_parameter_list_code(self, param_list) -> Union[List[Element], None]:  # TODO: is there anything to do here? yes, define args
+    def write_parameter_list_code(self, param_list) -> None:
         # ((type varName) (',' type varName)*)?
         self._write_any_var_dec_code(param_list)
 
@@ -168,7 +168,7 @@ class CodeWriter:
         self.write_statements_code(statements[1])  # execute s2 TODO: should it be optional?
         self.vm_writer.write_label(true_label)  # label L2
 
-    def write_expression_code(self, expression: Element) -> None: 
+    def write_expression_code(self, expression: Element) -> None:
         """Compiles an expression."""
         self.write_term_code(expression[0])
         for i in range(1, len(expression), 2):
