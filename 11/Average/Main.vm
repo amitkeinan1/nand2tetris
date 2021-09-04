@@ -41,9 +41,9 @@ push constant 32
 function String.appendChar 1
 push constant 32
 function String.appendChar 1
-call <Element identifier-class-0-usage-UNK at 0x2516dc8> 1
+call <Element identifier-class-0-usage-UNK at 0x170aad0> 1
 push local 1
-call <Element identifier-class-0-usage-UNK at 0x2516dc8> 1
+call <Element identifier-class-0-usage-UNK at 0x170aad0> 1
 push constant 0
 label while-L1 - 0
 push local 2
@@ -90,7 +90,7 @@ push constant 32
 function String.appendChar 1
 push constant 32
 function String.appendChar 1
-call <Element identifier-class-0-usage-UNK at 0x2525c88> 1
+call <Element identifier-class-0-usage-UNK at 0x171a288> 1
 push local 3
 add
 push local 0

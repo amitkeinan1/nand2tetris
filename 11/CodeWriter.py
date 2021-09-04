@@ -176,9 +176,6 @@ class CodeWriter:
             term = expression[i + 1]
             self.write_op(self._get_name(operator))
             self.write_term_code(term)
-        operator = expression.find(SYMBOL_TAG)  # TODO: more than one operator
-        if operator is not None:
-            self.write_op(self._get_name(operator))
 
     def write_term_code(self, term: Element) -> None:
         """Compiles a term. 
