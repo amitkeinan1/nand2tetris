@@ -53,9 +53,12 @@ class ExtendedXmlCompiler:
         else:
             return xml_tree
 
-    def _handle_var_defined(self, element, parent):
+    def _handle_var_defined(self, element, parent, is_param_list=False):
         var_name = self._get_name(element)
-        var_kind = VAR_KINDS[self._get_name(parent[0])]
+        if is_param_list:
+            var_kind = VAR_KINDS["argument"]
+        else:
+            var_kind = VAR_KINDS[self._get_name(parent[0])]
         self.symbol_table.define(var_name, self._get_name(parent[1]), var_kind)
         return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION)
 
@@ -67,7 +70,7 @@ class ExtendedXmlCompiler:
             return self._generate_tag("subroutine", 0, USAGE)
         else:
             if index_in_call == 0:
-                if self.symbol_table.kind_of(self._get_name(element)) is None:  # TODO: is it good?
+                if self.symbol_table.kind_of(self._get_name(element)) is None:
                     return self._generate_tag("class", 0, USAGE)
                 else:
                     return self._handle_var_used(element)
@@ -80,8 +83,6 @@ class ExtendedXmlCompiler:
         var_index = self.symbol_table.index_of(var_name)
         return self._generate_tag(var_kind, var_index, USAGE)
 
-    # TODO: how can we distinguish between className and varName in subroutine call
-    # TODO: add running indexes
     def _get_extended_type(self, element: Element, index: int):
         parent = element.getparent()
         parent_type = self._get_type(parent)
@@ -106,7 +107,7 @@ class ExtendedXmlCompiler:
             if index % 3 == 0:
                 return self._generate_tag("class", 0, USAGE)
             elif index % 3 == 1:
-                return self._handle_var_used(element)
+                return self._handle_var_defined(element, parent, is_param_list=True)
             else:
                 raise Exception()
 
@@ -140,5 +141,6 @@ class ExtendedXmlCompiler:
 
 
 if __name__ == '__main__':
-    compiler = ExtendedXmlCompiler("amit_tests/ArrayJack.jack", "amit_tests/ArrayExtended.xml")
+    file_name = "MethodsDec"
+    compiler = ExtendedXmlCompiler(f"amit_tests/{file_name}Jack.jack", f"amit_tests/{file_name}Extended.xml")
     compiler.compile()
