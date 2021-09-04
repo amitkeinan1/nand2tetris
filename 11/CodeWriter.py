@@ -107,7 +107,7 @@ class CodeWriter:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         expressions = let_statement.findall(EXPRESSION_TAG)[-1]
-        right_expression = expressions[-1]
+        right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
         if len(expressions) > 1:  # TODO: array access
             pass
@@ -171,7 +171,7 @@ class CodeWriter:
             term = expression[i + 1]
             self.write_op(self._get_name(operator))
             self.write_term_code(term)
-        operator = expression.find(SYMBOL_TAG) # TODO: more than one operator
+        operator = expression.find(SYMBOL_TAG)  # TODO: more than one operator
         if operator is not None:
             self.write_op(operator.text)
 
@@ -193,7 +193,6 @@ class CodeWriter:
             pass
         if term.find(KEYWORD_CONSTANT_TAG):
             self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
-
 
     def write_expression_list_code(self, expression_list: Element) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""
