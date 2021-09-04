@@ -44,16 +44,28 @@ class CodeWriter:
         for subroutine_dec in class_xml.find(f"./{SUBROUTINE_DEC_TAG}"):
             self.write_subroutine_dec_code(subroutine_dec)
 
-    def write_class_var_dec_code(self, var_dec: Element) -> None:  # TODO
+    def write_class_var_dec_code(self, var_dec: Element) -> None:
         """Compiles a static declaration or a field declaration."""
         # ('static' | 'field') type varName (',' varName)* ';'
-        pass
+        for element in var_dec:
+            element_type = self._get_type(element)
+            element_name = self._get_name(element)
+            if element_type.startswith("identifier"):
+                category, index, status, var_type = self._get_identifier_details(element_type)
+                if status == DEFINITION:
+                    self.symbol_table.define(element_name, var_type, category)
 
-    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:  # TODO
+    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:  # TODO: complete the missing
         """Compiles a complete method, function, or constructor."""
-        pass
+        # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
+        self.symbol_table.start_subroutine()
+        subroutine_type = self._get_name(subroutine_dec[0])
+        return_type = self._get_name(subroutine_dec[1])
+        subroutine_name = self._get_name(subroutine_dec[2])
+        self.write_parameter_list_code(subroutine_dec[4])
+        self.write_subroutine_body_code(subroutine_dec[6])
 
-    def write_parameter_list_code(self) -> Union[List[Element], None]:  # TODO
+    def write_parameter_list_code(self, params_list: Element) -> Union[List[Element], None]:  # TODO
         # ((type varName) (',' type varName)*)?
         pass
 
@@ -168,9 +180,25 @@ class CodeWriter:
         self.write_expression_code(condition_expression)
         self.vm_writer.write_arithmetic("NOT")
 
+    @staticmethod
+    def _get_identifier_details(element_type):
+        details = element_type.split("-")
+        assert len(details) == 5
+        return details[1:]
+
+    # TODO: code dup
+    @staticmethod
+    def _get_type(element):
+        return element.tag
+
+    # TODO: code dup
+    @staticmethod
+    def _get_name(element):
+        return element.text.strip()
+
 
 if __name__ == '__main__':
     file_name = "SquareMain"
-    syntax_tree = etree.parse(f"amit_tests/{file_name}Simple.xml")
+    syntax_tree = etree.parse(f"amit_tests/{file_name}Extended.xml")
     code_writer = CodeWriter(syntax_tree, f"amit_tests/{file_name}VM.vm")
     code_writer.write_code()

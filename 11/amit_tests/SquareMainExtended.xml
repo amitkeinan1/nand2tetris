@@ -1,17 +1,17 @@
 <class>
   <keyword> class </keyword>
-  <identifier-class-0-definition> Main </identifier-class-0-definition>
+  <identifier-class-0-definition-UNK> Main </identifier-class-0-definition-UNK>
   <symbol> { </symbol>
   <classVarDec>
     <keyword> static </keyword>
     <keyword> boolean </keyword>
-    <identifier-STATIC-0-definition> test </identifier-STATIC-0-definition>
+    <identifier-STATIC-0-definition-boolean> test </identifier-STATIC-0-definition-boolean>
     <symbol> ; </symbol>
   </classVarDec>
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier-subroutine-0-definition> main </identifier-subroutine-0-definition>
+    <identifier-subroutine-0-definition-UNK> main </identifier-subroutine-0-definition-UNK>
     <symbol> ( </symbol>
     <parameterList/>
     <symbol> ) </symbol>
@@ -19,20 +19,20 @@
       <symbol> { </symbol>
       <varDec>
         <keyword> var </keyword>
-        <identifier-class-0-usage> SquareGame </identifier-class-0-usage>
-        <identifier-VAR-0-definition> game </identifier-VAR-0-definition>
+        <identifier-class-0-usage-UNK> SquareGame </identifier-class-0-usage-UNK>
+        <identifier-VAR-0-definition-SquareGame> game </identifier-VAR-0-definition-SquareGame>
         <symbol> ; </symbol>
       </varDec>
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier-class-0-usage> SquareGame </identifier-class-0-usage>
+              <identifier-class-0-usage-UNK> SquareGame </identifier-class-0-usage-UNK>
               <symbol> . </symbol>
-              <identifier-subroutine-0-usage> new </identifier-subroutine-0-usage>
+              <identifier-subroutine-0-usage-UNK> new </identifier-subroutine-0-usage-UNK>
               <symbol> ( </symbol>
               <expressionList/>
               <symbol> ) </symbol>
@@ -42,9 +42,9 @@
         </letStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage> run </identifier-subroutine-0-usage>
+          <identifier-subroutine-0-usage-UNK> run </identifier-subroutine-0-usage-UNK>
           <symbol> ( </symbol>
           <expressionList/>
           <symbol> ) </symbol>
@@ -52,9 +52,9 @@
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-VAR-0-usage> game </identifier-VAR-0-usage>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage> dispose </identifier-subroutine-0-usage>
+          <identifier-subroutine-0-usage-UNK> dispose </identifier-subroutine-0-usage-UNK>
           <symbol> ( </symbol>
           <expressionList/>
           <symbol> ) </symbol>
@@ -71,7 +71,7 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier-subroutine-0-definition> more </identifier-subroutine-0-definition>
+    <identifier-subroutine-0-definition-UNK> more </identifier-subroutine-0-definition-UNK>
     <symbol> ( </symbol>
     <parameterList/>
     <symbol> ) </symbol>
@@ -80,21 +80,21 @@
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier-VAR-0-definition> i </identifier-VAR-0-definition>
+        <identifier-VAR-0-definition-int> i </identifier-VAR-0-definition-int>
         <symbol> , </symbol>
-        <identifier-VAR-1-definition> j </identifier-VAR-1-definition>
+        <identifier-VAR-1-definition-int> j </identifier-VAR-1-definition-int>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
-        <identifier-class-0-usage> String </identifier-class-0-usage>
-        <identifier-VAR-2-definition> s </identifier-VAR-2-definition>
+        <identifier-class-0-usage-UNK> String </identifier-class-0-usage-UNK>
+        <identifier-VAR-2-definition-String> s </identifier-VAR-2-definition-String>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
-        <identifier-class-0-usage> Array </identifier-class-0-usage>
-        <identifier-VAR-3-definition> a </identifier-VAR-3-definition>
+        <identifier-class-0-usage-UNK> Array </identifier-class-0-usage-UNK>
+        <identifier-VAR-3-definition-Array> a </identifier-VAR-3-definition-Array>
         <symbol> ; </symbol>
       </varDec>
       <statements>
@@ -111,7 +111,7 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-2-usage> s </identifier-VAR-2-usage>
+              <identifier-VAR-2-usage-UNK> s </identifier-VAR-2-usage-UNK>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -122,7 +122,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-2-usage> s </identifier-VAR-2-usage>
+              <identifier-VAR-2-usage-UNK> s </identifier-VAR-2-usage-UNK>
               <symbol> = </symbol>
               <expression>
                 <term>
@@ -133,7 +133,7 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-3-usage> a </identifier-VAR-3-usage>
+              <identifier-VAR-3-usage-UNK> a </identifier-VAR-3-usage-UNK>
               <symbol> [ </symbol>
               <expression>
                 <term>
@@ -144,7 +144,7 @@
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-VAR-3-usage> a </identifier-VAR-3-usage>
+                  <identifier-VAR-3-usage-UNK> a </identifier-VAR-3-usage-UNK>
                   <symbol> [ </symbol>
                   <expression>
                     <term>
@@ -163,11 +163,11 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
+              <identifier-VAR-0-usage-UNK> i </identifier-VAR-0-usage-UNK>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
+                  <identifier-VAR-0-usage-UNK> i </identifier-VAR-0-usage-UNK>
                 </term>
                 <symbol> * </symbol>
                 <term>
@@ -176,7 +176,7 @@
                     <term>
                       <symbol> - </symbol>
                       <term>
-                        <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
+                        <identifier-VAR-1-usage-UNK> j </identifier-VAR-1-usage-UNK>
                       </term>
                     </term>
                   </expression>
@@ -187,11 +187,11 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
+              <identifier-VAR-1-usage-UNK> j </identifier-VAR-1-usage-UNK>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
+                  <identifier-VAR-1-usage-UNK> j </identifier-VAR-1-usage-UNK>
                 </term>
                 <symbol> / </symbol>
                 <term>
@@ -211,15 +211,15 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
+              <identifier-VAR-0-usage-UNK> i </identifier-VAR-0-usage-UNK>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-VAR-0-usage> i </identifier-VAR-0-usage>
+                  <identifier-VAR-0-usage-UNK> i </identifier-VAR-0-usage-UNK>
                 </term>
                 <symbol> | </symbol>
                 <term>
-                  <identifier-VAR-1-usage> j </identifier-VAR-1-usage>
+                  <identifier-VAR-1-usage-UNK> j </identifier-VAR-1-usage-UNK>
                 </term>
               </expression>
               <symbol> ; </symbol>

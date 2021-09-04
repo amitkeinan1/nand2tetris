@@ -33,8 +33,8 @@ class ExtendedXmlCompiler:
         return element.text.strip()
 
     @staticmethod
-    def _generate_tag(category, index, status):
-        return f"identifier-{category}-{index}-{status}"
+    def _generate_tag(category, index, status, var_type="UNK"):
+        return f"identifier-{category}-{index}-{status}-{var_type}"
 
     def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
         xml_tree = self.xml_compiler.compile(write_to_file=False)
@@ -59,8 +59,9 @@ class ExtendedXmlCompiler:
             var_kind = VAR_KINDS["argument"]
         else:
             var_kind = VAR_KINDS[self._get_name(parent[0])]
-        self.symbol_table.define(var_name, self._get_name(parent[1]), var_kind)
-        return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION)
+            var_type = self._get_name(parent[1])
+        self.symbol_table.define(var_name, var_type, var_kind)
+        return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION, var_type)
 
     def _handle_subroutine_call(self, element, index, parent, index_of_call):
         index_in_call = index - index_of_call
@@ -141,6 +142,6 @@ class ExtendedXmlCompiler:
 
 
 if __name__ == '__main__':
-    file_name = "MethodsDec"
+    file_name = "SquareMain"
     compiler = ExtendedXmlCompiler(f"amit_tests/{file_name}Jack.jack", f"amit_tests/{file_name}Extended.xml")
     compiler.compile()
