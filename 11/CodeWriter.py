@@ -27,7 +27,6 @@ class CodeWriter:
         """
         self.parsed_code = syntax_tree
         self.output_path = output_path
-        self.symbol_table = SymbolTable()
         self.vm_writer = VMWriter(open(output_path, 'w'))
         self.labels_count = 0
 
@@ -39,7 +38,6 @@ class CodeWriter:
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        self.symbol_table = SymbolTable()
         for class_var in class_xml.find(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
         for subroutine_dec in class_xml.find(f"./{SUBROUTINE_DEC_TAG}"):
