@@ -216,8 +216,8 @@ class CodeWriter:
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
                 if term.findtext(SYMBOL_TAG) == ".":
-                    function_name = ".".join(
-                        map(self._get_name, term.findall("/*[starts-with(local-name(), 'identifier')]")))
+                    assert self._get_name(term) == "."
+                    function_name = map(self._get_name, [term[0], term[1], term[2]])
 
                 else:
                     function_name = term[0]
