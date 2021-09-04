@@ -112,15 +112,16 @@ class CodeWriter:
         if len(expressions) > 1:  # TODO: array access
             pass
         else:
-            var_name = let_statement.find("")
-        elements = self._sequence_compiling_with_kwargs([
-            (self._get_curr_token_if_condition, {"expected_token": "let"}),
-            (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
-            (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
-            (self._get_curr_token_if_condition, {"expected_token": "="}),
-            (self.write_expression_code, {}),
-            (self._get_curr_token_if_condition, {"expected_token": ";"})
-        ])
+            pass
+            # var_name = let_statement.find("")
+        # elements = self._sequence_compiling_with_kwargs([
+        #     (self._get_curr_token_if_condition, {"expected_token": "let"}),
+        #     (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
+        #     (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
+        #     (self._get_curr_token_if_condition, {"expected_token": "="}),
+        #     (self.write_expression_code, {}),
+        #     (self._get_curr_token_if_condition, {"expected_token": ";"})
+        # ])
         # return self._add_elements(let_root, elements)
 
     def write_while_code(self, while_statement: Element) -> None:
@@ -200,12 +201,12 @@ class CodeWriter:
             if len(term) == 1:  # varName
                 var = term[0]
                 var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
-                self.vm_writer.write_push(var_kind, var_index)
+                self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
 
-            elif term.findtext(SYMBOL_TAG) == "[":  # varName '['expression']'
-                array_name = self._get_name(term[0])
-                var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(array_name))
-                self.vm_writer.write_push(var_kind, var_index)
+            elif self._get_name(term[1]) == '[':  # varName '['expression']'
+                array_elem = term[0]
+                var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(array_elem))
+                self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
                 self.write_expression_code(term.find(EXPRESSION_TAG))
                 self.write_op("+")
                 self.vm_writer.write_pop("POINTER", 1)
@@ -215,7 +216,8 @@ class CodeWriter:
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
                 if term.findtext(SYMBOL_TAG) == ".":
-                    function_name = ".".join(map(self._get_name, term.findall("/*[starts-with(local-name(), 'identifier')]")))
+                    function_name = ".".join(
+                        map(self._get_name, term.findall("/*[starts-with(local-name(), 'identifier')]")))
 
                 else:
                     function_name = term[0]
@@ -285,6 +287,11 @@ class CodeWriter:
     @staticmethod
     def _get_name(element):
         return element.text.strip()
+
+    @staticmethod
+    def _convert_kind_to_segment(kind):
+        KIND_TO_SEGMENT = {"STATIC": "STATIC", "FIELD": "THIS", "ARG": "ARG", "VAR": "LOCAL"}  # TODO: to config
+        return KIND_TO_SEGMENT[kind]
 
 
 if __name__ == '__main__':

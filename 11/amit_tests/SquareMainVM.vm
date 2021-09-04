@@ -1,2 +1,16 @@
 function main 0
-call <Element identifier-class-0-usage-UNK at 0x1b93ad0> 0
+call <Element identifier-class-0-usage-UNK at 0x2132a58> 0
+call game 0
+call game 0
+return
+function more 0
+not
+if-goto if-L1 - 0
+push local 3
+add
+pop pointer 1
+push that 0
+goto if-L2 - 1
+label if-L1 - 0
+push local 0
+call Math.multiply 2
