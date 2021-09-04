@@ -13,8 +13,6 @@ from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
 
-regexpNS = "http://exslt.org/regular-expressions"  # TODO: put somewhere nicer
-
 
 class CodeWriter:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -46,9 +44,7 @@ class CodeWriter:
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
             self.write_subroutine_dec_code(subroutine_dec)
 
-    def write_class_var_dec_code(self, var_dec: Element) -> None:
-        """Compiles a static declaration or a field declaration."""
-        # ('static' | 'field') type varName (',' varName)* ';'
+    def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
             element_type = self._get_type(element)
             element_name = self._get_name(element)
@@ -56,6 +52,11 @@ class CodeWriter:
                 category, index, status, var_type = self._get_identifier_details(element_type)
                 if status == DEFINITION:
                     self.symbol_table.define(element_name, var_type, category)
+
+    def write_class_var_dec_code(self, var_dec: Element) -> None:
+        """Compiles a static declaration or a field declaration."""
+        # ('static' | 'field') type varName (',' varName)* ';'
+        self._write_any_var_dec_code(var_dec)
 
     def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
         """Compiles a complete method, function, or constructor."""
@@ -72,10 +73,10 @@ class CodeWriter:
         # ((type varName) (',' type varName)*)?
         pass
 
-    def write_var_dec_code(self, var_dec: Element) -> None:  # TODO: is there anything to do here?
+    def write_var_dec_code(self, var_dec: Element) -> None:
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
-        pass
+        self._write_any_var_dec_code(var_dec)
 
     def write_statements_code(self, statements: Element) -> None:
         """Compiles a sequence of statements, not including the enclosing 
@@ -95,9 +96,9 @@ class CodeWriter:
 
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
+        # 'do' subroutineCall ';'
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        method_name = do_statement.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-usage', 'i')]",
-                                        namespaces={'re': regexpNS}).text
+        method_name = self._get_name(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
 
@@ -107,7 +108,7 @@ class CodeWriter:
         expressions = let_statement.findall(EXPRESSION_TAG)[-1]
         right_expression = expressions[-1]
         self.write_expression_code(right_expression)
-        if len(expressions > 1):  # TODO: array access
+        if len(expressions) > 1:  # TODO: array access
             pass
         else:
             var_name = let_statement.find("")
