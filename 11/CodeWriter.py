@@ -13,6 +13,8 @@ from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
 
+regexpNS = "http://exslt.org/regular-expressions"  # TODO: put somewhere nicer
+
 
 class CodeWriter:
     """Gets input from a JackTokenizer and emits its parsed structure into an
@@ -55,21 +57,21 @@ class CodeWriter:
                 if status == DEFINITION:
                     self.symbol_table.define(element_name, var_type, category)
 
-    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:  # TODO: complete the missing
+    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
         """Compiles a complete method, function, or constructor."""
-        # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
-        self.symbol_table.start_subroutine()
-        subroutine_type = self._get_name(subroutine_dec[0])
-        return_type = self._get_name(subroutine_dec[1])
-        subroutine_name = self._get_name(subroutine_dec[2])
-        self.write_parameter_list_code(subroutine_dec[4])
-        self.write_subroutine_body_code(subroutine_dec[6])
+        subroutine_name = subroutine_dec.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-definition', 'i')]",
+                                              namespaces={'re': regexpNS}).text
+        args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG).findall())
+        self.vm_writer.write_function(subroutine_name, args_num)
+        for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
+            self.write_var_dec_code(var_dec)
+        self.write_statements_code(subroutine_dec.find(STATEMENTS_TAG))
 
-    def write_parameter_list_code(self, params_list: Element) -> Union[List[Element], None]:  # TODO
+    def write_parameter_list_code(self) -> Union[List[Element], None]:  # TODO: is there anything to do here?
         # ((type varName) (',' type varName)*)?
         pass
 
-    def write_var_dec_code(self, var_dec: Element) -> None:  # TODO
+    def write_var_dec_code(self, var_dec: Element) -> None:  # TODO: is there anything to do here?
         """Compiles a var declaration."""
         # 'var' type varName (',' varName)* ';'
         pass
@@ -93,7 +95,8 @@ class CodeWriter:
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        method_name = ""  # TODO: extract method name
+        method_name = do_statement.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-usage', 'i')]",
+                                              namespaces={'re': regexpNS}).text
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
 
