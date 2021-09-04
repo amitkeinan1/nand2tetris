@@ -13,8 +13,6 @@ from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
 
-regexpNS = "http://exslt.org/regular-expressions"  # TODO: put somewhere nicer
-
 
 class CodeWriter:
     """Gets input from a JackTokenizer and emits its parsed structure into an
