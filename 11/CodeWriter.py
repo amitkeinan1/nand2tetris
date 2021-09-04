@@ -48,7 +48,7 @@ class CodeWriter:
     def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
             element_type = self._get_type(element)
-            element_name = self._get_name(element)
+            element_name = self._get_text(element)
             if element_type.startswith("identifier"):
                 category, index, status, var_type = self._get_identifier_details(element_type)
                 if status == DEFINITION:
@@ -62,7 +62,7 @@ class CodeWriter:
     def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
-        subroutine_name = self._get_name(subroutine_dec[2])
+        subroutine_name = self._get_text(subroutine_dec[2])
         args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, args_num)
@@ -100,7 +100,7 @@ class CodeWriter:
         """Compiles a do statement."""
         # 'do' subroutineCall ';'
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        method_name = self._get_name(do_statement[1])
+        method_name = self._get_text(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
@@ -174,7 +174,7 @@ class CodeWriter:
         for i in range(1, len(expression), 2):
             operator = expression[i]
             term = expression[i + 1]
-            self.write_op(self._get_name(operator))
+            self.write_op(self._get_text(operator))
             self.write_term_code(term)
 
     def write_term_code(self, term: Element) -> None:
@@ -190,10 +190,10 @@ class CodeWriter:
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
         if term.find(INTEGER_CONSTANT_TAG) is not None:  # integerConstant
-            self.vm_writer.write_push("CONST", self._get_name(term.find(INTEGER_CONSTANT_TAG)))
+            self.vm_writer.write_push("CONST", self._get_text(term[0]))
 
         elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant
-            string: str = term.findtext(STRING_CONSTANT_TAG)
+            string: str = self._get_text(term[0])
             self.vm_writer.write_push("CONST", len(string))
             self.vm_writer.write_function("String.new", 1)
             for char in string:
@@ -201,7 +201,7 @@ class CodeWriter:
                 self.vm_writer.write_function("String.appendChar", 1)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
-            self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
+            self.write_keyword(self._get_text(term.find(KEYWORD_CONSTANT_TAG)))
 
         elif self._get_type(term[0]).startswith("identifier"):  # identifiers
             if len(term) == 1:  # varName
@@ -209,7 +209,7 @@ class CodeWriter:
                 var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
                 self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
 
-            elif self._get_name(term[1]) == '[':  # varName '['expression']'
+            elif self._get_text(term[1]) == '[':  # varName '['expression']'
                 array_elem = term[0]
                 var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(array_elem))
                 self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
@@ -222,8 +222,8 @@ class CodeWriter:
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
                 if term.findtext(SYMBOL_TAG) == ".":
-                    assert self._get_name(term) == "."
-                    function_name = map(self._get_name, [term[0], term[1], term[2]])
+                    assert self._get_text(term) == "."
+                    function_name = map(self._get_text, [term[0], term[1], term[2]])
 
                 else:
                     function_name = term[0]
@@ -291,7 +291,7 @@ class CodeWriter:
 
     # TODO: code dup
     @staticmethod
-    def _get_name(element):
+    def _get_text(element):
         return element.text.strip()
 
     @staticmethod
