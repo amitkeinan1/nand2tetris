@@ -1,12 +1,14 @@
 function main 0
-call <Element identifier-class-0-usage-UNK at 0x2132a58> 0
+call <Element identifier-class-0-usage-UNK at 0x2161a80> 0
 call game 0
 call game 0
 return
 function more 0
+push constant 0
 not
 if-goto if-L1 - 0
 push local 3
+push constant 2
 add
 pop pointer 1
 push that 0
@@ -14,3 +16,13 @@ goto if-L2 - 1
 label if-L1 - 0
 push local 0
 call Math.multiply 2
+call Math.multiply 2
+push local 1
+call Math.divide 2
+call Math.divide 2
+push local 0
+or
+push local 1
+or
+label if-L2 - 1
+return

@@ -174,7 +174,7 @@ class CodeWriter:
             self.write_term_code(term)
         operator = expression.find(SYMBOL_TAG)  # TODO: more than one operator
         if operator is not None:
-            self.write_op(operator.text)
+            self.write_op(self._get_name(operator))
 
     def write_term_code(self, term: Element) -> None:
         """Compiles a term. 
@@ -188,13 +188,13 @@ class CodeWriter:
         """
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
-        if term.find(INTEGER_CONSTANT_TAG):  # integerConstant
+        if term.find(INTEGER_CONSTANT_TAG) is not None:  # integerConstant
             self.vm_writer.write_push("CONST", self._get_name(term.find(INTEGER_CONSTANT_TAG)))
 
-        elif term.find(STRING_CONSTANT_TAG):  # stringConstant TODO
+        elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant TODO
             pass
 
-        elif term.find(KEYWORD_CONSTANT_TAG):  # keyword
+        elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
             self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
 
         elif self._get_type(term[0]).startswith("identifier"):  # identifiers
