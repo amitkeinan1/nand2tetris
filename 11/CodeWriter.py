@@ -95,9 +95,9 @@ class CodeWriter:
 
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
+        # 'do' subroutineCall ';'
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        method_name = do_statement.find("//*[re:test(., 'identifier-subroutine-^[0-9]+$-usage', 'i')]",
-                                              namespaces={'re': regexpNS}).text
+        method_name = self._get_name(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
 
