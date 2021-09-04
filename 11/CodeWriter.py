@@ -64,15 +64,16 @@ class CodeWriter:
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
         subroutine_name = self._get_name(subroutine_dec[2])
         args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG))
+        self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, args_num)
         for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
             self.write_var_dec_code(var_dec)
             subroutine_dec.find("subroutineBody").find("statements")
         self.write_statements_code(subroutine_dec.find("subroutineBody").find(STATEMENTS_TAG))
 
-    def write_parameter_list_code(self) -> Union[List[Element], None]:  # TODO: is there anything to do here?
+    def write_parameter_list_code(self, param_list) -> Union[List[Element], None]:  # TODO: is there anything to do here? yes, define args
         # ((type varName) (',' type varName)*)?
-        pass
+        self._write_any_var_dec_code(param_list)
 
     def write_var_dec_code(self, var_dec: Element) -> None:
         """Compiles a var declaration."""
