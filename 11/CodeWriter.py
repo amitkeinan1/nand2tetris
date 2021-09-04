@@ -104,7 +104,6 @@ class CodeWriter:
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
-        self.vm_writer.write_push("CONST", 0)
 
     def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
@@ -148,6 +147,8 @@ class CodeWriter:
         return_expression = return_statement.find(EXPRESSION_TAG)
         if return_expression is not None:
             self.write_expression_code(return_expression)
+        else:
+            self.vm_writer.write_push("CONST", 0)
         self.vm_writer.write_return()
 
     def write_if_code(self, if_statement: Element) -> None:
@@ -194,8 +195,13 @@ class CodeWriter:
         if term.find(INTEGER_CONSTANT_TAG) is not None:  # integerConstant
             self.vm_writer.write_push("CONST", self._get_name(term.find(INTEGER_CONSTANT_TAG)))
 
-        elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant TODO
-            pass
+        elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant
+            string: str = term.findtext(STRING_CONSTANT_TAG)
+            self.vm_writer.write_push("CONST", len(string))
+            self.vm_writer.write_function("String.new", 1)
+            for char in string:
+                self.vm_writer.write_push("CONST", int.from_bytes(char.encode("unicode")))
+                self.vm_writer.write_function("String.appendChar", 1)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
             self.write_keyword(self._get_name(term.find(KEYWORD_CONSTANT_TAG)))
