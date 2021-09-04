@@ -12,6 +12,7 @@ from lxml.etree import Element
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
+from jack_syntax import OPERATORS
 
 
 class CodeWriter:
@@ -162,9 +163,13 @@ class CodeWriter:
         self.write_statements_code(statements[1])  # execute s2 TODO: should it be optional?
         self.vm_writer.write_label(true_label)  # label L2
 
-    def write_expression_code(self, expression: Element) -> None:
+    def write_expression_code(self, expression: Element) -> None:  # TODO: complete
         """Compiles an expression."""
-        for term in expression.iter("term"):
+        self.write_term_code(expression[0])
+        for i in range(1, len(expression), 2):
+            operator = expression[i]
+            term = expression[i + 1]
+            self.write_op(self._get_name(operator))
             self.write_term_code(term)
         operator = expression.find(SYMBOL_TAG) # TODO: more than one operator
         if operator is not None:
