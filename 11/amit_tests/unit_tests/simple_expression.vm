@@ -1,0 +1,3 @@
+push constant 1
+add
+push constant 2
