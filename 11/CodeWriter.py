@@ -157,7 +157,7 @@ class CodeWriter:
 
     def write_if_code(self, if_statement: Element) -> None:
         """Compiles a if statement, possibly with a trailing else clause."""
-        false_label = self._generate_label("if-L1")  # TODO: what if there's no else statement
+        false_label = self._generate_label("if-L1")
         true_label = self._generate_label("if-L2")
         statements = if_statement.findall(STATEMENTS_TAG)
 
@@ -169,7 +169,8 @@ class CodeWriter:
         self.write_statements_code(statements[0])  # execute s1
         self.vm_writer.write_goto(true_label)  # goto-L2
         self.vm_writer.write_label(false_label)  # label L1
-        self.write_statements_code(statements[1])  # execute s2 TODO: should it be optional?
+        if len(statements) == 2:
+            self.write_statements_code(statements[1])
         self.vm_writer.write_label(true_label)  # label L2
 
     def write_expression_code(self, expression: Element) -> None:
