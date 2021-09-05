@@ -1,0 +1,628 @@
+<class>
+  <keyword> class </keyword>
+  <identifier-class-0-definition-UNK> SquareGame </identifier-class-0-definition-UNK>
+  <symbol> { </symbol>
+  <classVarDec>
+    <keyword> field </keyword>
+    <identifier-class-0-usage-UNK> Square </identifier-class-0-usage-UNK>
+    <identifier-FIELD-0-definition-Square> square </identifier-FIELD-0-definition-Square>
+    <symbol> ; </symbol>
+  </classVarDec>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier-FIELD-1-definition-int> direction </identifier-FIELD-1-definition-int>
+    <symbol> ; </symbol>
+  </classVarDec>
+  <subroutineDec>
+    <keyword> constructor </keyword>
+    <identifier-class-0-usage-UNK> SquareGame </identifier-class-0-usage-UNK>
+    <identifier-subroutine-0-definition-UNK> new </identifier-subroutine-0-definition-UNK>
+    <symbol> ( </symbol>
+    <parameterList/>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier-class-0-usage-UNK> Square </identifier-class-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-UNK> new </identifier-subroutine-0-usage-UNK>
+              <symbol> ( </symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <integerConstant> 0 </integerConstant>
+                  </term>
+                </expression>
+                <symbol> , </symbol>
+                <expression>
+                  <term>
+                    <integerConstant> 0 </integerConstant>
+                  </term>
+                </expression>
+                <symbol> , </symbol>
+                <expression>
+                  <term>
+                    <integerConstant> 30 </integerConstant>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol> ) </symbol>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <integerConstant> 0 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <expression>
+            <term>
+              <keyword> this </keyword>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-UNK> dispose </identifier-subroutine-0-definition-UNK>
+    <symbol> ( </symbol>
+    <parameterList/>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements>
+        <doStatement>
+          <keyword> do </keyword>
+          <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+          <symbol> . </symbol>
+          <identifier-subroutine-0-usage-UNK> dispose </identifier-subroutine-0-usage-UNK>
+          <symbol> ( </symbol>
+          <expressionList/>
+          <symbol> ) </symbol>
+          <symbol> ; </symbol>
+        </doStatement>
+        <doStatement>
+          <keyword> do </keyword>
+          <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+          <symbol> . </symbol>
+          <identifier-subroutine-0-usage-UNK> deAlloc </identifier-subroutine-0-usage-UNK>
+          <symbol> ( </symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <keyword> this </keyword>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol> ) </symbol>
+          <symbol> ; </symbol>
+        </doStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-UNK> moveSquare </identifier-subroutine-0-definition-UNK>
+    <symbol> ( </symbol>
+    <parameterList/>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+            </term>
+            <symbol> = </symbol>
+            <term>
+              <integerConstant> 1 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <doStatement>
+              <keyword> do </keyword>
+              <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-UNK> moveUp </identifier-subroutine-0-usage-UNK>
+              <symbol> ( </symbol>
+              <expressionList/>
+              <symbol> ) </symbol>
+              <symbol> ; </symbol>
+            </doStatement>
+          </statements>
+          <symbol> } </symbol>
+        </ifStatement>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+            </term>
+            <symbol> = </symbol>
+            <term>
+              <integerConstant> 2 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <doStatement>
+              <keyword> do </keyword>
+              <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-UNK> moveDown </identifier-subroutine-0-usage-UNK>
+              <symbol> ( </symbol>
+              <expressionList/>
+              <symbol> ) </symbol>
+              <symbol> ; </symbol>
+            </doStatement>
+          </statements>
+          <symbol> } </symbol>
+        </ifStatement>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+            </term>
+            <symbol> = </symbol>
+            <term>
+              <integerConstant> 3 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <doStatement>
+              <keyword> do </keyword>
+              <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-UNK> moveLeft </identifier-subroutine-0-usage-UNK>
+              <symbol> ( </symbol>
+              <expressionList/>
+              <symbol> ) </symbol>
+              <symbol> ; </symbol>
+            </doStatement>
+          </statements>
+          <symbol> } </symbol>
+        </ifStatement>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+            </term>
+            <symbol> = </symbol>
+            <term>
+              <integerConstant> 4 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <doStatement>
+              <keyword> do </keyword>
+              <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-UNK> moveRight </identifier-subroutine-0-usage-UNK>
+              <symbol> ( </symbol>
+              <expressionList/>
+              <symbol> ) </symbol>
+              <symbol> ; </symbol>
+            </doStatement>
+          </statements>
+          <symbol> } </symbol>
+        </ifStatement>
+        <doStatement>
+          <keyword> do </keyword>
+          <identifier-class-0-usage-UNK> Sys </identifier-class-0-usage-UNK>
+          <symbol> . </symbol>
+          <identifier-subroutine-0-usage-UNK> wait </identifier-subroutine-0-usage-UNK>
+          <symbol> ( </symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <integerConstant> 5 </integerConstant>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol> ) </symbol>
+          <symbol> ; </symbol>
+        </doStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-UNK> run </identifier-subroutine-0-definition-UNK>
+    <symbol> ( </symbol>
+    <parameterList/>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <varDec>
+        <keyword> var </keyword>
+        <keyword> char </keyword>
+        <identifier-VAR-0-definition-char> key </identifier-VAR-0-definition-char>
+        <symbol> ; </symbol>
+      </varDec>
+      <varDec>
+        <keyword> var </keyword>
+        <keyword> boolean </keyword>
+        <identifier-VAR-1-definition-boolean> exit </identifier-VAR-1-definition-boolean>
+        <symbol> ; </symbol>
+      </varDec>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier-VAR-1-usage-UNK> exit </identifier-VAR-1-usage-UNK>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <keyword> false </keyword>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <symbol> ~ </symbol>
+              <term>
+                <identifier-VAR-1-usage-UNK> exit </identifier-VAR-1-usage-UNK>
+              </term>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <whileStatement>
+              <keyword> while </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 0 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <identifier-class-0-usage-UNK> Keyboard </identifier-class-0-usage-UNK>
+                      <symbol> . </symbol>
+                      <identifier-subroutine-0-usage-UNK> keyPressed </identifier-subroutine-0-usage-UNK>
+                      <symbol> ( </symbol>
+                      <expressionList/>
+                      <symbol> ) </symbol>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+                <doStatement>
+                  <keyword> do </keyword>
+                  <identifier-subroutine-0-usage-UNK> moveSquare </identifier-subroutine-0-usage-UNK>
+                  <symbol> ( </symbol>
+                  <expressionList/>
+                  <symbol> ) </symbol>
+                  <symbol> ; </symbol>
+                </doStatement>
+              </statements>
+              <symbol> } </symbol>
+            </whileStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 81 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-VAR-1-usage-UNK> exit </identifier-VAR-1-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <keyword> true </keyword>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 90 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <doStatement>
+                  <keyword> do </keyword>
+                  <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+                  <symbol> . </symbol>
+                  <identifier-subroutine-0-usage-UNK> decSize </identifier-subroutine-0-usage-UNK>
+                  <symbol> ( </symbol>
+                  <expressionList/>
+                  <symbol> ) </symbol>
+                  <symbol> ; </symbol>
+                </doStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 88 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <doStatement>
+                  <keyword> do </keyword>
+                  <identifier-FIELD-0-usage-UNK> square </identifier-FIELD-0-usage-UNK>
+                  <symbol> . </symbol>
+                  <identifier-subroutine-0-usage-UNK> incSize </identifier-subroutine-0-usage-UNK>
+                  <symbol> ( </symbol>
+                  <expressionList/>
+                  <symbol> ) </symbol>
+                  <symbol> ; </symbol>
+                </doStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 131 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <integerConstant> 1 </integerConstant>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 133 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <integerConstant> 2 </integerConstant>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 130 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <integerConstant> 3 </integerConstant>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                </term>
+                <symbol> = </symbol>
+                <term>
+                  <integerConstant> 132 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-FIELD-1-usage-UNK> direction </identifier-FIELD-1-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <integerConstant> 4 </integerConstant>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+            <whileStatement>
+              <keyword> while </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <symbol> ~ </symbol>
+                  <term>
+                    <symbol> ( </symbol>
+                    <expression>
+                      <term>
+                        <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                      </term>
+                      <symbol> = </symbol>
+                      <term>
+                        <integerConstant> 0 </integerConstant>
+                      </term>
+                    </expression>
+                    <symbol> ) </symbol>
+                  </term>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-VAR-0-usage-UNK> key </identifier-VAR-0-usage-UNK>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <identifier-class-0-usage-UNK> Keyboard </identifier-class-0-usage-UNK>
+                      <symbol> . </symbol>
+                      <identifier-subroutine-0-usage-UNK> keyPressed </identifier-subroutine-0-usage-UNK>
+                      <symbol> ( </symbol>
+                      <expressionList/>
+                      <symbol> ) </symbol>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+                <doStatement>
+                  <keyword> do </keyword>
+                  <identifier-subroutine-0-usage-UNK> moveSquare </identifier-subroutine-0-usage-UNK>
+                  <symbol> ( </symbol>
+                  <expressionList/>
+                  <symbol> ) </symbol>
+                  <symbol> ; </symbol>
+                </doStatement>
+              </statements>
+              <symbol> } </symbol>
+            </whileStatement>
+          </statements>
+          <symbol> } </symbol>
+        </whileStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <symbol> } </symbol>
+</class>

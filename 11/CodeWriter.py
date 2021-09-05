@@ -41,13 +41,12 @@ class CodeWriter:
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        class_name = get_text(class_xml[1])
-        self.class_var_count = 0
+        self.class_name = get_text(class_xml[1])
+        self.class_var_count = self._count_var_decs(class_xml, CLASS_VAR_DEC_TAG)
         for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
-            self.class_var_count += 1
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
-            self.write_subroutine_dec_code(subroutine_dec, class_name)
+            self.write_subroutine_dec_code(subroutine_dec, self.class_name)
 
     def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
@@ -66,13 +65,14 @@ class CodeWriter:
     def write_subroutine_dec_code(self, subroutine_dec: Element, class_name: str) -> None:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
+        subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
+        self.write_parameter_list_code(subroutine_dec[4])
+        self.vm_writer.write_function(subroutine_name,
+                                      self._count_var_decs(subroutine_dec.find(SUBROUTINE_TAG), VAR_DEC_TAG))
         if get_text(subroutine_dec[0]) == "constructor":
             self.vm_writer.write_push("CONST", self.class_var_count)
             self.vm_writer.write_call("Memory.alloc", 1)
-            self.vm_writer.write_push("POINTER", 0)
-        subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
-        self.write_parameter_list_code(subroutine_dec[4])
-        self.vm_writer.write_function(subroutine_name, self._count_locals(subroutine_dec.find(SUBROUTINE_TAG)))
+            self.vm_writer.write_pop("POINTER", 0)
         for var_dec in subroutine_dec.findall(f"./{SUBROUTINE_TAG}/{VAR_DEC_TAG}"):
             self.write_var_dec_code(var_dec)
             subroutine_dec.find("subroutineBody").find("statements")
@@ -113,13 +113,13 @@ class CodeWriter:
             call_object = get_text(do_statement[1])
             if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
                 args_num += 1  # this
-                segment  = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
+                segment = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
                 index = self.symbol_table.index_of(call_object)
                 self.vm_writer.write_push(segment, index)
                 call_object = self.symbol_table.type_of(call_object)
             function_name = call_object + "." + get_text(do_statement[3])
         else:
-            function_name = get_text(do_statement[1])
+            function_name = self.class_name + "." + get_text(do_statement[1])
         self.vm_writer.write_call(function_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
@@ -325,9 +325,9 @@ class CodeWriter:
     def _is_var_dec(identifier_details):
         return identifier_details[2] == "definition"
 
-    def _count_locals(self, subroutine_body: Element):
+    def _count_var_decs(self, elem: Element, var_tag):
         locals_count = 0
-        var_decs = subroutine_body.findall(VAR_DEC_TAG)
+        var_decs = elem.findall(var_tag)
         for dec in var_decs:
             locals_count += (len(list(filter(lambda x: x == ",", map(lambda elem: get_text(elem), dec)))) + 1)
         return locals_count
