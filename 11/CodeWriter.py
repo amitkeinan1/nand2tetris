@@ -64,10 +64,9 @@ class CodeWriter:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
         subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
-        args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, self._count_locals(subroutine_dec.find(SUBROUTINE_TAG)))
-        for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
+        for var_dec in subroutine_dec.findall(f"./{SUBROUTINE_TAG}/{VAR_DEC_TAG}"):
             self.write_var_dec_code(var_dec)
             subroutine_dec.find("subroutineBody").find("statements")
         self.write_statements_code(subroutine_dec.find("subroutineBody").find(STATEMENTS_TAG))
