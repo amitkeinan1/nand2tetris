@@ -1,0 +1,7 @@
+function main 0
+push constant 1
+add
+call Output 1
+pop temp 0
+push constant 0
+return

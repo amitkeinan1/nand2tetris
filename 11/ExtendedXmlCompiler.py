@@ -1,10 +1,9 @@
 from typing import Optional
 
-from SymbolTable import SymbolTable
-from XmlCompiler import XmlCompiler
-from lxml import etree
 from lxml.etree import Element, ElementTree
 
+from SymbolTable import SymbolTable
+from XmlCompiler import XmlCompiler
 from config import *
 
 
@@ -36,9 +35,7 @@ class ExtendedXmlCompiler:
     def _generate_tag(category, index, status, var_type="UNK"):
         return f"identifier-{category}-{index}-{status}-{var_type}"
 
-    def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
-        xml_tree = self.xml_compiler.compile(write_to_file=False)
-
+    def _extend_tree(self, xml_tree, write_to_file):
         for element in xml_tree.iter():
             if len(element) != 0:  # if this is not a leaf
                 for index, child_element in enumerate(element):
@@ -52,6 +49,10 @@ class ExtendedXmlCompiler:
             xml_tree.write(self.output_path, pretty_print=True)
         else:
             return xml_tree
+
+    def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
+        xml_tree = self.xml_compiler.compile(write_to_file=False)
+        return self._extend_tree(xml_tree, write_to_file)
 
     def _handle_var_defined(self, element, parent, is_param_list=False):
         var_name = self._get_name(element)
