@@ -2,83 +2,121 @@ function Ball.new 0
 push constant 15
 call Memory.alloc 1
 pop pointer 0
+//           let x =                           Ax ;
+//                           Ax
 push argument 0
 pop this 0
+//           let y =                           Ay ;
+//                           Ay
 push argument 1
 pop this 1
+//           let leftWall =                           AleftWall ;
+//                           AleftWall
 push argument 2
 pop this 10
+//           let rightWall =                           ArightWall -               6 ;
+//                           ArightWall -               6
 push argument 3
 push constant 6
 sub
 pop this 11
+//           let topWall =                           AtopWall ;
+//                           AtopWall
 push argument 4
 pop this 12
+//           let bottomWall =                           AbottomWall -               6 ;
+//                           AbottomWall -               6
 push argument 5
 push constant 6
 sub
 pop this 13
+//           let wall =                           0 ;
+//                           0
 push constant 0
 pop this 14
+//           do show ( ) ;
 push pointer 0
 call Ball.show 1
 pop temp 0
+//           return                           this ;
+//                           this
 push pointer 0
 return
 function Ball.dispose 0
 push argument 0
 pop pointer 0
+//           do Memory . deAlloc (                                           this ) ;
+//                               this
 push pointer 0
 call Memory.deAlloc 1
 pop temp 0
+//           return ;
 push constant 0
 return
 function Ball.show 0
 push argument 0
 pop pointer 0
+//           do Screen . setColor (                                           true ) ;
+//                               true
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
+//           do draw ( ) ;
 push pointer 0
 call Ball.draw 1
 pop temp 0
+//           return ;
 push constant 0
 return
 function Ball.hide 0
 push argument 0
 pop pointer 0
+//           do Screen . setColor (                                           false ) ;
+//                               false
 push constant 0
 call Screen.setColor 1
 pop temp 0
+//           do draw ( ) ;
 push pointer 0
 call Ball.draw 1
 pop temp 0
+//           return ;
 push constant 0
 return
 function Ball.draw 0
 push argument 0
 pop pointer 0
+//           do Screen . drawRectangle (                                           x ,                               y ,                               x +                 5 ,                               y +                 5 ) ;
+//                               x
 push this 0
+//                               y
 push this 1
+//                               x +                 5
 push this 0
 push constant 5
 add
+//                               y +                 5
 push this 1
 push constant 5
 add
 call Screen.drawRectangle 4
 pop temp 0
+//           return ;
 push constant 0
 return
 function Ball.getLeft 0
 push argument 0
 pop pointer 0
+//           return                           x ;
+//                           x
 push this 0
 return
 function Ball.getRight 0
 push argument 0
 pop pointer 0
+//           return                           x +               5 ;
+//                           x +               5
 push this 0
 push constant 5
 add
@@ -86,103 +124,156 @@ return
 function Ball.setDestination 3
 push argument 0
 pop pointer 0
-push argument 0
+//           let lengthx =                           destx -               x ;
+//                           destx -               x
+push argument 1
 push this 0
 sub
 pop this 2
-push argument 1
+//           let lengthy =                           desty -               y ;
+//                           desty -               y
+push argument 2
 push this 1
 sub
 pop this 3
+//           let dx =                           Math . abs (                                                       lengthx ) ;
+//                           Math . abs (                                                       lengthx )
+//                                       lengthx
 push this 2
 call Math.abs 1
 pop local 0
+//           let dy =                           Math . abs (                                                       lengthy ) ;
+//                           Math . abs (                                                       lengthy )
+//                                       lengthy
 push this 3
 call Math.abs 1
 pop local 1
+//           let invert =                           (                                   dx <                   dy ) ;
+//                           (                                   dx <                   dy )
+//                                   dx <                   dy
 push local 0
 push local 1
 lt
 pop this 7
+//                           invert
 push this 7
 not
 if-goto IF-FALSE-0
+//               let temp =                                   dx ;
+//                                   dx
 push local 0
 pop local 2
+//               let dx =                                   dy ;
+//                                   dy
 push local 1
 pop local 0
+//               let dy =                                   temp ;
+//                                   temp
 push local 2
 pop local 1
+//               let positivex =                                   (                                           y <                       desty ) ;
+//                                   (                                           y <                       desty )
+//                                           y <                       desty
 push this 1
-push argument 1
+push argument 2
 lt
 pop this 8
+//               let positivey =                                   (                                           x <                       destx ) ;
+//                                   (                                           x <                       destx )
+//                                           x <                       destx
 push this 0
-push argument 0
+push argument 1
 lt
 pop this 9
 goto IF-TRUE-1
 label IF-FALSE-0
+//               let positivex =                                   (                                           x <                       destx ) ;
+//                                   (                                           x <                       destx )
+//                                           x <                       destx
 push this 0
-push argument 0
+push argument 1
 lt
 pop this 8
+//               let positivey =                                   (                                           y <                       desty ) ;
+//                                   (                                           y <                       desty )
+//                                           y <                       desty
 push this 1
-push argument 1
+push argument 2
 lt
 pop this 9
 label IF-TRUE-1
+//           let d =                           (                                   2 *                   dy ) -               dx ;
+//                           (                                   2 *                   dy ) -               dx
+//                                   2 *                   dy
 push constant 2
 push local 1
 call Math.multiply 2
 push local 0
 sub
 pop this 4
+//           let straightD =                           2 *               dy ;
+//                           2 *               dy
 push constant 2
 push local 1
 call Math.multiply 2
 pop this 5
+//           let diagonalD =                           2 *               (                                   dy -                   dx ) ;
+//                           2 *               (                                   dy -                   dx )
 push constant 2
+//                                   dy -                   dx
 push local 1
 push local 0
 sub
 call Math.multiply 2
 pop this 6
+//           return ;
 push constant 0
 return
 function Ball.move 0
 push argument 0
 pop pointer 0
+//           do hide ( ) ;
 push pointer 0
 call Ball.hide 1
 pop temp 0
+//                           d <               0
 push this 4
 push constant 0
 lt
 not
 if-goto IF-FALSE-2
+//               let d =                                   d +                   straightD ;
+//                                   d +                   straightD
 push this 4
 push this 5
 add
 pop this 4
 goto IF-TRUE-3
 label IF-FALSE-2
+//               let d =                                   d +                   diagonalD ;
+//                                   d +                   diagonalD
 push this 4
 push this 6
 add
 pop this 4
+//                                   positivey
 push this 9
 not
 if-goto IF-FALSE-4
+//                                           invert
 push this 7
 not
 if-goto IF-FALSE-6
+//                       let x =                                                   x +                           4 ;
+//                                                   x +                           4
 push this 0
 push constant 4
 add
 pop this 0
 goto IF-TRUE-7
 label IF-FALSE-6
+//                       let y =                                                   y +                           4 ;
+//                                                   y +                           4
 push this 1
 push constant 4
 add
@@ -190,15 +281,20 @@ pop this 1
 label IF-TRUE-7
 goto IF-TRUE-5
 label IF-FALSE-4
+//                                           invert
 push this 7
 not
 if-goto IF-FALSE-8
+//                       let x =                                                   x -                           4 ;
+//                                                   x -                           4
 push this 0
 push constant 4
 sub
 pop this 0
 goto IF-TRUE-9
 label IF-FALSE-8
+//                       let y =                                                   y -                           4 ;
+//                                                   y -                           4
 push this 1
 push constant 4
 sub
@@ -206,18 +302,24 @@ pop this 1
 label IF-TRUE-9
 label IF-TRUE-5
 label IF-TRUE-3
+//                           positivex
 push this 8
 not
 if-goto IF-FALSE-10
+//                                   invert
 push this 7
 not
 if-goto IF-FALSE-12
+//                   let y =                                           y +                       4 ;
+//                                           y +                       4
 push this 1
 push constant 4
 add
 pop this 1
 goto IF-TRUE-13
 label IF-FALSE-12
+//                   let x =                                           x +                       4 ;
+//                                           x +                       4
 push this 0
 push constant 4
 add
@@ -225,110 +327,158 @@ pop this 0
 label IF-TRUE-13
 goto IF-TRUE-11
 label IF-FALSE-10
+//                                   invert
 push this 7
 not
 if-goto IF-FALSE-14
+//                   let y =                                           y -                       4 ;
+//                                           y -                       4
 push this 1
 push constant 4
 sub
 pop this 1
 goto IF-TRUE-15
 label IF-FALSE-14
+//                   let x =                                           x -                       4 ;
+//                                           x -                       4
 push this 0
 push constant 4
 sub
 pop this 0
 label IF-TRUE-15
 label IF-TRUE-11
+//                           ~                 (                                       x >                     leftWall )
+//                                       x >                     leftWall
 push this 0
 push this 10
 gt
 not
 not
 if-goto IF-FALSE-16
+//               let wall =                                   1 ;
+//                                   1
 push constant 1
 pop this 14
+//               let x =                                   leftWall ;
+//                                   leftWall
 push this 10
 pop this 0
 goto IF-TRUE-17
 label IF-FALSE-16
 label IF-TRUE-17
+//                           ~                 (                                       x <                     rightWall )
+//                                       x <                     rightWall
 push this 0
 push this 11
 lt
 not
 not
 if-goto IF-FALSE-18
+//               let wall =                                   2 ;
+//                                   2
 push constant 2
 pop this 14
+//               let x =                                   rightWall ;
+//                                   rightWall
 push this 11
 pop this 0
 goto IF-TRUE-19
 label IF-FALSE-18
 label IF-TRUE-19
+//                           ~                 (                                       y >                     topWall )
+//                                       y >                     topWall
 push this 1
 push this 12
 gt
 not
 not
 if-goto IF-FALSE-20
+//               let wall =                                   3 ;
+//                                   3
 push constant 3
 pop this 14
+//               let y =                                   topWall ;
+//                                   topWall
 push this 12
 pop this 1
 goto IF-TRUE-21
 label IF-FALSE-20
 label IF-TRUE-21
+//                           ~                 (                                       y <                     bottomWall )
+//                                       y <                     bottomWall
 push this 1
 push this 13
 lt
 not
 not
 if-goto IF-FALSE-22
+//               let wall =                                   4 ;
+//                                   4
 push constant 4
 pop this 14
+//               let y =                                   bottomWall ;
+//                                   bottomWall
 push this 13
 pop this 1
 goto IF-TRUE-23
 label IF-FALSE-22
 label IF-TRUE-23
+//           do show ( ) ;
 push pointer 0
 call Ball.show 1
 pop temp 0
+//           return                           wall ;
+//                           wall
 push this 14
 return
 function Ball.bounce 5
 push argument 0
 pop pointer 0
+//           let divLengthx =                           lengthx /               10 ;
+//                           lengthx /               10
 push this 2
 push constant 10
 call Math.divide 2
 pop local 2
+//           let divLengthy =                           lengthy /               10 ;
+//                           lengthy /               10
 push this 3
 push constant 10
 call Math.divide 2
 pop local 3
-push argument 0
+//                           bouncingDirection =               0
+push argument 1
 push constant 0
 eq
 not
 if-goto IF-FALSE-24
+//               let factor =                                   10 ;
+//                                   10
 push constant 10
 pop local 4
 goto IF-TRUE-25
 label IF-FALSE-24
+//                                   (                                           (                                                   ~                             (                                                               lengthx <                                 0 ) ) &                       (                                                   bouncingDirection =                           1 ) ) |                   (                                           (                                                   lengthx <                           0 ) &                       (                                                   bouncingDirection =                           (                                                           -                                 1 ) ) )
+//                                           (                                                   ~                             (                                                               lengthx <                                 0 ) ) &                       (                                                   bouncingDirection =                           1 )
+//                                                   ~                             (                                                               lengthx <                                 0 )
+//                                                               lengthx <                                 0
 push this 2
 push constant 0
 lt
 not
-push argument 0
+//                                                   bouncingDirection =                           1
+push argument 1
 push constant 1
 eq
 and
+//                                           (                                                   lengthx <                           0 ) &                       (                                                   bouncingDirection =                           (                                                           -                                 1 ) )
+//                                                   lengthx <                           0
 push this 2
 push constant 0
 lt
-push argument 0
+//                                                   bouncingDirection =                           (                                                           -                                 1 )
+push argument 1
+//                                                           -                                 1
 push constant 1
 neg
 eq
@@ -336,29 +486,43 @@ and
 or
 not
 if-goto IF-FALSE-26
+//                   let factor =                                           20 ;
+//                                           20
 push constant 20
 pop local 4
 goto IF-TRUE-27
 label IF-FALSE-26
+//                   let factor =                                           5 ;
+//                                           5
 push constant 5
 pop local 4
 label IF-TRUE-27
 label IF-TRUE-25
+//                           wall =               1
 push this 14
 push constant 1
 eq
 not
 if-goto IF-FALSE-28
+//               let newx =                                   506 ;
+//                                   506
 push constant 506
 pop local 0
+//               let newy =                                   (                                           divLengthy *                       (                                                   -                             50 ) ) /                   divLengthx ;
+//                                   (                                           divLengthy *                       (                                                   -                             50 ) ) /                   divLengthx
+//                                           divLengthy *                       (                                                   -                             50 )
 push local 3
+//                                                   -                             50
 push constant 50
 neg
 call Math.multiply 2
 push local 2
 call Math.divide 2
 pop local 1
+//               let newy =                                   y +                   (                                           newy *                       factor ) ;
+//                                   y +                   (                                           newy *                       factor )
 push this 1
+//                                           newy *                       factor
 push local 1
 push local 4
 call Math.multiply 2
@@ -366,20 +530,29 @@ add
 pop local 1
 goto IF-TRUE-29
 label IF-FALSE-28
+//                                   wall =                   2
 push this 14
 push constant 2
 eq
 not
 if-goto IF-FALSE-30
+//                   let newx =                                           0 ;
+//                                           0
 push constant 0
 pop local 0
+//                   let newy =                                           (                                                   divLengthy *                           50 ) /                       divLengthx ;
+//                                           (                                                   divLengthy *                           50 ) /                       divLengthx
+//                                                   divLengthy *                           50
 push local 3
 push constant 50
 call Math.multiply 2
 push local 2
 call Math.divide 2
 pop local 1
+//                   let newy =                                           y +                       (                                                   newy *                           factor ) ;
+//                                           y +                       (                                                   newy *                           factor )
 push this 1
+//                                                   newy *                           factor
 push local 1
 push local 4
 call Math.multiply 2
@@ -387,21 +560,31 @@ add
 pop local 1
 goto IF-TRUE-31
 label IF-FALSE-30
+//                                           wall =                       3
 push this 14
 push constant 3
 eq
 not
 if-goto IF-FALSE-32
+//                       let newy =                                                   250 ;
+//                                                   250
 push constant 250
 pop local 1
+//                       let newx =                                                   (                                                           divLengthx *                               (                                                                   -                                     25 ) ) /                           divLengthy ;
+//                                                   (                                                           divLengthx *                               (                                                                   -                                     25 ) ) /                           divLengthy
+//                                                           divLengthx *                               (                                                                   -                                     25 )
 push local 2
+//                                                                   -                                     25
 push constant 25
 neg
 call Math.multiply 2
 push local 3
 call Math.divide 2
 pop local 0
+//                       let newx =                                                   x +                           (                                                           newx *                               factor ) ;
+//                                                   x +                           (                                                           newx *                               factor )
 push this 0
+//                                                           newx *                               factor
 push local 0
 push local 4
 call Math.multiply 2
@@ -409,15 +592,23 @@ add
 pop local 0
 goto IF-TRUE-33
 label IF-FALSE-32
+//                       let newy =                                                   0 ;
+//                                                   0
 push constant 0
 pop local 1
+//                       let newx =                                                   (                                                           divLengthx *                               25 ) /                           divLengthy ;
+//                                                   (                                                           divLengthx *                               25 ) /                           divLengthy
+//                                                           divLengthx *                               25
 push local 2
 push constant 25
 call Math.multiply 2
 push local 3
 call Math.divide 2
 pop local 0
+//                       let newx =                                                   x +                           (                                                           newx *                               factor ) ;
+//                                                   x +                           (                                                           newx *                               factor )
 push this 0
+//                                                           newx *                               factor
 push local 0
 push local 4
 call Math.multiply 2
@@ -426,10 +617,14 @@ pop local 0
 label IF-TRUE-33
 label IF-TRUE-31
 label IF-TRUE-29
-push local 0
-push local 1
+//           do setDestination (                                           newx ,                               newy ) ;
 push pointer 0
+//                               newx
+push local 0
+//                               newy
+push local 1
 call Ball.setDestination 3
 pop temp 0
+//           return ;
 push constant 0
 return

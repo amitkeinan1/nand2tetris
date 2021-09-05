@@ -4,6 +4,7 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
+import os
 
 from lxml import etree
 from lxml.etree import Element
@@ -143,8 +144,8 @@ class CodeWriter:
         """Compiles a do statement."""
         # 'do' subroutineCall ';'
         self._write_jack_code_as_comment(do_statement)
-        self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
+
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
             call_object = get_text(do_statement[1])
             if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
@@ -156,6 +157,7 @@ class CodeWriter:
         else:
             function_name, args_num = self._handle_curr_class_method(do_statement, args_num, is_explicit=False)
 
+        self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         self.vm_writer.write_call(function_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
@@ -354,8 +356,10 @@ class CodeWriter:
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
-        self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter() if e.text is not None]))
-        return
+        if os.environ.get("DEBUG"):
+            self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter() if e.text is not None]))
+        pass
+
     @staticmethod
     def _is_var_dec(identifier_details):
         return identifier_details[2] == "definition"

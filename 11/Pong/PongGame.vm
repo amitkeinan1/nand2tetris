@@ -2,39 +2,69 @@ function PongGame.new 0
 push constant 7
 call Memory.alloc 1
 pop pointer 0
+//           do Screen . clearScreen ( ) ;
 call Screen.clearScreen 0
 pop temp 0
+//           let batWidth =                           50 ;
+//                           50
 push constant 50
 pop this 6
+//           let bat =                           Bat . new (                                                       230 ,                                       229 ,                                       batWidth ,                                       7 ) ;
+//                           Bat . new (                                                       230 ,                                       229 ,                                       batWidth ,                                       7 )
+//                                       230
 push constant 230
+//                                       229
 push constant 229
+//                                       batWidth
 push this 6
+//                                       7
 push constant 7
 call Bat.new 4
 pop this 0
+//           let ball =                           Ball . new (                                                       253 ,                                       222 ,                                       0 ,                                       511 ,                                       0 ,                                       229 ) ;
+//                           Ball . new (                                                       253 ,                                       222 ,                                       0 ,                                       511 ,                                       0 ,                                       229 )
+//                                       253
 push constant 253
+//                                       222
 push constant 222
+//                                       0
 push constant 0
+//                                       511
 push constant 511
+//                                       0
 push constant 0
+//                                       229
 push constant 229
 call Ball.new 6
 pop this 1
-push constant 400
-push constant 0
+//           do ball . setDestination (                                           400 ,                               0 ) ;
 push this 1
+//                               400
+push constant 400
+//                               0
+push constant 0
 call Ball.setDestination 3
 pop temp 0
+//           do Screen . drawRectangle (                                           0 ,                               238 ,                               511 ,                               240 ) ;
+//                               0
 push constant 0
+//                               238
 push constant 238
+//                               511
 push constant 511
+//                               240
 push constant 240
 call Screen.drawRectangle 4
 pop temp 0
+//           do Output . moveCursor (                                           22 ,                               0 ) ;
+//                               22
 push constant 22
+//                               0
 push constant 0
 call Output.moveCursor 2
 pop temp 0
+//           do Output . printString (                                           Score: 0 ) ;
+//                               Score: 0
 push constant 8
 call String.new 1
 push constant 83
@@ -55,36 +85,56 @@ push constant 48
 call String.appendChar 2
 call Output.printString 1
 pop temp 0
+//           let exit =                           false ;
+//                           false
 push constant 0
 pop this 3
+//           let score =                           0 ;
+//                           0
 push constant 0
 pop this 4
+//           let wall =                           0 ;
+//                           0
 push constant 0
 pop this 2
+//           let lastWall =                           0 ;
+//                           0
 push constant 0
 pop this 5
+//           return                           this ;
+//                           this
 push pointer 0
 return
 function PongGame.dispose 0
 push argument 0
 pop pointer 0
+//           do bat . dispose ( ) ;
 push this 0
 call Bat.dispose 1
 pop temp 0
+//           do ball . dispose ( ) ;
 push this 1
 call Ball.dispose 1
 pop temp 0
+//           do Memory . deAlloc (                                           this ) ;
+//                               this
 push pointer 0
 call Memory.deAlloc 1
 pop temp 0
+//           return ;
 push constant 0
 return
 function PongGame.newInstance 0
+//           let instance =                           PongGame . new ( ) ;
+//                           PongGame . new ( )
 call PongGame.new 0
 pop static 0
+//           return ;
 push constant 0
 return
 function PongGame.getInstance 0
+//           return                           instance ;
+//                           instance
 push static 0
 return
 function PongGame.run 1
@@ -92,60 +142,79 @@ push argument 0
 pop pointer 0
 // while [yada yada yada]
 label WHILE_EXP-0
+//                           ~                 exit
 push this 3
 not
 not
 if-goto WHILE_END-1
 // while [yada yada yada]
 label WHILE_EXP-2
+//                                   (                                           key =                       0 ) &                   (                                           ~                         exit )
+//                                           key =                       0
 push local 0
 push constant 0
 eq
+//                                           ~                         exit
 push this 3
 not
 and
 not
 if-goto WHILE_END-3
+//                   let key =                                           Keyboard . keyPressed ( ) ;
+//                                           Keyboard . keyPressed ( )
 call Keyboard.keyPressed 0
 pop local 0
+//                   do bat . move ( ) ;
 push this 0
 call Bat.move 1
 pop temp 0
+//                   do moveBall ( ) ;
 push pointer 0
 call PongGame.moveBall 1
 pop temp 0
+//                   do Sys . wait (                                                                   50 ) ;
+//                                               50
 push constant 50
 call Sys.wait 1
 pop temp 0
 goto WHILE_EXP-2
 label WHILE_END-3
+//                                   key =                   130
 push local 0
 push constant 130
 eq
 not
 if-goto IF-FALSE-4
-push constant 1
+//                   do bat . setDirection (                                                                   1 ) ;
 push this 0
+//                                               1
+push constant 1
 call Bat.setDirection 2
 pop temp 0
 goto IF-TRUE-5
 label IF-FALSE-4
+//                                           key =                       132
 push local 0
 push constant 132
 eq
 not
 if-goto IF-FALSE-6
-push constant 2
+//                       do bat . setDirection (                                                                               2 ) ;
 push this 0
+//                                                       2
+push constant 2
 call Bat.setDirection 2
 pop temp 0
 goto IF-TRUE-7
 label IF-FALSE-6
+//                                                   key =                           140
 push local 0
 push constant 140
 eq
 not
 if-goto IF-FALSE-8
+//                           let exit =                                                           true ;
+//                                                           true
 push constant 0
 not
 pop this 3
@@ -156,23 +225,33 @@ label IF-TRUE-7
 label IF-TRUE-5
 // while [yada yada yada]
 label WHILE_EXP-10
+//                                   (                                           ~                         (                                                       key =                             0 ) ) &                   (                                           ~                         exit )
+//                                           ~                         (                                                       key =                             0 )
+//                                                       key =                             0
 push local 0
 push constant 0
 eq
 not
+//                                           ~                         exit
 push this 3
 not
 and
 not
 if-goto WHILE_END-11
+//                   let key =                                           Keyboard . keyPressed ( ) ;
+//                                           Keyboard . keyPressed ( )
 call Keyboard.keyPressed 0
 pop local 0
+//                   do bat . move ( ) ;
 push this 0
 call Bat.move 1
 pop temp 0
+//                   do moveBall ( ) ;
 push pointer 0
 call PongGame.moveBall 1
 pop temp 0
+//                   do Sys . wait (                                                                   50 ) ;
+//                                               50
 push constant 50
 call Sys.wait 1
 pop temp 0
@@ -180,13 +259,19 @@ goto WHILE_EXP-10
 label WHILE_END-11
 goto WHILE_EXP-0
 label WHILE_END-1
+//                           exit
 push this 3
 not
 if-goto IF-FALSE-12
+//               do Output . moveCursor (                                                       10 ,                                       27 ) ;
+//                                       10
 push constant 10
+//                                       27
 push constant 27
 call Output.moveCursor 2
 pop temp 0
+//               do Output . printString (                                                       Game Over ) ;
+//                                       Game Over
 push constant 9
 call String.new 1
 push constant 71
@@ -212,16 +297,23 @@ pop temp 0
 goto IF-TRUE-13
 label IF-FALSE-12
 label IF-TRUE-13
+//           return ;
 push constant 0
 return
 function PongGame.moveBall 5
 push argument 0
 pop pointer 0
+//           let wall =                           ball . move ( ) ;
+//                           ball . move ( )
 call Ball.move 0
 pop this 2
+//                           (                                   wall >                   0 ) &               (                                   ~                     (                                               wall =                         lastWall ) )
+//                                   wall >                   0
 push this 2
 push constant 0
 gt
+//                                   ~                     (                                               wall =                         lastWall )
+//                                               wall =                         lastWall
 push this 2
 push this 5
 eq
@@ -229,76 +321,113 @@ not
 and
 not
 if-goto IF-FALSE-14
+//               let lastWall =                                   wall ;
+//                                   wall
 push this 2
 pop this 5
+//               let bouncingDirection =                                   0 ;
+//                                   0
 push constant 0
 pop local 0
+//               let batLeft =                                   bat . getLeft ( ) ;
+//                                   bat . getLeft ( )
 call Bat.getLeft 0
 pop local 1
+//               let batRight =                                   bat . getRight ( ) ;
+//                                   bat . getRight ( )
 call Bat.getRight 0
 pop local 2
+//               let ballLeft =                                   ball . getLeft ( ) ;
+//                                   ball . getLeft ( )
 call Ball.getLeft 0
 pop local 3
+//               let ballRight =                                   ball . getRight ( ) ;
+//                                   ball . getRight ( )
 call Ball.getRight 0
 pop local 4
+//                                   wall =                   4
 push this 2
 push constant 4
 eq
 not
 if-goto IF-FALSE-16
+//                   let exit =                                           (                                                   batLeft >                           ballRight ) |                       (                                                   batRight <                           ballLeft ) ;
+//                                           (                                                   batLeft >                           ballRight ) |                       (                                                   batRight <                           ballLeft )
+//                                                   batLeft >                           ballRight
 push local 1
 push local 4
 gt
+//                                                   batRight <                           ballLeft
 push local 2
 push local 3
 lt
 or
 pop this 3
+//                                           ~                         exit
 push this 3
 not
 not
 if-goto IF-FALSE-18
+//                                                   ballRight <                           (                                                           batLeft +                               10 )
 push local 4
+//                                                           batLeft +                               10
 push local 1
 push constant 10
 add
 lt
 not
 if-goto IF-FALSE-20
+//                           let bouncingDirection =                                                           -                                 1 ;
+//                                                           -                                 1
 push constant 1
 neg
 pop local 0
 goto IF-TRUE-21
 label IF-FALSE-20
+//                                                           ballLeft >                               (                                                                   batRight -                                   10 )
 push local 3
+//                                                                   batRight -                                   10
 push local 2
 push constant 10
 sub
 gt
 not
 if-goto IF-FALSE-22
+//                               let bouncingDirection =                                                                   1 ;
+//                                                                   1
 push constant 1
 pop local 0
 goto IF-TRUE-23
 label IF-FALSE-22
 label IF-TRUE-23
 label IF-TRUE-21
+//                       let batWidth =                                                   batWidth -                           2 ;
+//                                                   batWidth -                           2
 push this 6
 push constant 2
 sub
 pop this 6
-push this 6
+//                       do bat . setWidth (                                                                               batWidth ) ;
 push this 0
+//                                                       batWidth
+push this 6
 call Bat.setWidth 2
 pop temp 0
+//                       let score =                                                   score +                           1 ;
+//                                                   score +                           1
 push this 4
 push constant 1
 add
 pop this 4
+//                       do Output . moveCursor (                                                                               22 ,                                                       7 ) ;
+//                                                       22
 push constant 22
+//                                                       7
 push constant 7
 call Output.moveCursor 2
 pop temp 0
+//                       do Output . printInt (                                                                               score ) ;
+//                                                       score
 push this 4
 call Output.printInt 1
 pop temp 0
@@ -308,12 +437,15 @@ label IF-TRUE-19
 goto IF-TRUE-17
 label IF-FALSE-16
 label IF-TRUE-17
-push local 0
+//               do ball . bounce (                                                       bouncingDirection ) ;
 push this 1
+//                                       bouncingDirection
+push local 0
 call Ball.bounce 2
 pop temp 0
 goto IF-TRUE-15
 label IF-FALSE-14
 label IF-TRUE-15
+//           return ;
 push constant 0
 return
