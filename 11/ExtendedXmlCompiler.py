@@ -14,7 +14,7 @@ class ExtendedXmlCompiler:
     output stream.
     """
 
-    def __init__(self, input_path: str, output_path: Optional[str]) -> None:
+    def __init__(self, input_path: str, output_path: Optional[str] = None) -> None:
         """
         Creates a new compilation engine with the given input and output. The
         next routine called must be compileClass()
@@ -47,17 +47,19 @@ class ExtendedXmlCompiler:
                         self.symbol_table.start_subroutine()
                     elif element_type == "identifier":
                         child_element.tag = self._get_extended_type(child_element, index)
-
-        if write_to_file:
-            xml_tree.write(self.output_path, pretty_print=True)
-        else:
-            return xml_tree
+        return xml_tree
 
     def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
         xml_tree = self.xml_compiler.compile(write_to_file=False)
         self.class_name = get_text(xml_tree.getroot()[1])
         self._add_subroutine_symbols(xml_tree)
-        return self._extend_tree(xml_tree, write_to_file)
+
+        xml_tree = self._extend_tree(xml_tree, write_to_file)
+
+        if write_to_file:
+            xml_tree.write(self.output_path, pretty_print=True)
+        else:
+            return xml_tree
 
     def _add_subroutine_symbols(self, xml_tree):
         for subroutine_dec in xml_tree.findall(f"./{SUBROUTINE_DEC_TAG}"):

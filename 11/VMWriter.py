@@ -105,12 +105,3 @@ class VMWriter:
     def write_comment(self, comment: str):
         self.write_line(f"// {comment}")
 
-
-# TODO: remove before submission
-if __name__ == '__main__':
-    # test
-    with open("amit_tests/test_vm_writer.vm", 'w') as output_stream:
-        writer = VMWriter(output_stream)
-        writer.write_push("ARG", 3)
-        writer.write_pop("LOCAL", 5)
-        writer.write_arithmetic("LT")

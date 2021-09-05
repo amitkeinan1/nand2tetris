@@ -13,6 +13,7 @@ from JackPreprocessing import get_tokens
 from config import TokenTypes
 from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 
+
 # TODO: fix stuff from last submission
 
 class JackTokenizer:
