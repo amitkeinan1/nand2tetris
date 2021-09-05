@@ -164,7 +164,7 @@ class CodeWriter:
             elif call_object == self.class_name:
                 if get_text(subroutine_call[2]) == "new":
                     function_name, args_num = self._handle_curr_class_constructor(subroutine_call, args_num,
-                                                                             is_explicit=True)
+                                                                                  is_explicit=True)
                 else:
                     function_name, args_num = self._handle_curr_class_method(subroutine_call, args_num,
                                                                              is_explicit=True)
@@ -182,16 +182,23 @@ class CodeWriter:
         self._write_jack_code_as_comment(let_statement)
         expressions = let_statement.findall(EXPRESSION_TAG)
         var_elem = let_statement[1]
-        right_expression = let_statement[-2]
-        self.write_expression_code(right_expression)
+        expression2 = let_statement[-2]
+
         if len(expressions) > 1:
+            expression1 = let_statement[3]
             var_kind, var_index, _, _, = self._get_identifier_details(get_type(var_elem))
-            self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
-            self.write_expression_code(let_statement[3])
-            self.write_op("+")
-            self.vm_writer.write_pop("POINTER", 1)
-            self.vm_writer.write_pop("THAT", 0)
+            self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)  # push arr
+            self.write_expression_code(
+                expression1)  # push expression1 - opposite order from slides to be consistent with the given compiler
+            self.write_op("+")  # add
+            self.write_expression_code(expression2)  # push expression2
+            self.vm_writer.write_pop("TEMP", 0)  # pop temp 0
+            self.vm_writer.write_pop("POINTER", 1)  # pop pointer 1
+            self.vm_writer.write_push("TEMP", 0)  # push temp 0
+            self.vm_writer.write_pop("THAT", 0)  # pop temp 0
+
         else:
+            self.write_expression_code(expression2)
             category, index, status, var_type = self._get_identifier_details(get_type(var_elem))
             segment = self._convert_kind_to_segment(category)
             self.vm_writer.write_pop(segment, index)
@@ -359,7 +366,7 @@ class CodeWriter:
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
-        if os.environ.get("DEBUG"):
+        if os.environ.get("DEBUG") == "True":
             self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter() if e.text is not None]))
         pass
 
