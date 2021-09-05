@@ -259,8 +259,10 @@ class CodeWriter:
     def write_op(self, symbol: str):
         if symbol in op_to_vm_command.keys():
             self.vm_writer.write_arithmetic(op_to_vm_command[symbol])
-        else:
+        elif symbol in op_to_os_function.keys():
             self.vm_writer.write_call(op_to_os_function[symbol], 2)
+        else:
+            raise Exception("symbol is not operator")
 
     def write_unary_op(self, symbol: str):
         self.vm_writer.write_arithmetic(unary_op_to_vm_command[symbol])
