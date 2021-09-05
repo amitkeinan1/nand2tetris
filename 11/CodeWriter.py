@@ -17,9 +17,6 @@ from xml_utils import get_text, get_type
 
 
 class CodeWriter:
-    """Gets input from a JackTokenizer and emits its parsed structure into an
-    output stream.
-    """
 
     def __init__(self, syntax_tree: etree, output_path: str) -> None:
         """
