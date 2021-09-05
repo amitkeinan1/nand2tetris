@@ -8,18 +8,10 @@ STRING_CONST_PATTERN = '"[^\\n"]*?"'
 IDENTIFIER_PATTERN = '[a-zA-Z_][a-zA-Z0-9_]*'
 
 # comments removing
-
-# INLINE_COMMENT_PATTERN = "//.*\n"
-# MULTILINE_COMMENT_PATTERN = "\s*\/\*\*(.*)\n(\s*\*.*\n)*(\s*\*.*)?\s*\*\/"
-# API_COMMENT_PATTERN = "/\*\*.*\*/"
 COMMENTS_REGEX = re.compile(r'//[^\n]*\n|/\*(.*?)\*/', re.MULTILINE | re.DOTALL)
 
 INLINE_COMMENT_REPLACEMENT = "\n"
 DEFAULT_REPLACEMENT = ""
-
-COMMENTS_REMOVING = {INLINE_COMMENT_PATTERN: INLINE_COMMENT_REPLACEMENT,
-                     MULTILINE_COMMENT_PATTERN: DEFAULT_REPLACEMENT,
-                     API_COMMENT_PATTERN: DEFAULT_REPLACEMENT}
 
 OPERATORS = ['+', '-', '*', '/', '&', '|', '<', '>', '=']
 UNARY_OPERATORS = ['-', '~']
