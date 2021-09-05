@@ -66,7 +66,7 @@ class CodeWriter:
         subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
         args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
-        self.vm_writer.write_function(subroutine_name, len(subroutine_dec.findall(f"./{SUBROUTINE_TAG}/{VAR_DEC_TAG}")))
+        self.vm_writer.write_function(subroutine_name, self._count_locals(subroutine_dec.find(SUBROUTINE_TAG)))
         for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
             self.write_var_dec_code(var_dec)
             subroutine_dec.find("subroutineBody").find("statements")
@@ -296,7 +296,6 @@ class CodeWriter:
         assert len(details) == 5
         return details[1:]
 
-
     @staticmethod
     def _convert_kind_to_segment(kind):
         return KIND_TO_SEGMENT[kind]
@@ -304,7 +303,16 @@ class CodeWriter:
     def _write_jack_code_as_comment(self, elem):
         self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter()]))
 
+    @staticmethod
+    def _is_var_dec(identifier_details):
+        return identifier_details[2] == "definition"
 
+    def _count_locals(self, subroutine_body: Element):
+        locals_count = 0
+        var_decs = subroutine_body.findall(VAR_DEC_TAG)
+        for dec in var_decs:
+            locals_count += (len(list(filter(lambda x: x == ",", map(lambda elem: get_text(elem), dec)))) + 1)
+        return locals_count
 
 if __name__ == '__main__':
     file_name = "SquareMain"
