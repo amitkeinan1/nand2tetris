@@ -305,7 +305,8 @@ class CodeWriter:
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
-        self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter()]))
+        pass
+        # self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter()]))
 
     @staticmethod
     def _is_var_dec(identifier_details):
