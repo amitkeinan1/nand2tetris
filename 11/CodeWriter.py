@@ -66,7 +66,7 @@ class CodeWriter:
         subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
         args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
-        self.vm_writer.write_function(subroutine_name, args_num)
+        self.vm_writer.write_function(subroutine_name, len(subroutine_dec.findall(f"./{SUBROUTINE_TAG}/{VAR_DEC_TAG}")))
         for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
             self.write_var_dec_code(var_dec)
             subroutine_dec.find("subroutineBody").find("statements")
@@ -205,7 +205,7 @@ class CodeWriter:
             self.vm_writer.write_function("String.new", 1)
             for char in string:
                 self.vm_writer.write_push("CONST", ord(char))
-                self.vm_writer.write_function("String.appendChar", 1)
+                self.vm_writer.write_call("String.appendChar", 1)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
             self.write_keyword(get_text(term.find(KEYWORD_CONSTANT_TAG)))

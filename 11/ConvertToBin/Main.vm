@@ -1,4 +1,4 @@
-function Main.main 0
+function Main.main 1
 //  do Main . fillMemory (    8001 ,   16 ,   -  1 ) ;
 push constant 8001
 push constant 16
@@ -17,7 +17,7 @@ pop temp 0
 //  return ;
 push constant 0
 return
-function Main.convert 1
+function Main.convert 2
 //  let loop =   true ;
 push constant 0
 neg
@@ -77,7 +77,7 @@ label while-L2-1
 //  return ;
 push constant 0
 return
-function Main.nextMask 1
+function Main.nextMask 0
 push argument 0
 push constant 0
 eq
@@ -94,7 +94,7 @@ push constant 2
 call Math.multiply 2
 return
 label if-L2-7
-function Main.fillMemory 3
+function Main.fillMemory 0
 label while-L1-8
 push argument 1
 push constant 0
