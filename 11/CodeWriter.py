@@ -31,6 +31,7 @@ class CodeWriter:
         self.symbol_table = SymbolTable()  # TODO: remove symbol table (probably)
         self.vm_writer = VMWriter(open(output_path, 'w'))
         self.labels_count = 0
+        self.class_var_count = 0
 
     def write_code(self) -> None:
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
@@ -41,8 +42,10 @@ class CodeWriter:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
         class_name = get_text(class_xml[1])
+        self.class_var_count = 0
         for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
+            self.class_var_count += 1
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
             self.write_subroutine_dec_code(subroutine_dec, class_name)
 
@@ -63,6 +66,10 @@ class CodeWriter:
     def write_subroutine_dec_code(self, subroutine_dec: Element, class_name: str) -> None:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
+        if get_text(subroutine_dec[0]) == "constructor":
+            self.vm_writer.write_push("CONST", self.class_var_count)
+            self.vm_writer.write_call("Memory.alloc", 1)
+            self.vm_writer.write_push("POINTER", 0)
         subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, self._count_locals(subroutine_dec.find(SUBROUTINE_TAG)))
