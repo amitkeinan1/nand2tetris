@@ -27,7 +27,7 @@ class CodeWriter:
         """
         self.parsed_code = syntax_tree
         self.output_path = output_path
-        self.symbol_table = SymbolTable()
+        self.symbol_table = SymbolTable()  # TODO: remove symbol table (probably)
         self.vm_writer = VMWriter(open(output_path, 'w'))
         self.labels_count = 0
 
@@ -112,13 +112,15 @@ class CodeWriter:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         expressions = let_statement.findall(EXPRESSION_TAG)
-        var_name = self._get_text(let_statement[1])
+        var_elem = let_statement[1]
         right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
         if len(expressions) > 1:  # TODO: array access
             raise Exception("we still do not support arrays in let statements...")
         else:
-            raise Exception("we still do not support non-arrays in let statements...")
+            category, index, status, var_type = self._get_identifier_details(self._get_type(var_elem))
+            segment = self._convert_kind_to_segment(category)
+            self.vm_writer.write_pop(segment, index)
 
     def write_while_code(self, while_statement: Element) -> None:
         """Compiles a while statement."""

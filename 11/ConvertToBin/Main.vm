@@ -4,4 +4,91 @@ push constant 16
 call Main.fillMemory 3
 pop temp 0
 push constant 8000
-call <Element identifier-class-0-usage-UNK at 0x1ffd46e3148> 1
+call Memory.peek 1
+pop local 0
+push local 0
+call Main.convert 1
+pop temp 0
+push constant 0
+return
+function Main.convert 1
+push constant 0
+neg
+pop local 2
+label while-L1 - 0
+push local 2
+not
+if-goto while-L2 - 1
+push local 1
+push constant 1
+add
+pop local 1
+push local 0
+call Main.nextMask 1
+pop local 0
+not
+if-goto if-L1 - 2
+not
+if-goto if-L1 - 4
+push constant 8000
+push local 1
+add
+push constant 1
+call Memory.poke 2
+pop temp 0
+goto if-L2 - 5
+label if-L1 - 4
+push constant 8000
+push local 1
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+label if-L2 - 5
+goto if-L2 - 3
+label if-L1 - 2
+push constant 0
+pop local 2
+label if-L2 - 3
+goto while-L1 - 0
+label while-L2 - 1
+push constant 0
+return
+function Main.nextMask 1
+push argument 0
+push constant 0
+eq
+not
+if-goto if-L1 - 6
+push constant 1
+return
+goto if-L2 - 7
+label if-L1 - 6
+push argument 0
+push constant 2
+call Math.multiply 2
+return
+label if-L2 - 7
+function Main.fillMemory 3
+label while-L1 - 8
+push argument 1
+push constant 0
+gt
+not
+if-goto while-L2 - 9
+push argument 0
+push argument 2
+call Memory.poke 2
+pop temp 0
+push argument 1
+push constant 1
+sub
+pop argument 1
+push argument 0
+push constant 1
+add
+pop argument 0
+goto while-L1 - 8
+label while-L2 - 9
+push constant 0
+return
