@@ -230,7 +230,7 @@ class CodeWriter:
 
                 self.vm_writer.write_call(function_name, args_num)
 
-        elif term.findtext(SYMBOL_TAG) == "(":  # '('expression')'
+        elif term.findtext(SYMBOL_TAG).strip() == "(":  # '('expression')'
             self.write_expression_code(term.find(EXPRESSION_TAG))
 
         elif term.findtext(SYMBOL_TAG) in UNARY_OPERATORS:  # unaryOp term
