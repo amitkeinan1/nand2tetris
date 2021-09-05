@@ -8,24 +8,37 @@ pop local 1
 push constant 1
 call Array.new 1
 pop local 2
+push local 0
+push constant 3
+add
 push constant 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
+push constant 4
+add
+push constant 8
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
+push constant 5
+add
+push constant 4
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 1
 push local 0
 push constant 3
 add
 pop pointer 1
-pop that 0
-push constant 8
-push local 0
-push constant 4
+push that 0
 add
-pop pointer 1
-pop that 0
-push constant 4
-push local 0
-push constant 5
-add
-pop pointer 1
-pop that 0
 push local 0
 push constant 3
 add
@@ -33,6 +46,11 @@ pop pointer 1
 push that 0
 push constant 3
 add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
 push local 1
 push local 0
 push constant 3
@@ -41,7 +59,8 @@ pop pointer 1
 push that 0
 add
 pop pointer 1
-pop that 0
+push that 0
+add
 push local 0
 push local 0
 push constant 5
@@ -69,23 +88,16 @@ add
 pop pointer 1
 push that 0
 call Math.multiply 2
-push local 0
-push local 1
-push local 0
-push constant 3
-add
+pop temp 0
 pop pointer 1
-push that 0
-add
-pop pointer 1
-push that 0
-add
-pop pointer 1
+push temp 0
 pop that 0
 push local 2
 push constant 0
 add
+pop temp 0
 pop pointer 1
+push temp 0
 pop that 0
 push local 2
 push constant 0
@@ -404,11 +416,13 @@ add
 pop pointer 1
 push that 0
 pop local 2
-push constant 33
 push local 2
 push constant 1
 add
+push constant 33
+pop temp 0
 pop pointer 1
+push temp 0
 pop that 0
 push local 0
 push constant 7
@@ -416,11 +430,13 @@ add
 pop pointer 1
 push that 0
 pop local 2
-push constant 77
 push local 2
 push constant 1
 add
+push constant 77
+pop temp 0
 pop pointer 1
+push temp 0
 pop that 0
 push local 0
 push constant 3
@@ -431,6 +447,9 @@ pop local 1
 push local 1
 push constant 1
 add
+push local 1
+push constant 1
+add
 pop pointer 1
 push that 0
 push local 2
@@ -439,10 +458,9 @@ add
 pop pointer 1
 push that 0
 add
-push local 1
-push constant 1
-add
+pop temp 0
 pop pointer 1
+push temp 0
 pop that 0
 goto IF-TRUE-1
 label IF-FALSE-0
@@ -670,12 +688,14 @@ push argument 1
 push constant 1
 sub
 pop argument 1
-push constant 3
-call Array.new 1
 push argument 0
 push argument 1
 add
+push constant 3
+call Array.new 1
+pop temp 0
 pop pointer 1
+push temp 0
 pop that 0
 goto WHILE_EXP-2
 label WHILE_END-3
