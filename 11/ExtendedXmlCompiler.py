@@ -54,13 +54,17 @@ class ExtendedXmlCompiler:
         xml_tree = self.xml_compiler.compile(write_to_file=False)
         return self._extend_tree(xml_tree, write_to_file)
 
-    def _handle_var_defined(self, element, parent, is_param_list=False):
+    def _handle_var_defined_params_list(self, element, parent, index):
+        var_kind = VAR_KINDS["argument"]
         var_name = self._get_name(element)
-        if is_param_list:
-            var_kind = VAR_KINDS["argument"]
-        else:
-            var_kind = VAR_KINDS[self._get_name(parent[0])]
-            var_type = self._get_name(parent[1])
+        var_type = self._get_name(parent[index - 1])
+        self.symbol_table.define(var_name, var_type, var_kind)
+        return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION, var_type)
+
+    def _handle_var_defined(self, element, parent):
+        var_name = self._get_name(element)
+        var_kind = VAR_KINDS[self._get_name(parent[0])]
+        var_type = self._get_name(parent[1])
         self.symbol_table.define(var_name, var_type, var_kind)
         return self._generate_tag(var_kind, self.symbol_table.index_of(var_name), DEFINITION, var_type)
 
@@ -109,7 +113,7 @@ class ExtendedXmlCompiler:
             if index % 3 == 0:
                 return self._generate_tag("class", 0, USAGE)
             elif index % 3 == 1:
-                return self._handle_var_defined(element, parent, is_param_list=True)
+                return self._handle_var_defined_params_list(element, parent, index)
             else:
                 raise Exception()
 

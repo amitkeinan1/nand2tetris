@@ -1,0 +1,54 @@
+function Main.main 0
+push constant 8001
+push constant 16
+call Main.fillMemory 3
+pop temp 0
+push constant 8000
+call <Element identifier-class-0-usage-UNK at 0x1e3a8333848> 1
+push local 0
+call Main.convert 1
+pop temp 0
+push constant 0
+return
+function Main.convert 1
+push constant 0
+neg
+label while-L1 - 0
+push local 2
+not
+if-goto while-L2 - 1
+push local 1
+push constant 1
+add
+push local 0
+call <Element identifier-class-0-usage-UNK at 0x1e3a8339d88> 1
+not
+if-goto if-L1 - 2
+not
+if-goto if-L1 - 4
+push constant 8000
+push local 1
+add
+push constant 1
+call Memory.poke 2
+pop temp 0
+goto if-L2 - 5
+label if-L1 - 4
+push constant 8000
+push local 1
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+label if-L2 - 5
+goto if-L2 - 3
+label if-L1 - 2
+push constant 0
+label if-L2 - 3
+goto while-L1 - 0
+label while-L2 - 1
+push constant 0
+return
+function Main.nextMask 1
+push argument 0
+push constant 0
