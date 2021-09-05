@@ -43,7 +43,7 @@ class CodeWriter:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
         self.class_name = get_text(class_xml[1])
-        self.class_var_count = self._count_var_decs(class_xml, CLASS_VAR_DEC_TAG)
+        self.class_var_count = self._count_local_var_decs(class_xml, f"{CLASS_VAR_DEC_TAG}")
         for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
@@ -70,7 +70,7 @@ class CodeWriter:
         subroutine_type = get_text(subroutine_dec[0])
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name,
-                                      self._count_var_decs(subroutine_dec.find(SUBROUTINE_TAG), VAR_DEC_TAG))
+                                      self._count_local_var_decs(subroutine_dec.find(SUBROUTINE_TAG), VAR_DEC_TAG))
         if subroutine_type == "constructor":
             self.vm_writer.write_push("CONST", self.class_var_count)
             self.vm_writer.write_call("Memory.alloc", 1)
@@ -360,10 +360,12 @@ class CodeWriter:
     def _is_var_dec(identifier_details):
         return identifier_details[2] == "definition"
 
-    def _count_var_decs(self, elem: Element, var_tag):
+    def _count_local_var_decs(self, elem: Element, var_tag):
         locals_count = 0
         var_decs = elem.findall(var_tag)
         for dec in var_decs:
+            if dec.findtext(KEYWORD_CONSTANT_TAG).strip() == "static":
+                continue
             locals_count += (len(list(filter(lambda x: x == ",", map(lambda elem: get_text(elem), dec)))) + 1)
         return locals_count
 
