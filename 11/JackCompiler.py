@@ -13,6 +13,10 @@ from CodeWriter import CodeWriter
 from ExtendedXmlCompiler import ExtendedXmlCompiler
 
 
+# TODO: pass ConvertToBin
+# TODO: Average: we pass but small diffs in Main.vm1
+# TODO: pass ComplexArrays
+
 def compile_file(input_path: str, output_path: str) -> None:
     """Compiles a single file.
 
