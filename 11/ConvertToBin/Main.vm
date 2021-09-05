@@ -18,10 +18,10 @@ push constant 0
 not
 pop local 2
 // while [yada yada yada]
-label WHILE_EXP-0
+label WHILE_EXP0
 push local 2
 not
-if-goto WHILE_END-1
+if-goto WHILE_END1
 push local 1
 push constant 1
 add
@@ -34,7 +34,7 @@ push constant 16
 gt
 not
 not
-if-goto IF-FALSE-2
+if-goto IF-FALSE2
 push argument 0
 push local 0
 and
@@ -42,29 +42,29 @@ push constant 0
 eq
 not
 not
-if-goto IF-FALSE-4
+if-goto IF-FALSE4
 push constant 8000
 push local 1
 add
 push constant 1
 call Memory.poke 2
 pop temp 0
-goto IF-TRUE-5
-label IF-FALSE-4
+goto IF-TRUE5
+label IF-FALSE4
 push constant 8000
 push local 1
 add
 push constant 0
 call Memory.poke 2
 pop temp 0
-label IF-TRUE-5
-goto IF-TRUE-3
-label IF-FALSE-2
+label IF-TRUE5
+goto IF-TRUE3
+label IF-FALSE2
 push constant 0
 pop local 2
-label IF-TRUE-3
-goto WHILE_EXP-0
-label WHILE_END-1
+label IF-TRUE3
+goto WHILE_EXP0
+label WHILE_END1
 push constant 0
 return
 function Main.nextMask 0
@@ -72,24 +72,24 @@ push argument 0
 push constant 0
 eq
 not
-if-goto IF-FALSE-6
+if-goto IF-FALSE6
 push constant 1
 return
-goto IF-TRUE-7
-label IF-FALSE-6
+goto IF-TRUE7
+label IF-FALSE6
 push argument 0
 push constant 2
 call Math.multiply 2
 return
-label IF-TRUE-7
+label IF-TRUE7
 function Main.fillMemory 0
 // while [yada yada yada]
-label WHILE_EXP-8
+label WHILE_EXP8
 push argument 1
 push constant 0
 gt
 not
-if-goto WHILE_END-9
+if-goto WHILE_END9
 push argument 0
 push argument 2
 call Memory.poke 2
@@ -102,7 +102,7 @@ push argument 0
 push constant 1
 add
 pop argument 0
-goto WHILE_EXP-8
-label WHILE_END-9
+goto WHILE_EXP8
+label WHILE_END9
 push constant 0
 return
