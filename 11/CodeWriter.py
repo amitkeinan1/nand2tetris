@@ -307,7 +307,6 @@ class CodeWriter:
 
     @staticmethod
     def _convert_kind_to_segment(kind):
-        KIND_TO_SEGMENT = {"STATIC": "STATIC", "FIELD": "THIS", "ARG": "ARG", "VAR": "LOCAL"}  # TODO: to config
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
