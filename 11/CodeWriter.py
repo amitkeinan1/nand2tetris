@@ -63,7 +63,7 @@ class CodeWriter:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
         subroutine_name = self._get_text(subroutine_dec[2])
-        args_num = len(subroutine_dec.find(PARAMETER_LIST_TAG))
+        args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, args_num)
         for var_dec in subroutine_dec.findall(VAR_DEC_TAG):
@@ -174,8 +174,8 @@ class CodeWriter:
         for i in range(1, len(expression), 2):
             operator = expression[i]
             term = expression[i + 1]
-            self.write_op(self._get_text(operator))
             self.write_term_code(term)
+            self.write_op(self._get_text(operator))
 
     def write_term_code(self, term: Element) -> None:
         """Compiles a term. 

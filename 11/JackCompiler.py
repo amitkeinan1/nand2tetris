@@ -26,7 +26,7 @@ def compile_file(input_path: str, output_path: str) -> None:
     writer = CodeWriter(tree, output_path)
     writer.write_code()
 
-
+# TODO: remove before submission
 if "__main__" == __name__:
     # Parses the input path and calls assemble_file on each input file
     if not len(sys.argv) == 2:
