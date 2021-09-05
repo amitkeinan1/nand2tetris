@@ -14,8 +14,6 @@ from config import TokenTypes
 from jack_syntax import KEYWORDS, SYMBOLS, IDENTIFIER_PATTERN, STRING_CONST_PATTERN
 
 
-# TODO: fix stuff from last submission
-
 class JackTokenizer:
     """Removes all comments from the input stream and breaks it
     into Jack language tokens, as specified by the Jack grammar.

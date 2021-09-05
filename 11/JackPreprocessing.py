@@ -87,12 +87,3 @@ def get_tokens(jack_code: str) -> List[str]:
     jack_code = _clean_text(jack_code)
     tokens = _split_to_tokens(jack_code)
     return tokens
-
-
-# TODO: remove before submission
-if __name__ == '__main__':
-    with open("ConvertToBin/Main.jack") as stream:
-        text = stream.read()
-        tokens = get_tokens(text)
-        for token in tokens:
-            print(token)
