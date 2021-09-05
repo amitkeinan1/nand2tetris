@@ -13,8 +13,6 @@ from CodeWriter import CodeWriter
 from ExtendedXmlCompiler import ExtendedXmlCompiler
 
 
-# TODO: pass ConvertToBin
-
 def compile_file(input_path: str, output_path: str) -> None:
     """Compiles a single file.
 
