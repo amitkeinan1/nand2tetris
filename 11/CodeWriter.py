@@ -134,8 +134,8 @@ class CodeWriter:
         """Compiles a while statement."""
         self.vm_writer.write_comment("while [yada yada yada]")
 
-        start_label = self._generate_label("while-L1")
-        out_label = self._generate_label("while-L2")
+        start_label = self._generate_label("WHILE_EXP")
+        out_label = self._generate_label("WHILE_END")
 
         self.vm_writer.write_label(start_label)  # label L1
         # !(cond):
