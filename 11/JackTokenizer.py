@@ -6,6 +6,7 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import re
 from typing import Union
+
 from lxml import etree as ET
 
 from JackPreprocessing import get_tokens
@@ -151,3 +152,8 @@ class JackTokenizer:
 
         tokens_tree = ET.ElementTree(tokens_root)
         tokens_tree.write(output_path, pretty_print=True)
+
+
+if __name__ == '__main__':
+    tokenizer = JackTokenizer(r"ConvertToBin\Main.jack")
+    tokenizer.tokenize(r"ConvertToBin\tokens")

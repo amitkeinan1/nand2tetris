@@ -91,8 +91,9 @@ def get_tokens(jack_code: str) -> List[str]:
     return tokens
 
 
+# TODO: remove before submission
 if __name__ == '__main__':
-    with open("Square/Main.jack") as stream:
+    with open("ConvertToBin/Main.jack") as stream:
         text = stream.read()
         tokens = get_tokens(text)
         for token in tokens:
