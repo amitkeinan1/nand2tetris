@@ -29,7 +29,7 @@ class CodeWriter:
         """
         self.parsed_code = syntax_tree
         self.output_path = output_path
-        self.symbol_table = SymbolTable()  # TODO: remove symbol table (probably)
+        self.symbol_table = SymbolTable()
         self.vm_writer = VMWriter(open(output_path, 'w'))
         self.labels_count = 0
         self.class_var_count = 0
