@@ -109,7 +109,7 @@ class CodeWriter:
         self.vm_writer.write_call(method_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
-    def write_let_code(self, let_statement: Element) -> None:  # TODO
+    def write_let_code(self, let_statement: Element) -> None:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         self._write_jack_code_as_comment(let_statement)
@@ -237,9 +237,9 @@ class CodeWriter:
         elif term.findtext(SYMBOL_TAG).strip() == "(":  # '('expression')'
             self.write_expression_code(term.find(EXPRESSION_TAG))
 
-        elif term.findtext(SYMBOL_TAG) in UNARY_OPERATORS:  # unaryOp term
-            self.write_expression_code(term.find(EXPRESSION_TAG))
-            self.write_unary_op(term.findtext(SYMBOL_TAG))
+        elif term.findtext(SYMBOL_TAG).strip() in UNARY_OPERATORS:  # unaryOp term
+            self.write_term_code(term.find(TERM_TAG))
+            self.write_unary_op(term.findtext(SYMBOL_TAG).strip())
 
     def write_expression_list_code(self, expression_list: Element) -> None:
         """Compiles a (possibly empty) comma-separated list of expressions."""

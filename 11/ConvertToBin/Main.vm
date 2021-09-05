@@ -2,6 +2,8 @@ function Main.main 0
 //  do Main . fillMemory (    8001 ,   16 ,   -  1 ) ;
 push constant 8001
 push constant 16
+push constant 1
+neg
 call Main.fillMemory 3
 pop temp 0
 //  let value =   Memory . peek (    8000 ) ;
@@ -33,8 +35,18 @@ pop local 1
 push local 0
 call Main.nextMask 1
 pop local 0
+push local 1
+push constant 16
+gt
+not
 not
 if-goto if-L1-2
+push argument 0
+push local 0
+and
+push constant 0
+eq
+not
 not
 if-goto if-L1-4
 //  do Memory . poke (    8000 +  position ,   1 ) ;
