@@ -117,8 +117,13 @@ class CodeWriter:
         var_elem = let_statement[1]
         right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
-        if len(expressions) > 1:  # TODO: array access
-            raise Exception("we still do not support arrays in let statements...")
+        if len(expressions) > 1:
+            var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(var_elem))
+            self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
+            self.write_expression_code(let_statement[3])
+            self.write_op("+")
+            self.vm_writer.write_pop("POINTER", 1)
+            self.vm_writer.write_pop("THAT", 0)
         else:
             category, index, status, var_type = self._get_identifier_details(self._get_type(var_elem))
             segment = self._convert_kind_to_segment(category)
