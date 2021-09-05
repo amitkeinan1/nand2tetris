@@ -340,8 +340,8 @@ class CodeWriter:
             self.vm_writer.write_arithmetic("NOT")
         if keyword == "false":
             self.vm_writer.write_push("CONST", 0)
-        if keyword == "null":  # TODO
-            pass
+        if keyword == "null":
+            self.vm_writer.write_push("CONST", 0)
         if keyword == "this":
             self.vm_writer.write_push("POINTER", 0)
 
