@@ -88,7 +88,8 @@ not
 if-goto WHILE_END-11
 call Keyboard.keyPressed 0
 pop local 0
-call SquareGame.moveSquare 0
+push pointer 0
+call SquareGame.moveSquare 1
 pop temp 0
 goto WHILE_EXP-10
 label WHILE_END-11
@@ -175,7 +176,8 @@ not
 if-goto WHILE_END-27
 call Keyboard.keyPressed 0
 pop local 0
-call SquareGame.moveSquare 0
+push pointer 0
+call SquareGame.moveSquare 1
 pop temp 0
 goto WHILE_EXP-26
 label WHILE_END-27

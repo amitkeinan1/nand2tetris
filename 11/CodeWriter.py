@@ -32,6 +32,7 @@ class CodeWriter:
         self.vm_writer = VMWriter(open(output_path, 'w'))
         self.labels_count = 0
         self.class_var_count = 0
+        self.class_name = None
 
     def write_code(self) -> None:
         """ the main compile class. uses compile_class for the logic and write the contents to a file."""
@@ -103,6 +104,37 @@ class CodeWriter:
             elif statement.tag == RETURN_TAG:
                 self.write_return_code(statement)
 
+    def _handle_var_method(self, do_statement: Element, args_num: int):
+        call_object = get_text(do_statement[1])
+        segment = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
+        index = self.symbol_table.index_of(call_object)
+        self.vm_writer.write_push(segment, index)
+        call_object = self.symbol_table.type_of(call_object)
+        function_name = call_object + "." + get_text(do_statement[3])
+        return function_name, args_num + 1
+
+    def _handle_other_class_method(self, do_statement: Element, args_num: int):
+        call_object = get_text(do_statement[1])
+        function_name = call_object + "." + get_text(do_statement[3])
+        return function_name, args_num
+
+    def _handle_curr_class_method(self, do_statement: Element, args_num: int, is_explicit):
+        if is_explicit:
+            call_object = get_text(do_statement[1])
+            call_object = self.symbol_table.type_of(call_object)
+        else:
+            call_object = self.class_name
+
+        self.vm_writer.write_push("POINTER", 0)
+
+        if is_explicit:
+            partial_method_name = get_text(do_statement[3])
+        else:
+            partial_method_name = get_text(do_statement[1])
+        function_name = call_object + "." + partial_method_name
+
+        return function_name, args_num + 1
+
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
         # 'do' subroutineCall ';'
@@ -112,14 +144,14 @@ class CodeWriter:
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
             call_object = get_text(do_statement[1])
             if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
-                args_num += 1  # this
-                segment = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
-                index = self.symbol_table.index_of(call_object)
-                self.vm_writer.write_push(segment, index)
-                call_object = self.symbol_table.type_of(call_object)
-            function_name = call_object + "." + get_text(do_statement[3])
+                function_name, args_num = self._handle_var_method(do_statement, args_num)
+            elif call_object == self.class_name:
+                function_name, args_num = self._handle_curr_class_method(do_statement, args_num, is_explicit=True)
+            else:
+                function_name, args_num = self._handle_other_class_method(do_statement, args_num)
         else:
-            function_name = self.class_name + "." + get_text(do_statement[1])
+            function_name, args_num = self._handle_curr_class_method(do_statement, args_num, is_explicit=False)
+
         self.vm_writer.write_call(function_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
