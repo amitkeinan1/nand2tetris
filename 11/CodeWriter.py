@@ -327,7 +327,7 @@ class CodeWriter:
         if keyword == "null":  # TODO
             pass
         if keyword == "this":
-            self.vm_writer.write_push("ARG", 0)
+            self.vm_writer.write_push("POINTER", 0)
 
     # helper methods
     def _generate_label(self, name: str) -> str:
@@ -350,9 +350,8 @@ class CodeWriter:
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
-        pass
-        # self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter()]))
-
+        # self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter() if e.text is not None]))
+        return
     @staticmethod
     def _is_var_dec(identifier_details):
         return identifier_details[2] == "definition"
