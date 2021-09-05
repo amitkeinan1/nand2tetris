@@ -6,4 +6,8 @@
   <term>
     <integerConstant> 2 </integerConstant>
   </term>
+  <symbol> + </symbol>
+  <term>
+    <integerConstant> 3 </integerConstant>
+  </term>
 </expression>
