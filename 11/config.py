@@ -17,7 +17,7 @@ SEGMENTS_NAMES = {"CONST": "constant", "ARG": "argument", "LOCAL": "local", "STA
 
 VAR_KINDS = {"static": "STATIC", "field": "FIELD", "argument": "ARG", "var": "VAR"}
 
-KIND_TO_SEGMENT = {"STATIC": "STATIC", "FIELD": "THIS", "ARG": "ARG", "VAR": "LOCAL"}  # TODO: to config
+KIND_TO_SEGMENT = {"STATIC": "STATIC", "FIELD": "THIS", "ARG": "ARG", "VAR": "LOCAL"}
 
 
 class IdentifierTypes(Enum):
