@@ -102,6 +102,8 @@ class VMWriter:
     def close_output_stream(self):
         self.output_stream.close()
 
+    def write_comment(self, comment: str):
+        self.write_line(f"// {comment}")
 
 # TODO: remove before submission
 if __name__ == '__main__':

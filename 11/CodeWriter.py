@@ -272,7 +272,7 @@ class CodeWriter:
 
     # helper methods
     def _generate_label(self, name: str) -> str:
-        label = f"{name} - {self.labels_count}"
+        label = f"{name}-{self.labels_count}"
         self.labels_count += 1
         return label
 
