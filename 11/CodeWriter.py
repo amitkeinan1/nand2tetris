@@ -108,14 +108,18 @@ class CodeWriter:
         # 'do' subroutineCall ';'
         self._write_jack_code_as_comment(do_statement)
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
+        args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
             call_object = get_text(do_statement[1])
             if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
+                args_num += 1  # this
+                segment  = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
+                index = self.symbol_table.index_of(call_object)
+                self.vm_writer.write_push(segment, index)
                 call_object = self.symbol_table.type_of(call_object)
             function_name = call_object + "." + get_text(do_statement[3])
         else:
             function_name = get_text(do_statement[1])
-        args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(function_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
