@@ -2,19 +2,12 @@ function Square.new 0
 push constant 3
 call Memory.alloc 1
 pop pointer 0
-//           let x =                           Ax ;
-//                           Ax
 push argument 0
 pop this 0
-//           let y =                           Ay ;
-//                           Ay
 push argument 1
 pop this 1
-//           let size =                           Asize ;
-//                           Asize
 push argument 2
 pop this 2
-//           do draw ( ) ;
 push pointer 0
 call Square.draw 1
 pop temp 0
@@ -26,69 +19,53 @@ pop pointer 0
 push pointer 0
 call Memory.deAlloc 1
 pop temp 0
-//           return ;
 push constant 0
 return
 function Square.draw 0
-//           do Screen . setColor (                                           true ) ;
-//                               true
+push argument 0
+pop pointer 0
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
-//           do Screen . drawRectangle (                                           x ,                               y ,                               x +                 size ,                               y +                 size ) ;
-//                               x
 push this 0
-//                               y
 push this 1
-//                               x +                 size
 push this 0
 push this 2
 add
-//                               y +                 size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-//           return ;
 push constant 0
 return
 function Square.erase 0
-//           do Screen . setColor (                                           false ) ;
-//                               false
+push argument 0
+pop pointer 0
 push constant 0
 call Screen.setColor 1
 pop temp 0
-//           do Screen . drawRectangle (                                           x ,                               y ,                               x +                 size ,                               y +                 size ) ;
-//                               x
 push this 0
-//                               y
 push this 1
-//                               x +                 size
 push this 0
 push this 2
 add
-//                               y +                 size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-//           return ;
 push constant 0
 return
 function Square.incSize 0
-//                           (                                   (                                           y +                       size ) <                   254 ) &               (                                   (                                           x +                       size ) <                   510 )
-//                                   (                                           y +                       size ) <                   254
-//                                           y +                       size
+push argument 0
+pop pointer 0
 push this 1
 push this 2
 add
 push constant 254
 lt
-//                                   (                                           x +                       size ) <                   510
-//                                           x +                       size
 push this 0
 push this 2
 add
@@ -96,317 +73,238 @@ push constant 510
 lt
 and
 not
-if-goto if-L1-0
-//               do erase ( ) ;
+if-goto IF-FALSE-0
 push pointer 0
 call Square.erase 1
 pop temp 0
-//               let size =                                   size +                   2 ;
-//                                   size +                   2
 push this 2
 push constant 2
 add
 pop this 2
-//               do draw ( ) ;
 push pointer 0
 call Square.draw 1
 pop temp 0
-goto if-L2-1
-label if-L1-0
-label if-L2-1
-//           return ;
+goto IF-TRUE-1
+label IF-FALSE-0
+label IF-TRUE-1
 push constant 0
 return
 function Square.decSize 0
-//                           size >               2
+push argument 0
+pop pointer 0
 push this 2
 push constant 2
 gt
 not
-if-goto if-L1-2
-//               do erase ( ) ;
+if-goto IF-FALSE-2
 push pointer 0
 call Square.erase 1
 pop temp 0
-//               let size =                                   size -                   2 ;
-//                                   size -                   2
 push this 2
 push constant 2
 sub
 pop this 2
-//               do draw ( ) ;
 push pointer 0
 call Square.draw 1
 pop temp 0
-goto if-L2-3
-label if-L1-2
-label if-L2-3
-//           return ;
+goto IF-TRUE-3
+label IF-FALSE-2
+label IF-TRUE-3
 push constant 0
 return
 function Square.moveUp 0
-//                           y >               1
+push argument 0
+pop pointer 0
 push this 1
 push constant 1
 gt
 not
-if-goto if-L1-4
-//               do Screen . setColor (                                                       false ) ;
-//                                       false
+if-goto IF-FALSE-4
 push constant 0
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       (                                               y +                         size ) -                     1 ,                                       x +                     size ,                                       y +                     size ) ;
-//                                       x
 push this 0
-//                                       (                                               y +                         size ) -                     1
-//                                               y +                         size
 push this 1
 push this 2
 add
 push constant 1
 sub
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-//               let y =                                   y -                   2 ;
-//                                   y -                   2
 push this 1
 push constant 2
 sub
 pop this 1
-//               do Screen . setColor (                                                       true ) ;
-//                                       true
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       y ,                                       x +                     size ,                                       y +                     1 ) ;
-//                                       x
 push this 0
-//                                       y
 push this 1
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     1
 push this 1
 push constant 1
 add
 call Screen.drawRectangle 4
 pop temp 0
-goto if-L2-5
-label if-L1-4
-label if-L2-5
-//           return ;
+goto IF-TRUE-5
+label IF-FALSE-4
+label IF-TRUE-5
 push constant 0
 return
 function Square.moveDown 0
-//                           (                                   y +                   size ) <               254
-//                                   y +                   size
+push argument 0
+pop pointer 0
 push this 1
 push this 2
 add
 push constant 254
 lt
 not
-if-goto if-L1-6
-//               do Screen . setColor (                                                       false ) ;
-//                                       false
+if-goto IF-FALSE-6
 push constant 0
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       y ,                                       x +                     size ,                                       y +                     1 ) ;
-//                                       x
 push this 0
-//                                       y
 push this 1
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     1
 push this 1
 push constant 1
 add
 call Screen.drawRectangle 4
 pop temp 0
-//               let y =                                   y +                   2 ;
-//                                   y +                   2
 push this 1
 push constant 2
 add
 pop this 1
-//               do Screen . setColor (                                                       true ) ;
-//                                       true
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       (                                               y +                         size ) -                     1 ,                                       x +                     size ,                                       y +                     size ) ;
-//                                       x
 push this 0
-//                                       (                                               y +                         size ) -                     1
-//                                               y +                         size
 push this 1
 push this 2
 add
 push constant 1
 sub
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-goto if-L2-7
-label if-L1-6
-label if-L2-7
-//           return ;
+goto IF-TRUE-7
+label IF-FALSE-6
+label IF-TRUE-7
 push constant 0
 return
 function Square.moveLeft 0
-//                           x >               1
+push argument 0
+pop pointer 0
 push this 0
 push constant 1
 gt
 not
-if-goto if-L1-8
-//               do Screen . setColor (                                                       false ) ;
-//                                       false
+if-goto IF-FALSE-8
 push constant 0
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       (                                               x +                         size ) -                     1 ,                                       y ,                                       x +                     size ,                                       y +                     size ) ;
-//                                       (                                               x +                         size ) -                     1
-//                                               x +                         size
 push this 0
 push this 2
 add
 push constant 1
 sub
-//                                       y
 push this 1
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-//               let x =                                   x -                   2 ;
-//                                   x -                   2
 push this 0
 push constant 2
 sub
 pop this 0
-//               do Screen . setColor (                                                       true ) ;
-//                                       true
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       y ,                                       x +                     1 ,                                       y +                     size ) ;
-//                                       x
 push this 0
-//                                       y
 push this 1
-//                                       x +                     1
 push this 0
 push constant 1
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-goto if-L2-9
-label if-L1-8
-label if-L2-9
-//           return ;
+goto IF-TRUE-9
+label IF-FALSE-8
+label IF-TRUE-9
 push constant 0
 return
 function Square.moveRight 0
-//                           (                                   x +                   size ) <               510
-//                                   x +                   size
+push argument 0
+pop pointer 0
 push this 0
 push this 2
 add
 push constant 510
 lt
 not
-if-goto if-L1-10
-//               do Screen . setColor (                                                       false ) ;
-//                                       false
+if-goto IF-FALSE-10
 push constant 0
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       x ,                                       y ,                                       x +                     1 ,                                       y +                     size ) ;
-//                                       x
 push this 0
-//                                       y
 push this 1
-//                                       x +                     1
 push this 0
 push constant 1
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-//               let x =                                   x +                   2 ;
-//                                   x +                   2
 push this 0
 push constant 2
 add
 pop this 0
-//               do Screen . setColor (                                                       true ) ;
-//                                       true
 push constant 0
 not
 call Screen.setColor 1
 pop temp 0
-//               do Screen . drawRectangle (                                                       (                                               x +                         size ) -                     1 ,                                       y ,                                       x +                     size ,                                       y +                     size ) ;
-//                                       (                                               x +                         size ) -                     1
-//                                               x +                         size
 push this 0
 push this 2
 add
 push constant 1
 sub
-//                                       y
 push this 1
-//                                       x +                     size
 push this 0
 push this 2
 add
-//                                       y +                     size
 push this 1
 push this 2
 add
 call Screen.drawRectangle 4
 pop temp 0
-goto if-L2-11
-label if-L1-10
-label if-L2-11
-//           return ;
+goto IF-TRUE-11
+label IF-FALSE-10
+label IF-TRUE-11
 push constant 0
 return
