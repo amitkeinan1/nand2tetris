@@ -40,10 +40,11 @@ class CodeWriter:
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
+        class_name = self._get_text(class_xml[1])
         for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
-            self.write_subroutine_dec_code(subroutine_dec)
+            self.write_subroutine_dec_code(subroutine_dec, class_name)
 
     def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
@@ -59,10 +60,10 @@ class CodeWriter:
         # ('static' | 'field') type varName (',' varName)* ';'
         self._write_any_var_dec_code(var_dec)
 
-    def write_subroutine_dec_code(self, subroutine_dec: Element) -> None:
+    def write_subroutine_dec_code(self, subroutine_dec: Element, class_name: str) -> None:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
-        subroutine_name = self._get_text(subroutine_dec[2])
+        subroutine_name = ".".join((class_name, self._get_text(subroutine_dec[2])))
         args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, args_num)
@@ -100,7 +101,10 @@ class CodeWriter:
         """Compiles a do statement."""
         # 'do' subroutineCall ';'
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        method_name = self._get_text(do_statement[1])
+        if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
+            method_name = ".".join((self._get_text(do_statement[1]), self._get_text(do_statement[3])))
+        else:
+            method_name = self._get_text(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
