@@ -111,7 +111,7 @@ class CodeWriter:
     def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
-        expressions = let_statement.findall(EXPRESSION_TAG)[-1]
+        expressions = let_statement.findall(EXPRESSION_TAG)
         var_name = self._get_text(let_statement[1])
         right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
@@ -216,7 +216,7 @@ class CodeWriter:
             else:  # subroutineCall
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
-                if term.findtext(SYMBOL_TAG) == ".":
+                if term.findtext(SYMBOL_TAG).strip() == ".":
                     assert self._get_text(term[1]) == '.'
                     call_object = self._get_text(term[0])
                     if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
