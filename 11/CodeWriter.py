@@ -206,10 +206,10 @@ class CodeWriter:
         elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant
             string: str = get_text(term[0])
             self.vm_writer.write_push("CONST", len(string))
-            self.vm_writer.write_function("String.new", 1)
+            self.vm_writer.write_call("String.new", 1)
             for char in string:
                 self.vm_writer.write_push("CONST", ord(char))
-                self.vm_writer.write_call("String.appendChar", 1)
+                self.vm_writer.write_call("String.appendChar", 2)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
             self.write_keyword(get_text(term.find(KEYWORD_CONSTANT_TAG)))
