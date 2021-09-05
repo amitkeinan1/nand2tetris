@@ -29,46 +29,46 @@ push this 1
 push constant 1
 eq
 not
-if-goto IF-FALSE-0
+if-goto IF-FALSE0
 push this 0
 call Square.moveUp 1
 pop temp 0
-goto IF-TRUE-1
-label IF-FALSE-0
-label IF-TRUE-1
+goto IF-TRUE1
+label IF-FALSE0
+label IF-TRUE1
 push this 1
 push constant 2
 eq
 not
-if-goto IF-FALSE-2
+if-goto IF-FALSE2
 push this 0
 call Square.moveDown 1
 pop temp 0
-goto IF-TRUE-3
-label IF-FALSE-2
-label IF-TRUE-3
+goto IF-TRUE3
+label IF-FALSE2
+label IF-TRUE3
 push this 1
 push constant 3
 eq
 not
-if-goto IF-FALSE-4
+if-goto IF-FALSE4
 push this 0
 call Square.moveLeft 1
 pop temp 0
-goto IF-TRUE-5
-label IF-FALSE-4
-label IF-TRUE-5
+goto IF-TRUE5
+label IF-FALSE4
+label IF-TRUE5
 push this 1
 push constant 4
 eq
 not
-if-goto IF-FALSE-6
+if-goto IF-FALSE6
 push this 0
 call Square.moveRight 1
 pop temp 0
-goto IF-TRUE-7
-label IF-FALSE-6
-label IF-TRUE-7
+goto IF-TRUE7
+label IF-FALSE6
+label IF-TRUE7
 push constant 5
 call Sys.wait 1
 pop temp 0
@@ -80,114 +80,114 @@ pop pointer 0
 push constant 0
 pop local 1
 // while [yada yada yada]
-label WHILE_EXP-8
+label WHILE_EXP8
 push local 1
 not
 not
-if-goto WHILE_END-9
+if-goto WHILE_END9
 // while [yada yada yada]
-label WHILE_EXP-10
+label WHILE_EXP10
 push local 0
 push constant 0
 eq
 not
-if-goto WHILE_END-11
+if-goto WHILE_END11
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
 call SquareGame.moveSquare 1
 pop temp 0
-goto WHILE_EXP-10
-label WHILE_END-11
+goto WHILE_EXP10
+label WHILE_END11
 push local 0
 push constant 81
 eq
 not
-if-goto IF-FALSE-12
+if-goto IF-FALSE12
 push constant 0
 not
 pop local 1
-goto IF-TRUE-13
-label IF-FALSE-12
-label IF-TRUE-13
+goto IF-TRUE13
+label IF-FALSE12
+label IF-TRUE13
 push local 0
 push constant 90
 eq
 not
-if-goto IF-FALSE-14
+if-goto IF-FALSE14
 push this 0
 call Square.decSize 1
 pop temp 0
-goto IF-TRUE-15
-label IF-FALSE-14
-label IF-TRUE-15
+goto IF-TRUE15
+label IF-FALSE14
+label IF-TRUE15
 push local 0
 push constant 88
 eq
 not
-if-goto IF-FALSE-16
+if-goto IF-FALSE16
 push this 0
 call Square.incSize 1
 pop temp 0
-goto IF-TRUE-17
-label IF-FALSE-16
-label IF-TRUE-17
+goto IF-TRUE17
+label IF-FALSE16
+label IF-TRUE17
 push local 0
 push constant 131
 eq
 not
-if-goto IF-FALSE-18
+if-goto IF-FALSE18
 push constant 1
 pop this 1
-goto IF-TRUE-19
-label IF-FALSE-18
-label IF-TRUE-19
+goto IF-TRUE19
+label IF-FALSE18
+label IF-TRUE19
 push local 0
 push constant 133
 eq
 not
-if-goto IF-FALSE-20
+if-goto IF-FALSE20
 push constant 2
 pop this 1
-goto IF-TRUE-21
-label IF-FALSE-20
-label IF-TRUE-21
+goto IF-TRUE21
+label IF-FALSE20
+label IF-TRUE21
 push local 0
 push constant 130
 eq
 not
-if-goto IF-FALSE-22
+if-goto IF-FALSE22
 push constant 3
 pop this 1
-goto IF-TRUE-23
-label IF-FALSE-22
-label IF-TRUE-23
+goto IF-TRUE23
+label IF-FALSE22
+label IF-TRUE23
 push local 0
 push constant 132
 eq
 not
-if-goto IF-FALSE-24
+if-goto IF-FALSE24
 push constant 4
 pop this 1
-goto IF-TRUE-25
-label IF-FALSE-24
-label IF-TRUE-25
+goto IF-TRUE25
+label IF-FALSE24
+label IF-TRUE25
 // while [yada yada yada]
-label WHILE_EXP-26
+label WHILE_EXP26
 push local 0
 push constant 0
 eq
 not
 not
-if-goto WHILE_END-27
+if-goto WHILE_END27
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
 call SquareGame.moveSquare 1
 pop temp 0
-goto WHILE_EXP-26
-label WHILE_END-27
-goto WHILE_EXP-8
-label WHILE_END-9
+goto WHILE_EXP26
+label WHILE_END27
+goto WHILE_EXP8
+label WHILE_END9
 push constant 0
 return

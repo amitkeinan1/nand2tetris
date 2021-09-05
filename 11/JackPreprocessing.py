@@ -1,13 +1,11 @@
 import re
 from typing import List, Tuple
 
-from jack_syntax import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
+from jack_syntax import SYMBOLS, STRING_CONST_PATTERN, COMMENTS_REGEX
 
 
-def _remove_comments(text: str) -> str:
-    for comment_regex, comment_replacement in COMMENTS_REMOVING.items():
-        text = re.sub(comment_regex, comment_replacement, text)
-    return text
+def _remove_comments(line):
+    return COMMENTS_REGEX.sub('', line)
 
 
 def _clean_text(text: str) -> List[str]:
