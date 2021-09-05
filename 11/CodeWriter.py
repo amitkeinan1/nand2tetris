@@ -99,6 +99,7 @@ class CodeWriter:
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
         # 'do' subroutineCall ';'
+        self._write_jack_code_as_comment(do_statement)
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
             method_name = ".".join((self._get_text(do_statement[1]), self._get_text(do_statement[3])))
@@ -111,6 +112,7 @@ class CodeWriter:
     def write_let_code(self, let_statement: Element) -> None:  # TODO
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
+        self._write_jack_code_as_comment(let_statement)
         expressions = let_statement.findall(EXPRESSION_TAG)
         var_elem = let_statement[1]
         right_expression = let_statement[-2]
@@ -140,6 +142,8 @@ class CodeWriter:
     def write_return_code(self, return_statement: Element) -> None:
         """Compiles a return statement."""
         # push result and return
+        self._write_jack_code_as_comment(return_statement)
+
         return_expression = return_statement.find(EXPRESSION_TAG)
         if return_expression is not None:
             self.write_expression_code(return_expression)
@@ -300,6 +304,10 @@ class CodeWriter:
     def _convert_kind_to_segment(kind):
         KIND_TO_SEGMENT = {"STATIC": "STATIC", "FIELD": "THIS", "ARG": "ARG", "VAR": "LOCAL"}  # TODO: to config
         return KIND_TO_SEGMENT[kind]
+
+    def _write_jack_code_as_comment(self, elem):
+        self.vm_writer.write_comment(' '.join([self._get_text(e) for e in elem.iter()]))
+
 
 
 if __name__ == '__main__':

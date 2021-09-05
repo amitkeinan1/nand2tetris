@@ -1,57 +1,68 @@
 function Main.main 0
+//  do Main . fillMemory (    8001 ,   16 ,   -  1 ) ;
 push constant 8001
 push constant 16
 call Main.fillMemory 3
 pop temp 0
+//  let value =   Memory . peek (    8000 ) ;
 push constant 8000
 call Memory.peek 1
 pop local 0
+//  do Main . convert (    value ) ;
 push local 0
 call Main.convert 1
 pop temp 0
+//  return ;
 push constant 0
 return
 function Main.convert 1
+//  let loop =   true ;
 push constant 0
 neg
 pop local 2
-label while-L1 - 0
+label while-L1-0
 push local 2
 not
-if-goto while-L2 - 1
+if-goto while-L2-1
+//  let position =   position +  1 ;
 push local 1
 push constant 1
 add
 pop local 1
+//  let mask =   Main . nextMask (    mask ) ;
 push local 0
 call Main.nextMask 1
 pop local 0
 not
-if-goto if-L1 - 2
+if-goto if-L1-2
 not
-if-goto if-L1 - 4
+if-goto if-L1-4
+//  do Memory . poke (    8000 +  position ,   1 ) ;
 push constant 8000
 push local 1
 add
 push constant 1
 call Memory.poke 2
 pop temp 0
-goto if-L2 - 5
-label if-L1 - 4
+goto if-L2-5
+label if-L1-4
+//  do Memory . poke (    8000 +  position ,   0 ) ;
 push constant 8000
 push local 1
 add
 push constant 0
 call Memory.poke 2
 pop temp 0
-label if-L2 - 5
-goto if-L2 - 3
-label if-L1 - 2
+label if-L2-5
+goto if-L2-3
+label if-L1-2
+//  let loop =   false ;
 push constant 0
 pop local 2
-label if-L2 - 3
-goto while-L1 - 0
-label while-L2 - 1
+label if-L2-3
+goto while-L1-0
+label while-L2-1
+//  return ;
 push constant 0
 return
 function Main.nextMask 1
@@ -59,36 +70,42 @@ push argument 0
 push constant 0
 eq
 not
-if-goto if-L1 - 6
+if-goto if-L1-6
+//  return   1 ;
 push constant 1
 return
-goto if-L2 - 7
-label if-L1 - 6
+goto if-L2-7
+label if-L1-6
+//  return   mask *  2 ;
 push argument 0
 push constant 2
 call Math.multiply 2
 return
-label if-L2 - 7
+label if-L2-7
 function Main.fillMemory 3
-label while-L1 - 8
+label while-L1-8
 push argument 1
 push constant 0
 gt
 not
-if-goto while-L2 - 9
+if-goto while-L2-9
+//  do Memory . poke (    startAddress ,   value ) ;
 push argument 0
 push argument 2
 call Memory.poke 2
 pop temp 0
+//  let length =   length -  1 ;
 push argument 1
 push constant 1
 sub
 pop argument 1
+//  let startAddress =   startAddress +  1 ;
 push argument 0
 push constant 1
 add
 pop argument 0
-goto while-L1 - 8
-label while-L2 - 9
+goto while-L1-8
+label while-L2-9
+//  return ;
 push constant 0
 return
