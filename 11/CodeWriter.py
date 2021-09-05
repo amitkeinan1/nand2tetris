@@ -67,12 +67,16 @@ class CodeWriter:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
         subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
+        subroutine_type = get_text(subroutine_dec[0])
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name,
                                       self._count_var_decs(subroutine_dec.find(SUBROUTINE_TAG), VAR_DEC_TAG))
-        if get_text(subroutine_dec[0]) == "constructor":
+        if subroutine_type == "constructor":
             self.vm_writer.write_push("CONST", self.class_var_count)
             self.vm_writer.write_call("Memory.alloc", 1)
+            self.vm_writer.write_pop("POINTER", 0)
+        elif subroutine_type == "method":
+            self.vm_writer.write_push("ARG", 0)
             self.vm_writer.write_pop("POINTER", 0)
         for var_dec in subroutine_dec.findall(f"./{SUBROUTINE_TAG}/{VAR_DEC_TAG}"):
             self.write_var_dec_code(var_dec)
@@ -206,8 +210,8 @@ class CodeWriter:
 
     def write_if_code(self, if_statement: Element) -> None:
         """Compiles a if statement, possibly with a trailing else clause."""
-        false_label = self._generate_label("if-L1")
-        true_label = self._generate_label("if-L2")
+        false_label = self._generate_label("IF-FALSE")
+        true_label = self._generate_label("IF-TRUE")
         statements = if_statement.findall(STATEMENTS_TAG)
 
         # !(cond):
