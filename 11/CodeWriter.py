@@ -162,7 +162,7 @@ class CodeWriter:
             if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
                 function_name, args_num = self._handle_var_method(subroutine_call, args_num)
             elif call_object == self.class_name:
-                if get_text(subroutine_call[2]) == "new":
+                if self._get_identifier_details(get_type(subroutine_call[2]))[-1] != "method":
                     function_name, args_num = self._handle_curr_class_constructor(subroutine_call, args_num,
                                                                                   is_explicit=True)
                 else:
@@ -302,7 +302,7 @@ class CodeWriter:
                 self.vm_writer.write_pop("POINTER", 1)
                 self.vm_writer.write_push("THAT", 0)
 
-            else:
+            else: # subroutineCall
                 self.write_subroutine_call_code(term)
 
         elif term.findtext(SYMBOL_TAG).strip() == "(":  # '('expression')'
