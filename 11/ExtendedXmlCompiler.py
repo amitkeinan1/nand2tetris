@@ -56,7 +56,17 @@ class ExtendedXmlCompiler:
     def compile(self, write_to_file: bool = True) -> Optional[ElementTree]:
         xml_tree = self.xml_compiler.compile(write_to_file=False)
         self.class_name = get_text(xml_tree.getroot()[1])
+        self._add_subroutine_symbols(xml_tree)
         return self._extend_tree(xml_tree, write_to_file)
+
+    def _add_subroutine_symbols(self, xml_tree):
+        for subroutine_dec in xml_tree.findall(f"./{SUBROUTINE_DEC_TAG}"):
+            for index, element in enumerate(subroutine_dec):
+                element_type = get_type(element)
+                if element_type == "identifier":
+                    subroutine_name = get_text(element)
+                    self.symbol_table.define(subroutine_name, "subroutine", get_text(subroutine_dec[0]))
+                    break
 
     def _handle_var_defined_params_list(self, element, parent, index):
         var_kind = VAR_KINDS["argument"]
@@ -77,7 +87,8 @@ class ExtendedXmlCompiler:
         is_normal_call = get_text(parent[index_of_call + 1]) != '.'
         if is_normal_call:
             assert index_in_call == 0
-            return self._generate_tag("subroutine", 0, USAGE)
+            return self._generate_tag("subroutine", 0, USAGE,
+                                      self.symbol_table.kind_of(get_text(parent[index_of_call])))
         else:
             if index_in_call == 0:
                 if self.symbol_table.kind_of(get_text(element)) is None:
@@ -85,13 +96,15 @@ class ExtendedXmlCompiler:
                 else:
                     return self._handle_var_used(element)
             if index_in_call == 2:
-                return self._generate_tag("subroutine", 0, USAGE)
+                return self._generate_tag("subroutine", 0, USAGE,
+                                          self.symbol_table.kind_of(get_text(parent[index_of_call + 2])))
 
     def _handle_var_used(self, element):
         var_name = get_text(element)
         var_kind = self.symbol_table.kind_of(var_name)
         var_index = self.symbol_table.index_of(var_name)
-        return self._generate_tag(var_kind, var_index, USAGE)
+        var_type = self.symbol_table.type_of(var_name)
+        return self._generate_tag(var_kind, var_index, USAGE, var_type)
 
     def _get_extended_type(self, element: Element, index: int):
         parent = element.getparent()
@@ -99,7 +112,6 @@ class ExtendedXmlCompiler:
 
         if parent_type == CLASS_TAG:
             return self._generate_tag("class", 0, DEFINITION)
-
         elif parent_type == CLASS_VAR_DEC_TAG:
             if index == 1:
                 return self._generate_tag("class", 0, USAGE)
@@ -111,9 +123,11 @@ class ExtendedXmlCompiler:
                 return self._generate_tag("class", 0, USAGE)
             else:
                 self.symbol_table.start_subroutine()
-                if get_text(parent[0]) == "method":
+                subroutine_name = get_text(element)
+                # self.symbol_table.define(subroutine_name, "subroutine", get_text(parent[0]))
+                if self.symbol_table.kind_of(subroutine_name) == "method":
                     self.symbol_table.define("this", None, "ARG")
-                return self._generate_tag("subroutine", 0, DEFINITION)
+                return self._generate_tag("subroutine", 0, DEFINITION, self.symbol_table.kind_of(subroutine_name))
 
         elif parent_type == PARAMETER_LIST_TAG:
             if index % 3 == 0:

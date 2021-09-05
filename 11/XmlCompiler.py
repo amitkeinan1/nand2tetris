@@ -55,8 +55,7 @@ class XmlCompiler:
             raise Exception("class could not be compiled.")
         if write_to_file:
             self._write_xml(root)
-        else:
-            return ElementTree(root)
+        return ElementTree(root)
 
     # helper methods
     @staticmethod

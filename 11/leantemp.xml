@@ -1,28 +1,29 @@
 <class>
   <keyword> class </keyword>
-  <identifier-class-0-definition-UNK> Main </identifier-class-0-definition-UNK>
+  <identifier> Main </identifier>
   <symbol> { </symbol>
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier-subroutine-0-definition-function> main </identifier-subroutine-0-definition-function>
+    <identifier> main </identifier>
     <symbol> ( </symbol>
-    <parameterList/>
+    <parameterList>
+    </parameterList>
     <symbol> ) </symbol>
     <subroutineBody>
       <symbol> { </symbol>
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier-VAR-0-definition-int> value </identifier-VAR-0-definition-int>
+        <identifier> value </identifier>
         <symbol> ; </symbol>
       </varDec>
       <statements>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+          <identifier> Main </identifier>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage-function> fillMemory </identifier-subroutine-0-usage-function>
+          <identifier> fillMemory </identifier>
           <symbol> ( </symbol>
           <expressionList>
             <expression>
@@ -51,13 +52,13 @@
         </doStatement>
         <letStatement>
           <keyword> let </keyword>
-          <identifier-VAR-0-usage-int> value </identifier-VAR-0-usage-int>
+          <identifier> value </identifier>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+              <identifier> Memory </identifier>
               <symbol> . </symbol>
-              <identifier-subroutine-0-usage-None> peek </identifier-subroutine-0-usage-None>
+              <identifier> peek </identifier>
               <symbol> ( </symbol>
               <expressionList>
                 <expression>
@@ -73,28 +74,22 @@
         </letStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+          <identifier> Main </identifier>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage-function> convert </identifier-subroutine-0-usage-function>
+          <identifier> convert </identifier>
           <symbol> ( </symbol>
           <expressionList>
             <expression>
               <term>
-                <identifier-VAR-0-usage-int> value </identifier-VAR-0-usage-int>
+                <identifier> value </identifier>
               </term>
             </expression>
           </expressionList>
           <symbol> ) </symbol>
           <symbol> ; </symbol>
         </doStatement>
-        <doStatement>
-          <keyword> do </keyword>
-          <identifier-class-0-usage-UNK> Output </identifier-class-0-usage-UNK>
-          <symbol> . </symbol>
-          <identifier-subroutine-0-usage-UNK> println </identifier-subroutine-0-usage-UNK>
-          <symbol> ( </symbol>
-          <expressionList/>
-          <symbol> ) </symbol>
+        <returnStatement>
+          <keyword> return </keyword>
           <symbol> ; </symbol>
         </returnStatement>
       </statements>
@@ -104,11 +99,11 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier-subroutine-0-definition-function> convert </identifier-subroutine-0-definition-function>
+    <identifier> convert </identifier>
     <symbol> ( </symbol>
     <parameterList>
       <keyword> int </keyword>
-      <identifier-ARG-0-definition-int> value </identifier-ARG-0-definition-int>
+      <identifier> value </identifier>
     </parameterList>
     <symbol> ) </symbol>
     <subroutineBody>
@@ -116,21 +111,21 @@
       <varDec>
         <keyword> var </keyword>
         <keyword> int </keyword>
-        <identifier-VAR-0-definition-int> mask </identifier-VAR-0-definition-int>
+        <identifier> mask </identifier>
         <symbol> , </symbol>
-        <identifier-VAR-1-definition-int> position </identifier-VAR-1-definition-int>
+        <identifier> position </identifier>
         <symbol> ; </symbol>
       </varDec>
       <varDec>
         <keyword> var </keyword>
         <keyword> boolean </keyword>
-        <identifier-VAR-2-definition-boolean> loop </identifier-VAR-2-definition-boolean>
+        <identifier> loop </identifier>
         <symbol> ; </symbol>
       </varDec>
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+          <identifier> loop </identifier>
           <symbol> = </symbol>
           <expression>
             <term>
@@ -144,7 +139,7 @@
           <symbol> ( </symbol>
           <expression>
             <term>
-              <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+              <identifier> loop </identifier>
             </term>
           </expression>
           <symbol> ) </symbol>
@@ -152,11 +147,11 @@
           <statements>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+              <identifier> position </identifier>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                  <identifier> position </identifier>
                 </term>
                 <symbol> + </symbol>
                 <term>
@@ -167,18 +162,18 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+              <identifier> mask </identifier>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+                  <identifier> Main </identifier>
                   <symbol> . </symbol>
-                  <identifier-subroutine-0-usage-function> nextMask </identifier-subroutine-0-usage-function>
+                  <identifier> nextMask </identifier>
                   <symbol> ( </symbol>
                   <expressionList>
                     <expression>
                       <term>
-                        <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+                        <identifier> mask </identifier>
                       </term>
                     </expression>
                   </expressionList>
@@ -197,7 +192,7 @@
                     <symbol> ( </symbol>
                     <expression>
                       <term>
-                        <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                        <identifier> position </identifier>
                       </term>
                       <symbol> &gt; </symbol>
                       <term>
@@ -224,11 +219,11 @@
                             <symbol> ( </symbol>
                             <expression>
                               <term>
-                                <identifier-ARG-0-usage-int> value </identifier-ARG-0-usage-int>
+                                <identifier> value </identifier>
                               </term>
                               <symbol> &amp; </symbol>
                               <term>
-                                <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+                                <identifier> mask </identifier>
                               </term>
                             </expression>
                             <symbol> ) </symbol>
@@ -247,9 +242,9 @@
                   <statements>
                     <doStatement>
                       <keyword> do </keyword>
-                      <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+                      <identifier> Memory </identifier>
                       <symbol> . </symbol>
-                      <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+                      <identifier> poke </identifier>
                       <symbol> ( </symbol>
                       <expressionList>
                         <expression>
@@ -258,7 +253,7 @@
                           </term>
                           <symbol> + </symbol>
                           <term>
-                            <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                            <identifier> position </identifier>
                           </term>
                         </expression>
                         <symbol> , </symbol>
@@ -278,9 +273,9 @@
                   <statements>
                     <doStatement>
                       <keyword> do </keyword>
-                      <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+                      <identifier> Memory </identifier>
                       <symbol> . </symbol>
-                      <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+                      <identifier> poke </identifier>
                       <symbol> ( </symbol>
                       <expressionList>
                         <expression>
@@ -289,7 +284,7 @@
                           </term>
                           <symbol> + </symbol>
                           <term>
-                            <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                            <identifier> position </identifier>
                           </term>
                         </expression>
                         <symbol> , </symbol>
@@ -312,7 +307,7 @@
               <statements>
                 <letStatement>
                   <keyword> let </keyword>
-                  <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+                  <identifier> loop </identifier>
                   <symbol> = </symbol>
                   <expression>
                     <term>
@@ -338,11 +333,11 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> int </keyword>
-    <identifier-subroutine-0-definition-function> nextMask </identifier-subroutine-0-definition-function>
+    <identifier> nextMask </identifier>
     <symbol> ( </symbol>
     <parameterList>
       <keyword> int </keyword>
-      <identifier-ARG-0-definition-int> mask </identifier-ARG-0-definition-int>
+      <identifier> mask </identifier>
     </parameterList>
     <symbol> ) </symbol>
     <subroutineBody>
@@ -353,7 +348,7 @@
           <symbol> ( </symbol>
           <expression>
             <term>
-              <identifier-ARG-0-usage-int> mask </identifier-ARG-0-usage-int>
+              <identifier> mask </identifier>
             </term>
             <symbol> = </symbol>
             <term>
@@ -381,7 +376,7 @@
               <keyword> return </keyword>
               <expression>
                 <term>
-                  <identifier-ARG-0-usage-int> mask </identifier-ARG-0-usage-int>
+                  <identifier> mask </identifier>
                 </term>
                 <symbol> * </symbol>
                 <term>
@@ -400,17 +395,17 @@
   <subroutineDec>
     <keyword> function </keyword>
     <keyword> void </keyword>
-    <identifier-subroutine-0-definition-function> fillMemory </identifier-subroutine-0-definition-function>
+    <identifier> fillMemory </identifier>
     <symbol> ( </symbol>
     <parameterList>
       <keyword> int </keyword>
-      <identifier-ARG-0-definition-int> startAddress </identifier-ARG-0-definition-int>
+      <identifier> startAddress </identifier>
       <symbol> , </symbol>
       <keyword> int </keyword>
-      <identifier-ARG-1-definition-int> length </identifier-ARG-1-definition-int>
+      <identifier> length </identifier>
       <symbol> , </symbol>
       <keyword> int </keyword>
-      <identifier-ARG-2-definition-int> value </identifier-ARG-2-definition-int>
+      <identifier> value </identifier>
     </parameterList>
     <symbol> ) </symbol>
     <subroutineBody>
@@ -421,7 +416,7 @@
           <symbol> ( </symbol>
           <expression>
             <term>
-              <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+              <identifier> length </identifier>
             </term>
             <symbol> &gt; </symbol>
             <term>
@@ -433,20 +428,20 @@
           <statements>
             <doStatement>
               <keyword> do </keyword>
-              <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+              <identifier> Memory </identifier>
               <symbol> . </symbol>
-              <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+              <identifier> poke </identifier>
               <symbol> ( </symbol>
               <expressionList>
                 <expression>
                   <term>
-                    <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+                    <identifier> startAddress </identifier>
                   </term>
                 </expression>
                 <symbol> , </symbol>
                 <expression>
                   <term>
-                    <identifier-ARG-2-usage-int> value </identifier-ARG-2-usage-int>
+                    <identifier> value </identifier>
                   </term>
                 </expression>
               </expressionList>
@@ -455,11 +450,11 @@
             </doStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+              <identifier> length </identifier>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+                  <identifier> length </identifier>
                 </term>
                 <symbol> - </symbol>
                 <term>
@@ -470,11 +465,11 @@
             </letStatement>
             <letStatement>
               <keyword> let </keyword>
-              <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+              <identifier> startAddress </identifier>
               <symbol> = </symbol>
               <expression>
                 <term>
-                  <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+                  <identifier> startAddress </identifier>
                 </term>
                 <symbol> + </symbol>
                 <term>
