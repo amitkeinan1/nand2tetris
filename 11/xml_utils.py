@@ -28,4 +28,4 @@ def get_type(element):
 
 
 def get_text(element):
-    return element.text.strip()
+    return element.text[1:-1]
