@@ -141,7 +141,6 @@ class ExtendedXmlCompiler:
             else:
                 raise Exception()
 
-
         else:
             return "identifier"
 

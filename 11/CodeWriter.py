@@ -4,7 +4,6 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import List, Union
 
 from lxml import etree
 from lxml.etree import Element
@@ -12,7 +11,7 @@ from lxml.etree import Element
 from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
-from jack_syntax import OPERATORS, UNARY_OPERATORS
+from jack_syntax import UNARY_OPERATORS
 
 
 class CodeWriter:
@@ -113,22 +112,13 @@ class CodeWriter:
         """Compiles a let statement."""
         # 'let' varName ('[' expression ']')? '=' expression ';'
         expressions = let_statement.findall(EXPRESSION_TAG)[-1]
+        var_name = self._get_text(let_statement[1])
         right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
         if len(expressions) > 1:  # TODO: array access
-            pass
+            raise Exception("we still do not support arrays in let statements...")
         else:
-            pass
-            # var_name = let_statement.find("")
-        # elements = self._sequence_compiling_with_kwargs([
-        #     (self._get_curr_token_if_condition, {"expected_token": "let"}),
-        #     (self._get_curr_token_if_condition, {"expected_type": TokenTypes.IDENTIFIER}),
-        #     (self._question_mark_compiling, {"compile_method": self._compile_array_accessor}),
-        #     (self._get_curr_token_if_condition, {"expected_token": "="}),
-        #     (self.write_expression_code, {}),
-        #     (self._get_curr_token_if_condition, {"expected_token": ";"})
-        # ])
-        # return self._add_elements(let_root, elements)
+            raise Exception("we still do not support non-arrays in let statements...")
 
     def write_while_code(self, while_statement: Element) -> None:
         """Compiles a while statement."""
@@ -229,7 +219,7 @@ class CodeWriter:
                 if term.findtext(SYMBOL_TAG) == ".":
                     assert self._get_text(term[1]) == '.'
                     call_object = self._get_text(term[0])
-                    if self.symbol_table.kind_of(call_object) is not None: # if it is a var and not a class
+                    if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
                         call_object = self.symbol_table.type_of(call_object)
                     function_name = call_object + "." + self._get_text(term[2])
 
