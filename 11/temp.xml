@@ -13,197 +13,44 @@
       <symbol> { </symbol>
       <varDec>
         <keyword> var </keyword>
-        <identifier-class-0-usage-UNK> Array </identifier-class-0-usage-UNK>
-        <identifier-VAR-0-definition-Array> a </identifier-VAR-0-definition-Array>
-        <symbol> ; </symbol>
-      </varDec>
-      <varDec>
-        <keyword> var </keyword>
-        <keyword> int </keyword>
-        <identifier-VAR-1-definition-int> length </identifier-VAR-1-definition-int>
-        <symbol> ; </symbol>
-      </varDec>
-      <varDec>
-        <keyword> var </keyword>
-        <keyword> int </keyword>
-        <identifier-VAR-2-definition-int> i </identifier-VAR-2-definition-int>
-        <symbol> , </symbol>
-        <identifier-VAR-3-definition-int> sum </identifier-VAR-3-definition-int>
+        <identifier-class-0-usage-UNK> SquareGame </identifier-class-0-usage-UNK>
+        <identifier-VAR-0-definition-SquareGame> game </identifier-VAR-0-definition-SquareGame>
         <symbol> ; </symbol>
       </varDec>
       <statements>
         <letStatement>
           <keyword> let </keyword>
-          <identifier-VAR-1-usage-UNK> length </identifier-VAR-1-usage-UNK>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> = </symbol>
           <expression>
             <term>
-              <identifier-class-0-usage-UNK> Keyboard </identifier-class-0-usage-UNK>
-              <symbol> . </symbol>
-              <identifier-subroutine-0-usage-UNK> readInt </identifier-subroutine-0-usage-UNK>
-              <symbol> ( </symbol>
-              <expressionList>
-                <expression>
-                  <term>
-                    <stringConstant> How many numbers?  </stringConstant>
-                  </term>
-                </expression>
-              </expressionList>
-              <symbol> ) </symbol>
-            </term>
-          </expression>
-          <symbol> ; </symbol>
-        </letStatement>
-        <letStatement>
-          <keyword> let </keyword>
-          <identifier-VAR-0-usage-UNK> a </identifier-VAR-0-usage-UNK>
-          <symbol> = </symbol>
-          <expression>
-            <term>
-              <identifier-class-0-usage-UNK> Array </identifier-class-0-usage-UNK>
+              <identifier-class-0-usage-UNK> SquareGame </identifier-class-0-usage-UNK>
               <symbol> . </symbol>
               <identifier-subroutine-0-usage-UNK> new </identifier-subroutine-0-usage-UNK>
               <symbol> ( </symbol>
-              <expressionList>
-                <expression>
-                  <term>
-                    <identifier-VAR-1-usage-UNK> length </identifier-VAR-1-usage-UNK>
-                  </term>
-                </expression>
-              </expressionList>
+              <expressionList/>
               <symbol> ) </symbol>
             </term>
           </expression>
           <symbol> ; </symbol>
         </letStatement>
-        <letStatement>
-          <keyword> let </keyword>
-          <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-          <symbol> = </symbol>
-          <expression>
-            <term>
-              <integerConstant> 0 </integerConstant>
-            </term>
-          </expression>
-          <symbol> ; </symbol>
-        </letStatement>
-        <whileStatement>
-          <keyword> while </keyword>
-          <symbol> ( </symbol>
-          <expression>
-            <term>
-              <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-            </term>
-            <symbol> &lt; </symbol>
-            <term>
-              <identifier-VAR-1-usage-UNK> length </identifier-VAR-1-usage-UNK>
-            </term>
-          </expression>
-          <symbol> ) </symbol>
-          <symbol> { </symbol>
-          <statements>
-            <letStatement>
-              <keyword> let </keyword>
-              <identifier-VAR-0-usage-UNK> a </identifier-VAR-0-usage-UNK>
-              <symbol> [ </symbol>
-              <expression>
-                <term>
-                  <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-                </term>
-              </expression>
-              <symbol> ] </symbol>
-              <symbol> = </symbol>
-              <expression>
-                <term>
-                  <identifier-class-0-usage-UNK> Keyboard </identifier-class-0-usage-UNK>
-                  <symbol> . </symbol>
-                  <identifier-subroutine-0-usage-UNK> readInt </identifier-subroutine-0-usage-UNK>
-                  <symbol> ( </symbol>
-                  <expressionList>
-                    <expression>
-                      <term>
-                        <stringConstant> Enter a number:  </stringConstant>
-                      </term>
-                    </expression>
-                  </expressionList>
-                  <symbol> ) </symbol>
-                </term>
-              </expression>
-              <symbol> ; </symbol>
-            </letStatement>
-            <letStatement>
-              <keyword> let </keyword>
-              <identifier-VAR-3-usage-UNK> sum </identifier-VAR-3-usage-UNK>
-              <symbol> = </symbol>
-              <expression>
-                <term>
-                  <identifier-VAR-3-usage-UNK> sum </identifier-VAR-3-usage-UNK>
-                </term>
-                <symbol> + </symbol>
-                <term>
-                  <identifier-VAR-0-usage-UNK> a </identifier-VAR-0-usage-UNK>
-                  <symbol> [ </symbol>
-                  <expression>
-                    <term>
-                      <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-                    </term>
-                  </expression>
-                  <symbol> ] </symbol>
-                </term>
-              </expression>
-              <symbol> ; </symbol>
-            </letStatement>
-            <letStatement>
-              <keyword> let </keyword>
-              <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-              <symbol> = </symbol>
-              <expression>
-                <term>
-                  <identifier-VAR-2-usage-UNK> i </identifier-VAR-2-usage-UNK>
-                </term>
-                <symbol> + </symbol>
-                <term>
-                  <integerConstant> 1 </integerConstant>
-                </term>
-              </expression>
-              <symbol> ; </symbol>
-            </letStatement>
-          </statements>
-          <symbol> } </symbol>
-        </whileStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-class-0-usage-UNK> Output </identifier-class-0-usage-UNK>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage-UNK> printString </identifier-subroutine-0-usage-UNK>
+          <identifier-subroutine-0-usage-UNK> run </identifier-subroutine-0-usage-UNK>
           <symbol> ( </symbol>
-          <expressionList>
-            <expression>
-              <term>
-                <stringConstant> The average is  </stringConstant>
-              </term>
-            </expression>
-          </expressionList>
+          <expressionList/>
           <symbol> ) </symbol>
           <symbol> ; </symbol>
         </doStatement>
         <doStatement>
           <keyword> do </keyword>
-          <identifier-class-0-usage-UNK> Output </identifier-class-0-usage-UNK>
+          <identifier-VAR-0-usage-UNK> game </identifier-VAR-0-usage-UNK>
           <symbol> . </symbol>
-          <identifier-subroutine-0-usage-UNK> printInt </identifier-subroutine-0-usage-UNK>
+          <identifier-subroutine-0-usage-UNK> dispose </identifier-subroutine-0-usage-UNK>
           <symbol> ( </symbol>
-          <expressionList>
-            <expression>
-              <term>
-                <identifier-VAR-3-usage-UNK> sum </identifier-VAR-3-usage-UNK>
-              </term>
-              <symbol> / </symbol>
-              <term>
-                <identifier-VAR-1-usage-UNK> length </identifier-VAR-1-usage-UNK>
-              </term>
-            </expression>
-          </expressionList>
+          <expressionList/>
           <symbol> ) </symbol>
           <symbol> ; </symbol>
         </doStatement>

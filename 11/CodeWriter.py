@@ -102,11 +102,14 @@ class CodeWriter:
         self._write_jack_code_as_comment(do_statement)
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
-            method_name = ".".join((get_text(do_statement[1]), get_text(do_statement[3])))
+            call_object = get_text(do_statement[1])
+            if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
+                call_object = self.symbol_table.type_of(call_object)
+            function_name = call_object + "." + get_text(do_statement[3])
         else:
-            method_name = get_text(do_statement[1])
+            function_name = get_text(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
-        self.vm_writer.write_call(method_name, args_num)
+        self.vm_writer.write_call(function_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
 
     def write_let_code(self, let_statement: Element) -> None:
@@ -317,6 +320,7 @@ class CodeWriter:
         for dec in var_decs:
             locals_count += (len(list(filter(lambda x: x == ",", map(lambda elem: get_text(elem), dec)))) + 1)
         return locals_count
+
 
 if __name__ == '__main__':
     file_name = "SquareMain"
