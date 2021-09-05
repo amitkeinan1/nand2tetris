@@ -6,10 +6,11 @@ Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
 import os
 import sys
-import typing
-from ExtendedXmlCompiler import ExtendedXmlCompiler
-from CodeWriter import CodeWriter
+
 from lxml import etree
+
+from CodeWriter import CodeWriter
+from ExtendedXmlCompiler import ExtendedXmlCompiler
 
 
 def compile_file(input_path: str, output_path: str) -> None:
@@ -25,6 +26,7 @@ def compile_file(input_path: str, output_path: str) -> None:
     tree = etree.parse(temp_path)
     writer = CodeWriter(tree, output_path)
     writer.write_code()
+
 
 # TODO: remove before submission
 if "__main__" == __name__:

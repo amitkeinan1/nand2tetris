@@ -4,8 +4,8 @@ https://www.nand2tetris.org (Shimon Schocken and Noam Nisan, 2017)
 and as allowed by the Creative Common Attribution-NonCommercial-ShareAlike 3.0 
 Unported License (https://creativecommons.org/licenses/by-nc-sa/3.0/).
 """
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -27,6 +27,7 @@ ARG_KIND = "ARG"
 CLASS_KINDS = {FIELD_KIND, STATIC_KIND}
 SUBROUTINE_KINDS = {VAR_KIND, ARG_KIND}
 RESOLUTION_ORDER = [SUBROUTINE_SCOPE, CLASS_SCOPE]
+
 
 class SymbolTable:
     """A symbol table that associates names with information needed for Jack

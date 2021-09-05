@@ -222,8 +222,11 @@ class CodeWriter:
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
                 if term.findtext(SYMBOL_TAG) == ".":
-                    assert self._get_text(term) == "."
-                    function_name = map(self._get_text, [term[0], term[1], term[2]])
+                    assert self._get_text(term[1]) == '.'
+                    call_object = self._get_text(term[0])
+                    if self.symbol_table.kind_of(call_object) is not None: # if it is a var and not a class
+                        call_object = self.symbol_table.type_of(call_object)
+                    function_name = call_object + "." + self._get_text(term[2])
 
                 else:
                     function_name = term[0]
