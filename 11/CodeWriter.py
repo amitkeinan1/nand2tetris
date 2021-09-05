@@ -109,57 +109,72 @@ class CodeWriter:
             elif statement.tag == RETURN_TAG:
                 self.write_return_code(statement)
 
-    def _handle_var_method(self, do_statement: Element, args_num: int):
-        call_object = get_text(do_statement[1])
+    def _handle_var_method(self, subroutine_call: Element, args_num: int):
+        call_object = get_text(subroutine_call[0])
         segment = self._convert_kind_to_segment(self.symbol_table.kind_of(call_object))
         index = self.symbol_table.index_of(call_object)
         self.vm_writer.write_push(segment, index)
         call_object = self.symbol_table.type_of(call_object)
-        function_name = call_object + "." + get_text(do_statement[3])
+        function_name = call_object + "." + get_text(subroutine_call[2])
         return function_name, args_num + 1
 
-    def _handle_other_class_method(self, do_statement: Element, args_num: int):
-        call_object = get_text(do_statement[1])
-        function_name = call_object + "." + get_text(do_statement[3])
+    def _handle_other_class_method(self, subroutine_call: Element, args_num: int):
+        call_object = get_text(subroutine_call[0])
+        function_name = call_object + "." + get_text(subroutine_call[2])
         return function_name, args_num
 
-    def _handle_curr_class_method(self, do_statement: Element, args_num: int, is_explicit):
-        if is_explicit:
-            call_object = get_text(do_statement[1])
-            call_object = self.symbol_table.type_of(call_object)
-        else:
-            call_object = self.class_name
+    def _handle_curr_class_method(self, subroutine_call: Element, args_num: int, is_explicit):
+        call_object = self.class_name
 
         self.vm_writer.write_push("POINTER", 0)
 
         if is_explicit:
-            partial_method_name = get_text(do_statement[3])
+            partial_method_name = get_text(subroutine_call[2])
         else:
-            partial_method_name = get_text(do_statement[1])
+            partial_method_name = get_text(subroutine_call[0])
         function_name = call_object + "." + partial_method_name
 
         return function_name, args_num + 1
 
+    def _handle_curr_class_constructor(self, subroutine_call: Element, args_num: int, is_explicit):
+        call_object = self.class_name
+
+        if is_explicit:
+            partial_method_name = get_text(subroutine_call[2])
+        else:
+            partial_method_name = get_text(subroutine_call[0])
+        function_name = call_object + "." + partial_method_name
+
+        return function_name, args_num
+
     def write_do_code(self, do_statement: Element) -> None:
         """Compiles a do statement."""
-        # 'do' subroutineCall ';'
-        self._write_jack_code_as_comment(do_statement)
-        args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
-
-        if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
-            call_object = get_text(do_statement[1])
-            if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
-                function_name, args_num = self._handle_var_method(do_statement, args_num)
-            elif call_object == self.class_name:
-                function_name, args_num = self._handle_curr_class_method(do_statement, args_num, is_explicit=True)
-            else:
-                function_name, args_num = self._handle_other_class_method(do_statement, args_num)
-        else:
-            function_name, args_num = self._handle_curr_class_method(do_statement, args_num, is_explicit=False)
-
-        self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
-        self.vm_writer.write_call(function_name, args_num)
+        subroutine_call = etree.Element("subroutineCall")
+        subroutine_call.extend(do_statement[1:])
+        self.write_subroutine_call_code(subroutine_call)
         self.vm_writer.write_pop("TEMP", 0)
+
+    def write_subroutine_call_code(self, subroutine_call: Element):
+        args_num = len(subroutine_call.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
+
+        if subroutine_call.findtext(SYMBOL_TAG, default="").strip() == ".":
+            call_object = get_text(subroutine_call[0])
+            if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
+                function_name, args_num = self._handle_var_method(subroutine_call, args_num)
+            elif call_object == self.class_name:
+                if get_text(subroutine_call[2]) == "new":
+                    function_name, args_num = self._handle_curr_class_constructor(subroutine_call, args_num,
+                                                                             is_explicit=True)
+                else:
+                    function_name, args_num = self._handle_curr_class_method(subroutine_call, args_num,
+                                                                             is_explicit=True)
+            else:
+                function_name, args_num = self._handle_other_class_method(subroutine_call, args_num)
+        else:
+            function_name, args_num = self._handle_curr_class_method(subroutine_call, args_num, is_explicit=False)
+
+        self.write_expression_list_code(subroutine_call.find(EXPRESSION_LIST_TAG))
+        self.vm_writer.write_call(function_name, args_num)
 
     def write_let_code(self, let_statement: Element) -> None:
         """Compiles a let statement."""
@@ -280,20 +295,8 @@ class CodeWriter:
                 self.vm_writer.write_pop("POINTER", 1)
                 self.vm_writer.write_push("THAT", 0)
 
-            else:  # subroutineCall
-                self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
-                args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
-                if term.findtext(SYMBOL_TAG).strip() == ".":
-                    assert get_text(term[1]) == '.'
-                    call_object = get_text(term[0])
-                    if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
-                        call_object = self.symbol_table.type_of(call_object)
-                    function_name = call_object + "." + get_text(term[2])
-
-                else:
-                    function_name = term[0]
-
-                self.vm_writer.write_call(function_name, args_num)
+            else:
+                self.write_subroutine_call_code(term)
 
         elif term.findtext(SYMBOL_TAG).strip() == "(":  # '('expression')'
             self.write_expression_code(term.find(EXPRESSION_TAG))
