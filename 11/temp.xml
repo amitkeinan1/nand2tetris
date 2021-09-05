@@ -86,7 +86,7 @@
           </expressionList>
           <symbol> ) </symbol>
           <symbol> ; </symbol>
-        </letStatement>
+        </doStatement>
         <returnStatement>
           <keyword> return </keyword>
           <symbol> ; </symbol>

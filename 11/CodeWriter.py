@@ -276,7 +276,7 @@ class CodeWriter:
     def write_keyword(self, keyword: str):
         if keyword == "true":
             self.vm_writer.write_push("CONST", 0)
-            self.vm_writer.write_arithmetic("NEG")
+            self.vm_writer.write_arithmetic("NOT")
         if keyword == "false":
             self.vm_writer.write_push("CONST", 0)
         if keyword == "null":  # TODO
