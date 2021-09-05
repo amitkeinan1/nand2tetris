@@ -132,6 +132,8 @@ class CodeWriter:
 
     def write_while_code(self, while_statement: Element) -> None:
         """Compiles a while statement."""
+        self.vm_writer.write_comment("while [yada yada yada]")
+
         start_label = self._generate_label("while-L1")
         out_label = self._generate_label("while-L2")
 
@@ -177,6 +179,8 @@ class CodeWriter:
 
     def write_expression_code(self, expression: Element) -> None:
         """Compiles an expression."""
+        self._write_jack_code_as_comment(expression)
+
         self.write_term_code(expression[0])
         for i in range(1, len(expression), 2):
             operator = expression[i]
