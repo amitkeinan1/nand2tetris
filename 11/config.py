@@ -45,8 +45,7 @@ SYMBOL_TAG = "symbol"
 INTEGER_CONSTANT_TAG = "integerConstant"
 STRING_CONSTANT_TAG = "stringConstant"
 KEYWORD_CONSTANT_TAG = "keyword"
-
-op_to_vm_command = {"+": "ADD", "-": "SUB", "==": "EQ", ">": "GT", "<": "LT", "&": "AND",
+op_to_vm_command = {"+": "ADD", "-": "SUB", "=": "EQ", ">": "GT", "<": "LT", "&": "AND",
                     "|": "OR", "!": "NOT"}
 op_to_os_function = {"*": "Math.multiply", "/": "Math.divide"}
 unary_op_to_vm_command = {"-": "NEG", "~": "NOT"}
