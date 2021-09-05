@@ -12,6 +12,7 @@ from SymbolTable import SymbolTable
 from VMWriter import VMWriter
 from config import *
 from jack_syntax import UNARY_OPERATORS
+from xml_utils import get_text, get_type
 
 
 class CodeWriter:
@@ -39,7 +40,7 @@ class CodeWriter:
     def write_class_code(self, class_xml: Element) -> None:
         """Compiles a complete class."""
         # 'class' className '{' classVarDec* subroutineDec* '}'
-        class_name = self._get_text(class_xml[1])
+        class_name = get_text(class_xml[1])
         for class_var in class_xml.findall(f"./{CLASS_VAR_DEC_TAG}"):
             self.write_class_var_dec_code(class_var)
         for subroutine_dec in class_xml.findall(f"./{SUBROUTINE_DEC_TAG}"):
@@ -47,8 +48,8 @@ class CodeWriter:
 
     def _write_any_var_dec_code(self, var_dec: Element) -> None:
         for element in var_dec:
-            element_type = self._get_type(element)
-            element_name = self._get_text(element)
+            element_type = get_type(element)
+            element_name = get_text(element)
             if element_type.startswith("identifier"):
                 category, index, status, var_type = self._get_identifier_details(element_type)
                 if status == DEFINITION:
@@ -62,7 +63,7 @@ class CodeWriter:
     def write_subroutine_dec_code(self, subroutine_dec: Element, class_name: str) -> None:
         """Compiles a complete method, function, or constructor."""
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
-        subroutine_name = ".".join((class_name, self._get_text(subroutine_dec[2])))
+        subroutine_name = ".".join((class_name, get_text(subroutine_dec[2])))
         args_num = len(subroutine_dec.findall(f"./{PARAMETER_LIST_TAG}/{KEYWORD_CONSTANT_TAG}"))
         self.write_parameter_list_code(subroutine_dec[4])
         self.vm_writer.write_function(subroutine_name, args_num)
@@ -102,9 +103,9 @@ class CodeWriter:
         self._write_jack_code_as_comment(do_statement)
         self.write_expression_list_code(do_statement.find(EXPRESSION_LIST_TAG))
         if do_statement.findtext(SYMBOL_TAG, default="").strip() == ".":
-            method_name = ".".join((self._get_text(do_statement[1]), self._get_text(do_statement[3])))
+            method_name = ".".join((get_text(do_statement[1]), get_text(do_statement[3])))
         else:
-            method_name = self._get_text(do_statement[1])
+            method_name = get_text(do_statement[1])
         args_num = len(do_statement.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
         self.vm_writer.write_call(method_name, args_num)
         self.vm_writer.write_pop("TEMP", 0)
@@ -118,14 +119,14 @@ class CodeWriter:
         right_expression = let_statement[-2]
         self.write_expression_code(right_expression)
         if len(expressions) > 1:
-            var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(var_elem))
+            var_kind, var_index, _, _, = self._get_identifier_details(get_type(var_elem))
             self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
             self.write_expression_code(let_statement[3])
             self.write_op("+")
             self.vm_writer.write_pop("POINTER", 1)
             self.vm_writer.write_pop("THAT", 0)
         else:
-            category, index, status, var_type = self._get_identifier_details(self._get_type(var_elem))
+            category, index, status, var_type = self._get_identifier_details(get_type(var_elem))
             segment = self._convert_kind_to_segment(category)
             self.vm_writer.write_pop(segment, index)
 
@@ -181,7 +182,7 @@ class CodeWriter:
             operator = expression[i]
             term = expression[i + 1]
             self.write_term_code(term)
-            self.write_op(self._get_text(operator))
+            self.write_op(get_text(operator))
 
     def write_term_code(self, term: Element) -> None:
         """Compiles a term. 
@@ -196,10 +197,10 @@ class CodeWriter:
         # integerConstant | stringConstant | keywordConstant | varName | varName '['expression']' | subroutineCall |
         # '(' expression ')' | unaryOp term
         if term.find(INTEGER_CONSTANT_TAG) is not None:  # integerConstant
-            self.vm_writer.write_push("CONST", self._get_text(term[0]))
+            self.vm_writer.write_push("CONST", get_text(term[0]))
 
         elif term.find(STRING_CONSTANT_TAG) is not None:  # stringConstant
-            string: str = self._get_text(term[0])
+            string: str = get_text(term[0])
             self.vm_writer.write_push("CONST", len(string))
             self.vm_writer.write_function("String.new", 1)
             for char in string:
@@ -207,17 +208,17 @@ class CodeWriter:
                 self.vm_writer.write_function("String.appendChar", 1)
 
         elif term.find(KEYWORD_CONSTANT_TAG) is not None:  # keyword
-            self.write_keyword(self._get_text(term.find(KEYWORD_CONSTANT_TAG)))
+            self.write_keyword(get_text(term.find(KEYWORD_CONSTANT_TAG)))
 
-        elif self._get_type(term[0]).startswith("identifier"):  # identifiers
+        elif get_type(term[0]).startswith("identifier"):  # identifiers
             if len(term) == 1:  # varName
                 var = term[0]
                 var_kind, var_index, _, _, = self._get_identifier_details(var.tag)
                 self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
 
-            elif self._get_text(term[1]) == '[':  # varName '['expression']'
+            elif get_text(term[1]) == '[':  # varName '['expression']'
                 array_elem = term[0]
-                var_kind, var_index, _, _, = self._get_identifier_details(self._get_type(array_elem))
+                var_kind, var_index, _, _, = self._get_identifier_details(get_type(array_elem))
                 self.vm_writer.write_push(self._convert_kind_to_segment(var_kind), var_index)
                 self.write_expression_code(term.find(EXPRESSION_TAG))
                 self.write_op("+")
@@ -228,11 +229,11 @@ class CodeWriter:
                 self.write_expression_list_code(term.find(EXPRESSION_LIST_TAG))
                 args_num = len(term.findall(f"./{EXPRESSION_LIST_TAG}/{EXPRESSION_TAG}"))
                 if term.findtext(SYMBOL_TAG).strip() == ".":
-                    assert self._get_text(term[1]) == '.'
-                    call_object = self._get_text(term[0])
+                    assert get_text(term[1]) == '.'
+                    call_object = get_text(term[0])
                     if self.symbol_table.kind_of(call_object) is not None:  # if it is a var and not a class
                         call_object = self.symbol_table.type_of(call_object)
-                    function_name = call_object + "." + self._get_text(term[2])
+                    function_name = call_object + "." + get_text(term[2])
 
                 else:
                     function_name = term[0]
@@ -295,22 +296,13 @@ class CodeWriter:
         assert len(details) == 5
         return details[1:]
 
-    # TODO: code dup
-    @staticmethod
-    def _get_type(element):
-        return element.tag
-
-    # TODO: code dup
-    @staticmethod
-    def _get_text(element):
-        return element.text.strip()
 
     @staticmethod
     def _convert_kind_to_segment(kind):
         return KIND_TO_SEGMENT[kind]
 
     def _write_jack_code_as_comment(self, elem):
-        self.vm_writer.write_comment(' '.join([self._get_text(e) for e in elem.iter()]))
+        self.vm_writer.write_comment(' '.join([get_text(e) for e in elem.iter()]))
 
 
 

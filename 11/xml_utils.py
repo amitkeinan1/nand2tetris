@@ -6,6 +6,7 @@ def xml_write_patch(method):
      it is used to allow pretty line by line printing of xmls in which empty elements appear with an opening tag and a
      closing tag, as expected by the tests, and not a single self-closing tag.
     """
+
     def patch_method(self, *args, **kwargs):
         old = self.childNodes
         try:
@@ -20,3 +21,11 @@ def xml_write_patch(method):
             self.childNodes = old
 
     return patch_method
+
+
+def get_type(element):
+    return element.tag
+
+
+def get_text(element):
+    return element.text.strip()

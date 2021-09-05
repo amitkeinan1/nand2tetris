@@ -20,7 +20,7 @@ def compile_file(input_path: str, output_path: str) -> None:
         input_path (str): the path to the file to compile.
         output_path (str): writes all output to the file in this path.
     """
-    temp_path = "temp.xml"  # TODO:change
+    temp_path = "temp.xml"  # TODO: change
     compiler = ExtendedXmlCompiler(input_path, temp_path)
     compiler.compile()
     tree = etree.parse(temp_path)
