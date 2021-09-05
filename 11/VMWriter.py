@@ -105,6 +105,7 @@ class VMWriter:
     def write_comment(self, comment: str):
         self.write_line(f"// {comment}")
 
+
 # TODO: remove before submission
 if __name__ == '__main__':
     # test
