@@ -18,14 +18,18 @@ class Symbol:
 
 CLASS_SCOPE = "class"
 SUBROUTINE_SCOPE = "subroutine"
+SUBROUTINES = "subroutine"
 
 FIELD_KIND = "FIELD"
 STATIC_KIND = "STATIC"
 VAR_KIND = "VAR"
 ARG_KIND = "ARG"
-
+CONSTRUCTOR_KIND = "constructor"
+FUNCTION_KIND = "function"
+METHOD_KIND = "method"
 CLASS_KINDS = {FIELD_KIND, STATIC_KIND}
-SUBROUTINE_KINDS = {VAR_KIND, ARG_KIND}
+SUBROUTINE_LOCALS_KINDS = {VAR_KIND, ARG_KIND}
+SUBROUTINE_KINDS = {CONSTRUCTOR_KIND, FUNCTION_KIND, METHOD_KIND}
 RESOLUTION_ORDER = [SUBROUTINE_SCOPE, CLASS_SCOPE]
 
 
@@ -37,7 +41,7 @@ class SymbolTable:
 
     def __init__(self) -> None:
         """Creates a new empty symbol table."""
-        self._table = {CLASS_SCOPE: {}, SUBROUTINE_SCOPE: {}}
+        self._table = {CLASS_SCOPE: {}, SUBROUTINE_SCOPE: {}, SUBROUTINES:{}}
         self._kind_indexes = {FIELD_KIND: 0, STATIC_KIND: 0, VAR_KIND: 0, ARG_KIND: 0}
 
     def start_subroutine(self) -> None:
@@ -45,7 +49,7 @@ class SymbolTable:
         symbol table).
         """
         self._table[SUBROUTINE_SCOPE] = {}
-        for kind in SUBROUTINE_KINDS:
+        for kind in SUBROUTINE_LOCALS_KINDS:
             self._kind_indexes[kind] = 0
 
     def define(self, name: str, type: str, kind: str) -> None:
@@ -64,7 +68,7 @@ class SymbolTable:
         symbol = Symbol(name, type, kind, symbol_index)
         if kind in CLASS_KINDS:
             self._table[CLASS_SCOPE][name] = symbol
-        else:
+        elif kind in VAR_KIND:
             self._table[SUBROUTINE_SCOPE][name] = symbol
 
     def var_count(self, kind: str) -> int:
