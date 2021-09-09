@@ -1,0 +1,8 @@
+function Main.main 0
+//  let a =   0 ;
+//   0
+push constant 0
+pop local 0
+//  return ;
+push constant 0
+return
