@@ -19,12 +19,12 @@ JackPreprocessing.py - handles preprocessing of jack code streams: mainly remove
 jack_syntax.py - this file contains string constants and regular expressions for some parts of the jack language syntax
 config.py - this file contains constant definitions that are used for internally by the compiler (i.e. token types)
 xml_utils.py - utilities for working with xml, especially stuff to be exactly consistent with the required format of the
+XmlCompiler.py - the syntax analyzer from project 10 that parses the code into xml
 xml.
 JackCompiler - The executable.
 JackCompiler.py -
-JackTokenizer.py - 
-CompilationEngine.py - 
-VMWriter.py - 
-SymbolTable.py - 
+JackTokenizer.py -
+VMWriter.py -
+SymbolTable.py -
 CodeWriter - this class gets xml tree of parsed jack code and generates vm code.
 ExtendedXmlCompiler - this class uses XmlCompiler and extends the identifier tags.

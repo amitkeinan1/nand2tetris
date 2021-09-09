@@ -6,7 +6,11 @@ from jack_syntax import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
 
 def _remove_comments(text: str) -> str:
     for comment_regex, comment_replacement in COMMENTS_REMOVING.items():
-        text = re.sub(comment_regex, comment_replacement, text)
+        suspected_comments = re.findall(comment_regex, text)
+        for suspect in suspected_comments:
+            if re.match(f'".*{text}.*"', text) is None:
+                text = text.replace(suspect, comment_replacement)
+        # text = re.sub(comment_regex, comment_replacement, text)
     return text
 
 
