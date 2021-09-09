@@ -1,0 +1,50 @@
+<class>
+  <keyword> class </keyword>
+  <identifier-class-0-definition> Main </identifier-class-0-definition>
+  <symbol> { </symbol>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition> method1 </identifier-subroutine-0-definition>
+    <symbol> ( </symbol>
+    <parameterList>
+      <identifier-class-0-usage> Class1 </identifier-class-0-usage>
+      <identifier-ARG-0-definition> var1 </identifier-ARG-0-definition>
+      <symbol> , </symbol>
+      <identifier-class-0-usage> Class2 </identifier-class-0-usage>
+      <identifier-ARG-1-definition> var2 </identifier-ARG-1-definition>
+      <symbol> , </symbol>
+      <identifier-class-0-usage> Class3 </identifier-class-0-usage>
+      <identifier-ARG-2-definition> var3 </identifier-ARG-2-definition>
+    </parameterList>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements/>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition> method2 </identifier-subroutine-0-definition>
+    <symbol> ( </symbol>
+    <parameterList>
+      <identifier-class-0-usage> Class1 </identifier-class-0-usage>
+      <identifier-ARG-0-definition> var1 </identifier-ARG-0-definition>
+      <symbol> , </symbol>
+      <identifier-class-0-usage> Class2 </identifier-class-0-usage>
+      <identifier-ARG-1-definition> var2 </identifier-ARG-1-definition>
+      <symbol> , </symbol>
+      <identifier-class-0-usage> Class3 </identifier-class-0-usage>
+      <identifier-ARG-2-definition> var3 </identifier-ARG-2-definition>
+    </parameterList>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements/>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <symbol> } </symbol>
+</class>

@@ -1,17 +1,11 @@
 import re
 from typing import List, Tuple
 
-from jack_syntax import SYMBOLS, COMMENTS_REMOVING, STRING_CONST_PATTERN
+from jack_syntax import SYMBOLS, STRING_CONST_PATTERN, COMMENTS_REGEX
 
 
-def _remove_comments(text: str) -> str:
-    for comment_regex, comment_replacement in COMMENTS_REMOVING.items():
-        suspected_comments = re.findall(comment_regex, text)
-        for suspect in suspected_comments:
-            if re.match(f'".*{text}.*"', text) is None:
-                text = text.replace(suspect, comment_replacement)
-        # text = re.sub(comment_regex, comment_replacement, text)
-    return text
+def _remove_comments(line):
+    return COMMENTS_REGEX.sub('', line)
 
 
 def _clean_text(text: str) -> List[str]:
@@ -93,11 +87,3 @@ def get_tokens(jack_code: str) -> List[str]:
     jack_code = _clean_text(jack_code)
     tokens = _split_to_tokens(jack_code)
     return tokens
-
-
-if __name__ == '__main__':
-    with open("Square/Main.jack") as stream:
-        text = stream.read()
-        tokens = get_tokens(text)
-        for token in tokens:
-            print(token)

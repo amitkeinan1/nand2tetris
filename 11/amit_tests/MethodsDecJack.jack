@@ -1,0 +1,7 @@
+class Main {
+    function void method1(Class1 var1, Class2 var2, Class3 var3) {
+    }
+
+    function void method2(Class1 var1, Class2 var2, Class3 var3) {
+    }
+}
