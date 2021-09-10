@@ -129,7 +129,7 @@ class Math {
 		
 		while (j > -1){
 			let a = (y + twoToThe[j]) * (y + twoToThe[j]);
-			if (~(a > x)){
+			if ((a > 0) & (~(a > x))){
 				let y = y + twoToThe[j];
 			}
 			else{
@@ -144,20 +144,20 @@ class Math {
     /** Returns the greater number. */
     function int max(int a, int b) {
 		if (a > b){
-		return a;
+			return a;
 		}
 		else{
-		return b;
+			return b;
 		}
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
 		if (a > b){
-		return b;
+			return b;
 		}
 		else{
-		return a;
+			return a;
 		}
     }
 }
