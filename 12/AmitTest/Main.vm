@@ -1,0 +1,4 @@
+function Main.main 1
+push constant 100
+call Math.sqrt 1
+pop local 0
