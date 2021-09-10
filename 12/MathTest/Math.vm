@@ -149,7 +149,7 @@ push argument 0
 neg
 return
 label IF_END0
-function Math.getBit 0
+function Math.getBit 1
 push argument 0
 push argument 1
 push static 0
@@ -157,7 +157,20 @@ add
 pop pointer 1
 push that 0
 and
+pop local 0
+push local 0
+push constant 0
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 1
 return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
 function Math.multiply 3
 push constant 0
 pop local 0
@@ -268,7 +281,7 @@ push argument 0
 call Math.abs 1
 push argument 1
 call Math.abs 1
-call Math.divide 2
+call Math.absDivide 2
 pop local 0
 push local 1
 push constant 1
