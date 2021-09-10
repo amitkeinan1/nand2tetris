@@ -69,23 +69,29 @@ class String {
 		var int val, i;
 		var char d;
 		var int isNeg;
+		var bool shouldBrake;
 		
 		let val = 0;
-		let i = 1;
+		let i = 0;
+		let shouldBrake = (0 = 1); // set to false
 		
-		let d = charAt(0);
-		if (d = 45){
+		if (charAt(0) = 45){ // begins with minus
 			let isNeg = 1;
+			let i = 1;
 		}
 		else{
 			let isNeg = 0;
-			let val = val * 10 + charToInt(d);
 		}
 		
 		
-		while (i < length){
+		while ((i < length)& (~shouldBrake)){
 			let d = charAt(i);
-			let val = val * 10 + charToInt(d);
+			if (isDigit(d)){
+				let val = val * 10 + charToInt(d);
+			}
+			else{
+				let shouldBrake = (1 = 1); // set to true
+			}
 			let i = i + 1;
 		}
 		
@@ -98,12 +104,16 @@ class String {
 		
     }
 	
-	method char intToChar(int val){
+	function char intToChar(int val){
 		return val + 48;
 	}
 	
-	method int charToInt(char c){
+	function int charToInt(char c){
 		return c - 48;
+	}
+	
+	function boolean isDigit(char c){
+		return (c > 47) & (c < 58)
 	}
 
     /** return a string with representation of the given value. */
