@@ -71,6 +71,25 @@ class Math {
 		
 		return sum;
     }
+	
+	 /** Returns the positive integer part of x/y.
+     */
+    function int absDivide(int x, int y) {
+		var int q;
+		if (y > x){
+		return 0;
+		}
+		else{
+			let q = x / (y + y);
+			if ((x - (2 * q * y)) < y){
+				return (q + q);
+			}
+			else {
+				return q + q + 1;
+			}
+		}
+    }
+	
 
     /** Returns the integer part of x/y.
      *  When a Jack compiler detects the multiplication operator '/' in the 
@@ -78,18 +97,20 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
-		var int q;
-		if (y > x){
-		return 0;
+		var int absRes, negsNum;
+		let negsNum = 0;
+		if (x > 0){
+			let negsNum = negsNum + 1;
+		}
+		if (y > 0){
+			let negsNum = negsNum + 1;
+		}
+		let absRes = Math.abs(x) / Math.abs(y);
+		if (negsNum = 1){
+			return -absRes;
 		}
 		else{
-			let q = x / (2 * y);
-			if ((x - (2 * q * y)) < y){
-				return 2 * q;
-			}
-			else {
-				return (2 * q) + 1;
-			}
+			return absRes;
 		}
     }
 
