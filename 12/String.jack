@@ -11,54 +11,144 @@
  * string-oriented operations.
  */
 class String {
+	field Array string;
+	field int length;
+	field int capacity;
 
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
+		if (maxLength = 0){
+			let maxLength = 1;
+		}
+		let string = Array.new(maxLength);
+		let length = 0;
+		return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
+		do string.dispose();
+		return;
     }
 
     /** Returns the current length of this string. */
     method int length() {
+		return length;
     }
 
     /** Returns the character at the j-th location of this string. */
     method char charAt(int j) {
+		return string[j];
     }
 
     /** Sets the character at the j-th location of this string to c. */
     method void setCharAt(int j, char c) {
+		let string[j] = c;
+		return;
     }
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
+		let string[length] = c;
+		let length = length + 1;
+		return this;
     }
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
+		if (length > 0){
+			let length = length - 1;
+		}
+		return;
     }
 
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+		var int val, i;
+		var char d;
+		var int isNeg;
+		
+		let val = 0;
+		let i = 1;
+		
+		let d = charAt(0);
+		if (d = 45){
+			let isNeg = 1;
+		}
+		else{
+			let isNeg = 0;
+			let val = val * 10 + charToInt(d);
+		}
+		
+		
+		while (i < length){
+			let d = charAt(i);
+			let val = val * 10 + charToInt(d);
+			let i = i + 1;
+		}
+		
+		if (isNeg = 1){
+			return -val;
+		}
+		else{
+			return val;
+		}
+		
     }
+	
+	method char intToChar(int val){
+		return val + 48;
+	}
+	
+	method int charToInt(char c){
+		return c - 48;
+	}
 
-    /** Sets this string to hold a representation of the given value. */
-    method void setInt(int val) {
+    /** return a string with representation of the given value. */
+    method void addDigits(int val) {
+		var int lastDigit, q;
+		var char lastChar;
+		
+		let q = val / 10;
+		let lastDigit = val - (q * 10);
+		let lastChar = intToChar(lastDigit);
+		
+		if (val < 10){
+			do appendChar(lastChar);
+		}
+		else{
+			do addDigits(q);
+			do appendChar(lastChar);
+		}
+		return;
     }
+	
+	
+	/** Sets this string to hold a representation of the given value. */
+    method void setInt(int val) {
+		let length = 0;
+		if (val < 0){
+			do appendChar(45);
+		}
+		do addDigits(Math.abs(val));
+		return;
+    }
+	
 
     /** Returns the new line character. */
     function char newLine() {
+		return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+		return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+		return 34;
     }
 }
