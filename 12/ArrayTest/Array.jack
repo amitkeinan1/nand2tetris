@@ -15,11 +15,11 @@ class Array {
 
     /** Constructs a new Array of the given size. */
     function Array new(int size) {
-		Memory.Alloc(size);
-		return 0;
+		return Memory.alloc(size);
     }
 
     /** Disposes this array. */
     method void dispose() {
+		return;
     }
 }
