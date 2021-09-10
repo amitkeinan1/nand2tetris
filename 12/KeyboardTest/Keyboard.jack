@@ -79,7 +79,7 @@ class Keyboard {
 			else{
 				if(c = String.backSpace()){
 					do str.eraseLastChar();
-					do Output.backSpace();
+					//do Output.backSpace();
 				}
 				else{
 					let str = str.appendChar(c);
@@ -99,7 +99,7 @@ class Keyboard {
 		var String input;
 		
 		let input = Keyboard.readLine(message);
-		return String.intValue(input);
+		return input.intValue();
 		
     }
 }

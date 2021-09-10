@@ -70,8 +70,6 @@ label IF_TRUE1
 push local 0
 call String.eraseLastChar 1
 pop temp 0
-call Output.backSpace 0
-pop temp 0
 goto IF_END1
 label IF_FALSE1
 push local 0

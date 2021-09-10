@@ -86,8 +86,8 @@ class String {
 		
 		while ((i < length)& (~shouldBrake)){
 			let d = charAt(i);
-			if (isDigit(d)){
-				let val = val * 10 + charToInt(d);
+			if (String.isDigit(d)){
+				let val = val * 10 + String.charToInt(d);
 			}
 			else{
 				let shouldBrake = (1 = 1); // set to true
@@ -113,7 +113,7 @@ class String {
 	}
 	
 	function boolean isDigit(char c){
-		return (c > 47) & (c < 58)
+		return (c > 47) & (c < 58);
 	}
 
     /** return a string with representation of the given value. */
@@ -123,7 +123,7 @@ class String {
 		
 		let q = val / 10;
 		let lastDigit = val - (q * 10);
-		let lastChar = intToChar(lastDigit);
+		let lastChar = String.intToChar(lastDigit);
 		
 		if (val < 10){
 			do appendChar(lastChar);
