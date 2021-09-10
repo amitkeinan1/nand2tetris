@@ -57,12 +57,9 @@ class Math {
 		}
     }
 
-    /** Returns the product of x and y. 
-     *  When a Jack compiler detects the multiplication operator '*' in the 
-     *  program's code, it handles it by invoking this method. In other words,
-     *  the Jack expressions x*y and multiply(x,y) return the same value.
+    /** Returns x*y if x and y are positive.
      */
-    function int multiply(int x, int y) {
+    function int absMultiply(int x, int y) {
 		var int sum, i, shiftedX;
 		let sum = 0;
 		let i = 0;
@@ -79,10 +76,36 @@ class Math {
 		return sum;
     }
 	
-	 /** Returns the positive integer part of x/y.
+	 /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+	function int multiply(int x, int y) {
+		var int absRes, negsNum;
+		let negsNum = 0;
+		if (x > 0){
+			let negsNum = negsNum + 1;
+		}
+		if (y > 0){
+			let negsNum = negsNum + 1;
+		}
+		let absRes = Math.absMultiply(Math.abs(x), Math.abs(y));
+		if (negsNum = 1){
+			return -absRes;
+		}
+		else{
+			return absRes;
+		}
+    }
+	
+	 /** Returns x/y if x and y are positive.
      */
     function int absDivide(int x, int y) {
 		var int q;
+		if (y < 0){     //detect overflow
+			return 0;
+		}
 		if (y > x){
 		return 0;
 		}

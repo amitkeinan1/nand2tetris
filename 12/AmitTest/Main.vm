@@ -1,4 +1,5 @@
 function Main.main 1
-push constant 100
-call Math.sqrt 1
+push constant 1
+push constant 18000
+call Math.multiply 2
 pop local 0
