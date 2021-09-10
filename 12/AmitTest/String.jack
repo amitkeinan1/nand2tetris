@@ -75,20 +75,27 @@ class String {
 		}
 		return val;
     }
+	
+	method char intToChar(int val){
+		return val + 48;
+	}
+	
 
     /** return a string with representation of the given value. */
     method void addDigits(int val) {
-		var int lastDigit, tempQ;
+		var int lastDigit, q;
+		var char lastChar;
 		
-		let tempQ = val / 10;
-		let lastDigit = val - tempQ;
+		let q = val / 10;
+		let lastDigit = val - (q * 10);
+		let lastChar = intToChar(lastDigit);
 		
 		if (val < 10){
-			do appendChar(lastDigit);
+			do appendChar(lastChar);
 		}
 		else{
-			do addDigits(val / 10);
-			do appendChar(lastDigit);
+			do addDigits(q);
+			do appendChar(lastChar);
 		}
 		return;
     }
