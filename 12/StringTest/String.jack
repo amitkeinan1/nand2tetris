@@ -68,14 +68,34 @@ class String {
     method int intValue() {
 		var int val, i;
 		var char d;
+		var int isNeg;
+		
 		let val = 0;
-		let i = 0;
+		let i = 1;
+		
+		let d = charAt(0);
+		if (d = 45){
+			let isNeg = 1;
+		}
+		else{
+			let isNeg = 0;
+			let val = val * 10 + charToInt(d);
+		}
+		
+		
 		while (i < length){
 			let d = charAt(i);
 			let val = val * 10 + charToInt(d);
 			let i = i + 1;
 		}
-		return val;
+		
+		if (isNeg = 1){
+			return -val;
+		}
+		else{
+			return val;
+		}
+		
     }
 	
 	method char intToChar(int val){
