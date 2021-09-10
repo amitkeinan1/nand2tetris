@@ -8,9 +8,13 @@
  */
 class Keyboard {
 
+	static int kbAddr;
+
     /** Initializes the keyboard. */
     function void init() {
-    } 
+		let kbAddr = 24576;
+		return;
+	} 
 
     /**
      * Returns the character of the currently pressed key on the keyboard;
@@ -33,6 +37,9 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+		var int input;
+		let input = Memory.peek(kbAddr);
+		return input;
     }
 
     /**								
@@ -41,6 +48,14 @@ class Keyboard {
      * of the pressed key.
      */
     function char readChar() {
+		var char c;
+		while (Keyboard.keyPressed() = 0){
+		}
+		let c = Keyboard.keyPressed();
+		while (~(Keyboard.keyPressed() = 0)){
+		}
+		do Output.printChar(c);
+		return c;
     }
 
     /**								
@@ -49,6 +64,29 @@ class Keyboard {
      * and returns its value. Also handles user backspaces.
      */
     function String readLine(String message) {
+		var String str;
+		var char c;
+		let str = String.new(100);
+		let c = -1;
+		
+		do Output.printString(message);
+		
+		while (~(c = String.newLine())){
+			let c = Keyboard.readChar();
+			
+			if (c = String.newLine()){
+			}
+			else{
+				if(c = String.backSpace()){
+					do str.eraseLastChar();
+					do Output.backSpace();
+				}
+				else{
+					let str = str.appendChar(c);
+				}
+			}
+		}
+		return str;
     }   
 
     /**								
@@ -58,5 +96,10 @@ class Keyboard {
      * entered text is detected). Also handles user backspaces. 
      */
     function int readInt(String message) {
+		var String input;
+		
+		let input = Keyboard.readLine(message);
+		return String.intValue(input);
+		
     }
 }
