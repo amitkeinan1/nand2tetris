@@ -64,7 +64,27 @@ class Keyboard {
      * and returns its value. Also handles user backspaces.
      */
     function String readLine(String message) {
-		return 0;
+		var String str;
+		var char c;
+		let str = String.new(100);
+		let c = -1;
+		
+		while (~(c = String.newLine())){
+			let c = Keyboard.readChar();
+			
+			if (c = String.newLine()){
+			}
+			else{
+				if(c = String.backSpace()){
+					do str.eraseLastChar();
+					do Output.backSpace();
+				}
+				else{
+					let str = str.appendChar(c);
+				}
+			}
+		}
+		return str;
     }   
 
     /**								
