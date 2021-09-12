@@ -49,7 +49,7 @@ class Math {
     function int getBit(int x, int i) {
 		var int temp;
 		let temp = x & twoToThe[i];
-		if (temp > 0){
+		if ((temp > 0) | (temp = (32767 + 1))){
 			return 1;
 		}
 		else{
@@ -60,14 +60,16 @@ class Math {
     /** Returns x*y if x and y are positive.
      */
     function int absMultiply(int x, int y) {
-		var int sum, i, shiftedX;
+		var int sum, i, shiftedX, remainingY;
 		let sum = 0;
 		let i = 0;
 		let shiftedX = x;
-		
-		while (i < 16){
+		let remainingY = y;
+
+		while ((i < 16) & (remainingY > 0)){
 			if (Math.getBit(y, i) = 1){
 				let sum = sum + shiftedX;
+				let remainingY = remainingY - twoToThe[i];
 			}
 			let shiftedX = shiftedX + shiftedX;
 			let i = i + 1;
@@ -183,4 +185,10 @@ class Math {
 			return a;
 		}
     }
+
+    /** ~non-public~ Returns the i-th power of two */
+    function int powerOfTwo(int i){
+        return twoToThe[i];
+    }
+
 }
