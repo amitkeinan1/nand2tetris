@@ -1,0 +1,61 @@
+function Main.main 1
+push constant 280
+push constant 90
+push constant 410
+push constant 220
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push constant 350
+push constant 120
+push constant 390
+push constant 219
+call Screen.drawRectangle 4
+pop temp 0
+push constant 292
+push constant 120
+push constant 332
+push constant 150
+call Screen.drawRectangle 4
+pop temp 0
+push constant 66
+pop local 0
+push constant 32767
+push constant 1
+add
+pop local 0
+push local 0
+push constant 1
+sub
+pop local 0
+push constant 32767
+push constant 200
+add
+push local 0
+sub
+pop local 0
+push constant 0
+not
+call Screen.setColor 1
+pop temp 0
+push constant 350
+push constant 120
+push constant 382
+push constant 180
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push constant 66
+pop local 0
+push constant 350
+push constant 120
+push constant 382
+push constant 180
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+return

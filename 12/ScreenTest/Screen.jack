@@ -15,6 +15,7 @@ class Screen {
     /** Initializes the Screen. */
     function void init() {
         let currColor = true;
+//        do Screen.clearScreen();
         return;
     }
 
@@ -42,7 +43,7 @@ class Screen {
         var int value;
         var int bitCurrValue;
         var int bitDecimalValue;
-        var xModSixteen;
+        var int xModSixteen;
         let address = (32*y) + (x/16);
         let value = Memory.peek(16384 + address);
         let xModSixteen = x-(16*(x/16));
@@ -65,33 +66,57 @@ class Screen {
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
-        var int xBegin;
+        var int xBegin; // TODO: vars are useless here
         var int yBegin;
         var int xEnd;
         var int yEnd;
         var int dx;
         var int dy;
-        var int currX;
-        var int currY;
-        var int diff;
-        let xBegin = Math.min(x1, x2);
-        let xEnd = Math.max(x1, x2);
         let yBegin = Math.min(y1, y2);
         let yEnd = Math.max(y1, y2);
-        let dx = xEnd - xBegin;
+        let dx = x2 - x1;
+
         if (dx = 0){
             do Screen.drawVerticalLine(yBegin, yEnd, x1);
             return;
         }
-        let dy = yEnd - yBegin;
+        let xBegin = Math.min(x1, x2);
+        let xEnd = Math.max(x1, x2);
+        let dy = y2- y1;
         if (dy = 0){
             do Screen.drawHorizontalLine(xBegin, xEnd, y1);
             return;
         }
-        let currX = xBegin;
-        let currY = yBegin;
+        if ((dx*dy) > 0){
+            if (dx >0){
+                do Screen.drawLineIncrease(x1, y1, x2, y2);
+            }
+            else{
+                do Screen.drawLineIncrease(x2, y2, x1, y1);
+            }
+            return;
+        }
+        if (dx > 0){
+                do Screen.drawLineYDecrease(x1, y1, x2, y2);
+            }
+            else{
+                do Screen.drawLineYDecrease(x2, y2, x1, y1);
+            }
+        return;
+    }
+    
+    function void drawLineIncrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let currX = x1;
+        let currY = y1;
         let diff = 0;
-        while (~(currX = (xEnd+1)) | ~(currY = (yEnd+1))){
+        while (~(currX = (x2+1)) | ~(currY = (y2+1))){
             do Screen.drawPixel(currX, currY);
             if (diff < 0){
                 let currX = currX + 1;
@@ -99,6 +124,31 @@ class Screen {
             }
             else{
                 let currY = currY + 1;
+                let diff = diff - dx;
+            }
+        }
+        return;
+    }
+
+    function void drawLineYDecrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        let dx = x2 - x1;
+        let dy = y1 - y2;
+        let currX = x1;
+        let currY = y1;
+        let diff = 0;
+        while (~(currX = (x2+1)) | ~(currY = (y2-1))){
+            do Screen.drawPixel(currX, currY);
+            if (diff < 0){
+                let currX = currX + 1;
+                let diff = diff + dy;
+            }
+            else{
+                let currY = currY - 1;
                 let diff = diff - dx;
             }
         }
