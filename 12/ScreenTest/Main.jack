@@ -15,7 +15,7 @@ class Main {
         do Screen.setColor(false); 
         do Screen.drawRectangle(350,120,390,219); // door
         do Screen.drawRectangle(292,120,332,150); // window
-        
+
         do Screen.setColor(true); 
         do Screen.drawCircle(360,170,3);          // door handle
         do Screen.drawLine(280,90,345,35);        // roof

@@ -36,19 +36,13 @@ class Screen {
         return;
     }
 
-    /** Draws the (x,y) pixel, using the current color. */
-    function void drawPixel(int x, int y) {
-        var int address;
+    function void innerDrawPixel(int address, int xModSixteen){
         var int value;
         var int bitCurrValue;
-        var int bitDecimalValue;
-        var int xModSixteen;
-        let address = (32*y) + (x/16);
         let value = Memory.peek(16384 + address);
-        let xModSixteen = x-(16*(x/16));
-        // change bit x%16 bit to currColor
         let bitCurrValue = Math.getBit(value, xModSixteen);
 
+        // change bit x%16 bit to currColor
         if  ((bitCurrValue = 1) & ~currColor) // pixel is black and needs to be white
         {
             let value = value - Math.powerOfTwo(xModSixteen);
@@ -60,6 +54,20 @@ class Screen {
             }
         }
         do Memory.poke(16384 + address, value);
+        return;
+    }
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int address;
+        var int value;
+        var int bitCurrValue;
+        var int bitDecimalValue;
+        var int xDivSixteen;
+        var int xModSixteen;
+        let xModSixteen = x/16;
+        let address = (32*y) + xDivSixteen;
+        let xModSixteen = x-(16*xDivSixteen);
+        do Screen.innerDrawPixel(address, xModSixteen);
         return;
     }
 
@@ -78,12 +86,12 @@ class Screen {
         let xEnd = Math.max(x1, x2);
         let yBegin = Math.min(y1, y2);
         let yEnd = Math.max(y1, y2);
-        let dx = xEnd - xBegin;
+        let dx = x2 - x1;
         if (dx = 0){
             do Screen.drawVerticalLine(yBegin, yEnd, x1);
             return;
         }
-        let dy = yEnd - yBegin;
+        let dy = y2 - y1;
         if (dy = 0){
             do Screen.drawHorizontalLine(xBegin, xEnd, y1);
             return;
@@ -91,37 +99,178 @@ class Screen {
         let currX = xBegin;
         let currY = yBegin;
         let diff = 0;
-        while (~(currX = (xEnd+1)) | ~(currY = (yEnd+1))){
-            do Screen.drawPixel(currX, currY);
-            if (diff < 0){
-                let currX = currX + 1;
-                let diff = diff + dy;
+        if ((dx*dy) > 0){
+            if (dx >0){
+                do Screen.drawLineIncrease(x1, y1, x2, y2);
             }
             else{
-                let currY = currY + 1;
-                let diff = diff - dx;
+                do Screen.drawLineIncrease(x2, y2, x1, y1);
             }
+            return;
         }
+        if (dx > 0){
+                do Screen.drawLineYDecrease(x1, y1, x2, y2);
+            }
+            else{
+                do Screen.drawLineYDecrease(x2, y2, x1, y1);
+            }
         return;
     }
 
     /** TODO */
     function void drawHorizontalLine(int xBegin, int xEnd, int y){
         var int currX;
-        let currX = xBegin;
-        while (currX < (xEnd+1)){
-            do Screen.drawPixel(currX, y);
-            let currX = currX + 1;
+        var int startAddress;
+        var int endAddress;
+        var int currAddress;
+        var int xModSixteen;
+        let startAddress = (32*y) + (xBegin/16);
+        let endAddress = (32*y) + (xEnd/16);
+        if ((endAddress - startAddress) > 1){
+            let currAddress = startAddress + 1;
+            while (currAddress < endAddress){
+                if (currColor){
+                    do Memory.poke(16384 + currAddress, ~0);
+                }
+                else{
+                    do Memory.poke(16384 + currAddress, 0);
+                }
+                    let currAddress = currAddress + 1;
+            }
+            let currAddress = startAddress;
+            let currX = xBegin;
+            let xModSixteen = xBegin-(16*(xBegin/16));
+            while (currAddress = startAddress){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX + 1;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let currAddress = currAddress+1;
+                }
+            }
+            let currAddress = endAddress;
+            let currX = xEnd;
+            let xModSixteen = xEnd-(16*(xEnd/16));
+            while (currAddress = endAddress){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX - 1;
+                let xModSixteen = xModSixteen - 1;
+                if (xModSixteen = -1){
+                    let xModSixteen = 15;
+                }
+                if (xModSixteen = 15){
+                    let currAddress = currAddress - 1;
+                }
+            }
+        }else
+        {
+            let currAddress = startAddress;
+            let currX = xBegin;
+            let xModSixteen = xBegin-(16*(xBegin/16));
+            while (currX < (xEnd + 1)){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX + 1;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let currAddress = currAddress+1;
+                }
+            }
+        }
+
+        return;
+    }
+    /** TODO */
+    function void drawLineIncrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        var int address;
+        var int xModSixteen;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let currX = x1;
+        let currY = y1;
+        let diff = 0;
+        let address = (32*y1) + (x1/16);
+        let xModSixteen = x1-(16*(x1/16));
+        while (~(currX = (x2+1)) | ~(currY = (y2+1))){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            if (diff < 0){
+                let currX = currX + 1;
+                let diff = diff + dy;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let address = address+1;
+                }
+            }
+            else{
+                let currY = currY + 1;
+                let diff = diff - dx;
+                let address = address + 32;
+            }
         }
         return;
     }
 
     /** TODO */
+    function void drawLineYDecrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        var int address;
+        var int xModSixteen;
+        let dx = x2 - x1;
+        let dy = y1 - y2;
+        let currX = x1;
+        let currY = y1;
+        let diff = 0;
+        let address = (32*y1) + (x1/16);
+        let xModSixteen = x1-(16*(x1/16));
+        while (~(currX = (x2+1)) | ~(currY = (y2-1))){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            if (diff < 0){
+                let currX = currX + 1;
+                let diff = diff + dy;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let address = address+1;
+                }
+            }
+            else{
+                let currY = currY - 1;
+                let diff = diff - dx;
+                let address = address - 32;
+            }
+        }
+        return;
+    }
+    /** TODO */
     function void drawVerticalLine(int yBegin, int yEnd, int x){
         var int currY;
+        var int address;
+        var int xModSixteen;
+        let address = (32*yBegin) + (x/16);
+        let xModSixteen = x-(16*(x/16));
         let currY = yBegin;
         while (currY < (yEnd+1)){
-            do Screen.drawPixel(x, currY);
+            do Screen.innerDrawPixel(address, xModSixteen);
+            let address = address + 32;
             let currY = currY + 1;
         }
         return;
@@ -143,7 +292,7 @@ class Screen {
 
         /* The following if statement is used to save expensive function calls. We prefer to draw less lines which are
         longer, instead of drawing a lot of short lines which is less efficient. */
-        if ((x2 - x1) >(y2 - y1)){ // if the rectangle is wide and short
+        if (true){ // if the rectangle is wide and short
             let currY = y1;
             while (currY < (y2 + 1)){
                 do Screen.drawHorizontalLine(x1, x2, currY);
