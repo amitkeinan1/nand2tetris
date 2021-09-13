@@ -42,7 +42,7 @@ class Screen {
         var int value;
         var int bitCurrValue;
         var int bitDecimalValue;
-        var xModSixteen;
+        var int xModSixteen;
         let address = (32*y) + (x/16);
         let value = Memory.peek(16384 + address);
         let xModSixteen = x-(16*(x/16));
