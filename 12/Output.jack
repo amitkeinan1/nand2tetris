@@ -235,7 +235,6 @@ class Output {
         let cellCurrX = 0;
         let cellCurrY = 0;
         let map = Output.getMap(c);
-        let flag = 666;
         while (cellCurrY < (11)){ // CELL_HEIGHT = 11 TODO ignore last line
             while (cellCurrX < (8)){ // CELL_WIDTH = 8 TODO ignore last 2 columns
                 let pixelColor = Math.getBit(map[cellCurrY], cellCurrX);
