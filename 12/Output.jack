@@ -17,16 +17,21 @@
 class Output {
 
     // Character map for displaying characters
-    static Array charMaps; 
+    static Array charMaps;
+    static int cursorX;
+    static int cursorY;
 
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
+        do Output.initMap();
+        let cursorX = 0;
+        let cursorY = 0;
+        return;
     }
 
     // Initializes the character map array
     function void initMap() {
         var int i;
-    
         let charMaps = Array.new(127);
         
         // Black square, used for displaying non-printable characters.
@@ -71,7 +76,7 @@ class Output {
         do Output.create(64,30,51,51,59,59,59,27,3,30,0,0);  // @
         do Output.create(63,30,51,51,24,12,12,0,12,12,0,0);  // ?
 
-        do Output.create(65,0,0,0,0,0,0,0,0,0,0,0);          // A ** TO BE FILLED **
+        do Output.create(65,12,30,51,51,63,51,51,51,51,0,0); // A
         do Output.create(66,31,51,51,51,31,51,51,51,31,0,0); // B
         do Output.create(67,28,54,35,3,3,3,35,54,28,0,0);    // C
         do Output.create(68,15,27,51,51,51,51,51,27,15,0,0); // D
@@ -176,28 +181,114 @@ class Output {
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
+        var int cellCurrX;
+        var int cellCurrY;
+        var Array map;
+        var int pixelColor;
+
+        if (j > 63){
+            let j = j-(64*(j/64)); //modulus
+        }
+        if (i > 22){
+            let i = i-(23*(i/23)); //modulus
+        }
+        let cursorX = j;
+        let cursorY = i;
+        let cellCurrX = 0;
+        let cellCurrY = 0;
+        let map = Output.getMap(32);
+
+        while (cellCurrY < (11)){ // CELL_HEIGHT = 11
+            while (cellCurrX < (8)){ // CELL_WIDTH = 8
+                let pixelColor = Math.getBit(map[cellCurrY], cellCurrX);
+                if (pixelColor = 1){
+                    do Screen.setColor(true);
+                }else
+                {
+                    do Screen.setColor(false);
+                }
+                do Screen.drawPixel((8*cursorX) + cellCurrX, (11*cursorY) + cellCurrY);
+                let cellCurrX = cellCurrX + 1;
+            }
+            let cellCurrY = cellCurrY + 1;
+        }
+        return;
     }
 
+    /** TODO*/
+    function void advanceCursor() {
+        var int flag;
+        if (cursorX < 63){
+            do Output.moveCursor(cursorY, cursorX+1);
+        } else {
+            do Output.moveCursor(cursorY+1, cursorX+1);
+        }
+        return;
+    }
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
-    function void printChar(char c) {
+    function void printChar(char c) { // TODO handle special char like space and backspace
+        var int cellCurrX;
+        var int cellCurrY;
+        var Array map;
+        var int pixelColor;
+        let cellCurrX = 0;
+        let cellCurrY = 0;
+        let map = Output.getMap(c);
+        let flag = 666;
+        while (cellCurrY < (11)){ // CELL_HEIGHT = 11 TODO ignore last line
+            while (cellCurrX < (8)){ // CELL_WIDTH = 8 TODO ignore last 2 columns
+                let pixelColor = Math.getBit(map[cellCurrY], cellCurrX);
+                if (pixelColor = 1){
+                    do Screen.setColor(true);
+                }else
+                {
+                    do Screen.setColor(false);
+                }
+                do Screen.drawPixel((8*cursorX) + cellCurrX, (11*cursorY) + cellCurrY);
+                let cellCurrX = cellCurrX + 1;
+            }
+            let cellCurrY = cellCurrY + 1;
+            let cellCurrX = 0;
+        }
+        do Output.advanceCursor();
+        return;
     }
+
 
     /** displays the given string starting at the cursor location,
      *  and advances the cursor appropriately. */
     function void printString(String s) {
+        var int length;
+        var int index;
+        let length = s.length();
+        let index = 0;
+        while (index < length){
+            do Output.printChar(s.charAt(index));
+            let index = index + 1;
+        }
+        return;
     }
 
     /** Displays the given integer starting at the cursor location,
      *  and advances the cursor appropriately. */
     function void printInt(int i) {
+        var String s;
+        let s = String.new(6); // 6 is due to hardware limitations that limit us from handling larger numbers
+        do s.setInt(i);
+        do Output.printString(s);
+        return;
     }
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
+        do Output.moveCursor(cursorY + 1, 0);
+        return;
     }
 
     /** Moves the cursor one column back. */
     function void backSpace() {
+        do Output.moveCursor(cursorY, cursorX-1);
+        return;
     }
 }

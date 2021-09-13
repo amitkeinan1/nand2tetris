@@ -104,7 +104,8 @@ class Screen {
             }
         return;
     }
-    
+
+    /** TODO */
     function void drawLineIncrease(int x1, int y1, int x2, int y2){
         var int dx;
         var int dy;
@@ -130,6 +131,7 @@ class Screen {
         return;
     }
 
+    /** TODO */
     function void drawLineYDecrease(int x1, int y1, int x2, int y2){
         var int dx;
         var int dy;
