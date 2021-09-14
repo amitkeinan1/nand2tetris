@@ -113,7 +113,8 @@ class Screen {
         return;
     }
 
-    /** TODO */
+    /** this function implements fast drawing of horizontal lines (where y1=y2), using a greedy approach to save
+    calculations and memory access operations */
     function void drawHorizontalLine(int xBegin, int xEnd, int y){
         var int currX;
         var int startAddress;
@@ -181,7 +182,24 @@ class Screen {
 
         return;
     }
-    /** TODO */
+
+    /** this function implements fast drawing of vertical lines (where x1=x2), by saving calculations of x%16 */
+    function void drawVerticalLine(int yBegin, int yEnd, int x){
+        var int currY;
+        var int address;
+        var int xModSixteen;
+        let address = (32*yBegin) + (x/16);
+        let xModSixteen = x&15;
+        let currY = yBegin;
+        while (currY < (yEnd+1)){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            let address = address + 32;
+            let currY = currY + 1;
+        }
+        return;
+    }
+
+    /** this function is used to draw diagonal lines where y2 > y1 */
     function void drawLineIncrease(int x1, int y1, int x2, int y2){
         var int dx;
         var int dy;
@@ -219,7 +237,7 @@ class Screen {
         return;
     }
 
-    /** TODO */
+    /** this function is used to draw diagonal lines where y2 < y1 */
     function void drawLineYDecrease(int x1, int y1, int x2, int y2){
         var int dx;
         var int dy;
@@ -256,43 +274,15 @@ class Screen {
         }
         return;
     }
-    /** TODO */
-    function void drawVerticalLine(int yBegin, int yEnd, int x){
-        var int currY;
-        var int address;
-        var int xModSixteen;
-        let address = (32*yBegin) + (x/16);
-        let xModSixteen = x&15;
-        let currY = yBegin;
-        while (currY < (yEnd+1)){
-            do Screen.innerDrawPixel(address, xModSixteen);
-            let address = address + 32;
-            let currY = currY + 1;
-        }
-        return;
-    }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
         var int currY;
-        var int currX;
-
-        /* The following if statement is used to save expensive function calls. We prefer to draw less lines which are
-        longer, instead of drawing a lot of short lines which is less efficient. */
-        if (true){ // if the rectangle is wide and short
-            let currY = y1;
-            while (currY < (y2 + 1)){
-                do Screen.drawHorizontalLine(x1, x2, currY);
-                let currY = currY + 1;
-            }
-        }
-        else{  // if the rectangle is tall and narrow
-            let currX = x1;
-            while (currX < (x2 + 1)){
-                do Screen.drawVerticalLine(y1, y2, currX);
-                let currX = currX + 1;
-            }
+        let currY = y1;
+        while (currY < (y2 + 1)){
+            do Screen.drawHorizontalLine(x1, x2, currY);
+            let currY = currY + 1;
         }
         return;
     }
@@ -303,7 +293,6 @@ class Screen {
         var int xDiff;
         var int currY;
         if (r > 181){ // 181 is the limit we have to set in order to avoid overflow on the hack computer hardware
-            do Output.printString("r is too big"); // TODO: remove before submission
             return;
         }
         let dy = -r;

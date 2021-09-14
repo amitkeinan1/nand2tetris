@@ -215,7 +215,8 @@ class Output {
         return;
     }
 
-    /** TODO*/
+    /** this function is used whenever the cursor needs to be advanced to the net cell. it handles the normal case as
+    well as special cases like when the cursor is the end of the current line or the entire screen*/
     function void advanceCursor() {
         var int flag;
         if (cursorX < 63){
@@ -227,7 +228,7 @@ class Output {
     }
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
-    function void printChar(char c) { // TODO handle special char like space and backspace
+    function void printChar(char c) {
         var int cellCurrX;
         var int cellCurrY;
         var Array map;
