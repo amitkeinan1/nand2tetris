@@ -39,18 +39,20 @@ class Screen {
     function void innerDrawPixel(int address, int xModSixteen){
         var int value;
         var int bitCurrValue;
+        var int diff;
         let value = Memory.peek(16384 + address);
+        let diff = Math.powerOfTwo(xModSixteen);
         let bitCurrValue = Math.getBit(value, xModSixteen);
 
         // change bit x%16 bit to currColor
         if  ((bitCurrValue = 1) & ~currColor) // pixel is black and needs to be white
         {
-            let value = value - Math.powerOfTwo(xModSixteen);
+            let value = value - diff;
         }
         else
         {
             if((bitCurrValue = 0) & currColor){ // pixel is white and needs to be black
-                let value = value + Math.powerOfTwo(xModSixteen);
+                let value = value + diff;
             }
         }
         do Memory.poke(16384 + address, value);
@@ -64,9 +66,9 @@ class Screen {
         var int bitDecimalValue;
         var int xDivSixteen;
         var int xModSixteen;
-        let xModSixteen = x/16;
+        let xDivSixteen = x/16;
         let address = (32*y) + xDivSixteen;
-        let xModSixteen = x-(16*xDivSixteen);
+        let xModSixteen = x&15;
         do Screen.innerDrawPixel(address, xModSixteen);
         return;
     }
@@ -139,7 +141,7 @@ class Screen {
             }
             let currAddress = startAddress;
             let currX = xBegin;
-            let xModSixteen = xBegin-(16*(xBegin/16));
+            let xModSixteen = xBegin & 15;
             while (currAddress = startAddress){
                 do Screen.innerDrawPixel(currAddress, xModSixteen);
                 let currX = currX + 1;
@@ -153,7 +155,7 @@ class Screen {
             }
             let currAddress = endAddress;
             let currX = xEnd;
-            let xModSixteen = xEnd-(16*(xEnd/16));
+            let xModSixteen = xEnd & 15;
             while (currAddress = endAddress){
                 do Screen.innerDrawPixel(currAddress, xModSixteen);
                 let currX = currX - 1;
@@ -169,7 +171,7 @@ class Screen {
         {
             let currAddress = startAddress;
             let currX = xBegin;
-            let xModSixteen = xBegin-(16*(xBegin/16));
+            let xModSixteen = xBegin & 15;
             while (currX < (xEnd + 1)){
                 do Screen.innerDrawPixel(currAddress, xModSixteen);
                 let currX = currX + 1;
@@ -200,7 +202,7 @@ class Screen {
         let currY = y1;
         let diff = 0;
         let address = (32*y1) + (x1/16);
-        let xModSixteen = x1-(16*(x1/16));
+        let xModSixteen = x1&15;
         while (~(currX = (x2+1)) | ~(currY = (y2+1))){
             do Screen.innerDrawPixel(address, xModSixteen);
             if (diff < 0){
@@ -238,7 +240,7 @@ class Screen {
         let currY = y1;
         let diff = 0;
         let address = (32*y1) + (x1/16);
-        let xModSixteen = x1-(16*(x1/16));
+        let xModSixteen = x1&15;
         while (~(currX = (x2+1)) | ~(currY = (y2-1))){
             do Screen.innerDrawPixel(address, xModSixteen);
             if (diff < 0){
@@ -266,7 +268,7 @@ class Screen {
         var int address;
         var int xModSixteen;
         let address = (32*yBegin) + (x/16);
-        let xModSixteen = x-(16*(x/16));
+        let xModSixteen = x&15;
         let currY = yBegin;
         while (currY < (yEnd+1)){
             do Screen.innerDrawPixel(address, xModSixteen);
@@ -281,14 +283,6 @@ class Screen {
     function void drawRectangle(int x1, int y1, int x2, int y2) {
         var int currY;
         var int currX;
-        if (x1 > x2) {
-            do Output.printString("x1 must be smaller than x2"); // TODO: remove before submission
-            return;
-        }
-        if (y1 > y2) {
-            do Output.printString("y1 must be smaller than y2"); // TODO: remove before submission
-            return;
-        }
 
         /* The following if statement is used to save expensive function calls. We prefer to draw less lines which are
         longer, instead of drawing a lot of short lines which is less efficient. */
