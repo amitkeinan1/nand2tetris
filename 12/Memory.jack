@@ -17,7 +17,7 @@ class Memory {
         let ram = 0;
         let freeList = 2048;
         do Memory.poke(freeList, null);
-        do Memory.poke(freeList + 1, 14335);
+        do Memory.poke(freeList + 1, 14333);
         return;
     }
 
@@ -62,6 +62,7 @@ class Memory {
                     do Memory.poke(block + 1, size);
                     do Memory.poke(currBlock + 1, currBlockSize - (size + 2));
                 }
+
                 return block + 2;
             }
             let prevBlock = currBlock;
@@ -84,17 +85,16 @@ class Memory {
         let currBlock = freeList;
         let prevBlock = freeList;
         let isFirst = true;
-
-        do Memory.poke(o, null);
-        while (~(currBlock = 0)){
-             let prevBlock = currBlock;
-             let currBlock = Memory.peek(currBlock);
-        }
+        do Memory.poke(o-2, null);
         if (currBlock = 0){
             let freeList = o;
             return;
         }
-        do Memory.poke(prevBlock, o);
+        while (~(currBlock = 0)){
+             let prevBlock = currBlock;
+             let currBlock = Memory.peek(currBlock);
+        }
+        do Memory.poke(prevBlock, o-2);
         return;
     }    
 }
