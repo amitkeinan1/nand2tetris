@@ -47,14 +47,7 @@ class Math {
 	
 	/** Returns the i'th bit of x. */
     function int getBit(int x, int i) {
-		var int temp;
-		let temp = x & twoToThe[i];
-		if ((temp > 0) | (temp = (32767 + 1))){
-			return 1;
-		}
-		else{
-			return 0;
-		}
+        return -(~((x & twoToThe[i]) = 0));
     }
 
     /** Returns x*y if x and y are positive.
