@@ -60,12 +60,34 @@ class Math {
     /** Returns x*y if x and y are positive.
      */
     function int absMultiply(int x, int y) {
-		var int sum, i, shiftedX, remainingY;
+		var int sum, i, shiftedX, remainingY, j;
 		let sum = 0;
 		let i = 0;
 		let shiftedX = x;
 		let remainingY = y;
-
+		while (i < 16){
+		    if (x = twoToThe[i]){
+		        let j = 0;
+                let sum = y;
+		        while (j < i){
+                    let sum = sum + y;
+                    let j = j+1;
+		        }
+		        return sum;
+		    }else{
+		        if (y = twoToThe[i]){
+		        let j = 0;
+                let sum = x;
+		        while (j < i){
+                    let sum = sum + x;
+                    let j = j+1;
+		        }
+		        return sum;
+		        }
+		    }
+		    let i = i+1;
+		}
+        let i =0;
 		while ((i < 16) & (remainingY > 0)){
 			if (Math.getBit(y, i) = 1){
 				let sum = sum + shiftedX;
