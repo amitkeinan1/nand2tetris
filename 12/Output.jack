@@ -235,8 +235,8 @@ class Output {
         let cellCurrX = 0;
         let cellCurrY = 0;
         let map = Output.getMap(c);
-        while (cellCurrY < (11)){ // CELL_HEIGHT = 11 TODO ignore last line
-            while (cellCurrX < (8)){ // CELL_WIDTH = 8 TODO ignore last 2 columns
+        while (cellCurrY < (11)){ // CELL_HEIGHT = 11
+            while (cellCurrX < (8)){ // CELL_WIDTH = 8
                 let pixelColor = Math.getBit(map[cellCurrY], cellCurrX);
                 if (pixelColor = 1){
                     do Screen.setColor(true);
