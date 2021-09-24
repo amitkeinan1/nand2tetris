@@ -1,0 +1,100 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+    static Array ram;
+    static int freeList;
+
+    /** Initializes the class. */
+    function void init() {
+        let ram = 0;
+        let freeList = 2048;
+        do Memory.poke(freeList, null);
+        do Memory.poke(freeList + 1, 14333);
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return ram[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let ram[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {
+        var int block;
+        var int currBlock;
+        var int prevBlock;
+        var int currBlockSize;
+        var boolean isFirst;
+        let currBlock = freeList;
+        let prevBlock = freeList;
+        let isFirst = true;
+        while (~(currBlock = 0)){
+            let currBlockSize = Memory.peek(currBlock + 1);
+            if (~( currBlockSize < (size + 2))){
+                if (currBlockSize = (size + 2)){
+                    let block = currBlock;
+                    if (isFirst){
+                        let freeList = 0;
+                    }
+                    else
+                    {
+                        do Memory.poke(prevBlock, Memory.peek(currBlock));
+                    }
+                }
+                else{
+                    let block = (currBlock + currBlockSize + 1) - (size + 1);
+                    do Memory.poke(block, null);
+                    do Memory.poke(block + 1, size);
+                    do Memory.poke(currBlock + 1, currBlockSize - (size + 2));
+                }
+
+                return block + 2;
+            }
+            let prevBlock = currBlock;
+            let currBlock = Memory.peek(currBlock);
+            if (isFirst){
+                let isFirst = false;
+            }
+        }
+        return null;
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        var int block;
+        var int currBlock;
+        var int prevBlock;
+        var int currBlockSize;
+        var boolean isFirst;
+        let currBlock = freeList;
+        let prevBlock = freeList;
+        let isFirst = true;
+        do Memory.poke(o-2, null);
+        if (currBlock = 0){
+            let freeList = o;
+            return;
+        }
+        while (~(currBlock = 0)){
+             let prevBlock = currBlock;
+             let currBlock = Memory.peek(currBlock);
+        }
+        do Memory.poke(prevBlock, o-2);
+        return;
+    }    
+}

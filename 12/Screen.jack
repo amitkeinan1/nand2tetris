@@ -1,0 +1,307 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 256 rows (indexed 0..255, top to bottom)
+ * of 512 pixels each (indexed 0..511, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+    static boolean currColor;
+
+    /** Initializes the Screen. */
+    function void init() {
+        let currColor = true;
+        return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+        var int address;
+        let address = 16384;
+        while (address <  24576){
+            do Memory.poke(address, 0);
+            let address = address + 1;
+        }
+        return;
+    }
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let currColor = b;
+        return;
+    }
+
+    function void innerDrawPixel(int address, int xModSixteen){
+        var int value;
+        var int mask;
+        let value = Memory.peek(16384 + address);
+        let mask = Math.powerOfTwo(xModSixteen);
+        if  (~currColor) // pixel is black and needs to be white
+        {
+            let value = value & ~mask;
+        }
+        else
+        {
+            let value = value | mask;
+        }
+        do Memory.poke(16384 + address, value);
+        return;
+    }
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        var int address;
+        var int value;
+        var int bitCurrValue;
+        var int bitDecimalValue;
+        var int xDivSixteen;
+        var int xModSixteen;
+        let xDivSixteen = x/16;
+        let address = (32*y) + xDivSixteen;
+        let xModSixteen = x&15;
+        do Screen.innerDrawPixel(address, xModSixteen);
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        var int xBegin;
+        var int yBegin;
+        var int xEnd;
+        var int yEnd;
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        let xBegin = Math.min(x1, x2);
+        let xEnd = Math.max(x1, x2);
+        let yBegin = Math.min(y1, y2);
+        let yEnd = Math.max(y1, y2);
+        let dx = x2 - x1;
+        if (dx = 0){
+            do Screen.drawVerticalLine(yBegin, yEnd, x1);
+            return;
+        }
+        let dy = y2 - y1;
+        if (dy = 0){
+            do Screen.drawHorizontalLine(xBegin, xEnd, y1);
+            return;
+        }
+        let currX = xBegin;
+        let currY = yBegin;
+        let diff = 0;
+        if ((dx*dy) > 0){
+            if (dx >0){
+                do Screen.drawLineIncrease(x1, y1, x2, y2);
+            }
+            else{
+                do Screen.drawLineIncrease(x2, y2, x1, y1);
+            }
+            return;
+        }
+        if (dx > 0){
+                do Screen.drawLineYDecrease(x1, y1, x2, y2);
+            }
+            else{
+                do Screen.drawLineYDecrease(x2, y2, x1, y1);
+            }
+        return;
+    }
+
+    /** this function implements fast drawing of horizontal lines (where y1=y2), using a greedy approach to save
+    calculations and memory access operations */
+    function void drawHorizontalLine(int xBegin, int xEnd, int y){
+        var int currX;
+        var int startAddress;
+        var int endAddress;
+        var int currAddress;
+        var int xModSixteen;
+        let startAddress = (32*y) + (xBegin/16);
+        let endAddress = (32*y) + (xEnd/16);
+        if ((endAddress - startAddress) > 1){
+            let currAddress = startAddress + 1;
+            while (currAddress < endAddress){
+                if (currColor){
+                    do Memory.poke(16384 + currAddress, ~0);
+                }
+                else{
+                    do Memory.poke(16384 + currAddress, 0);
+                }
+                    let currAddress = currAddress + 1;
+            }
+            let currAddress = startAddress;
+            let currX = xBegin;
+            let xModSixteen = xBegin & 15;
+            while (currAddress = startAddress){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX + 1;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let currAddress = currAddress+1;
+                }
+            }
+            let currAddress = endAddress;
+            let currX = xEnd;
+            let xModSixteen = xEnd & 15;
+            while (currAddress = endAddress){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX - 1;
+                let xModSixteen = xModSixteen - 1;
+                if (xModSixteen = -1){
+                    let xModSixteen = 15;
+                }
+                if (xModSixteen = 15){
+                    let currAddress = currAddress - 1;
+                }
+            }
+        }else
+        {
+            let currAddress = startAddress;
+            let currX = xBegin;
+            let xModSixteen = xBegin & 15;
+            while (currX < (xEnd + 1)){
+                do Screen.innerDrawPixel(currAddress, xModSixteen);
+                let currX = currX + 1;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let currAddress = currAddress+1;
+                }
+            }
+        }
+
+        return;
+    }
+
+    /** this function implements fast drawing of vertical lines (where x1=x2), by saving calculations of x%16 */
+    function void drawVerticalLine(int yBegin, int yEnd, int x){
+        var int currY;
+        var int address;
+        var int xModSixteen;
+        let address = (32*yBegin) + (x/16);
+        let xModSixteen = x&15;
+        let currY = yBegin;
+        while (currY < (yEnd+1)){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            let address = address + 32;
+            let currY = currY + 1;
+        }
+        return;
+    }
+
+    /** this function is used to draw diagonal lines where y2 > y1 */
+    function void drawLineIncrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        var int address;
+        var int xModSixteen;
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let currX = x1;
+        let currY = y1;
+        let diff = 0;
+        let address = (32*y1) + (x1/16);
+        let xModSixteen = x1&15;
+        while (~(currX = (x2+1)) | ~(currY = (y2+1))){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            if (diff < 0){
+                let currX = currX + 1;
+                let diff = diff + dy;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let address = address+1;
+                }
+            }
+            else{
+                let currY = currY + 1;
+                let diff = diff - dx;
+                let address = address + 32;
+            }
+        }
+        return;
+    }
+
+    /** this function is used to draw diagonal lines where y2 < y1 */
+    function void drawLineYDecrease(int x1, int y1, int x2, int y2){
+        var int dx;
+        var int dy;
+        var int currX;
+        var int currY;
+        var int diff;
+        var int address;
+        var int xModSixteen;
+        let dx = x2 - x1;
+        let dy = y1 - y2;
+        let currX = x1;
+        let currY = y1;
+        let diff = 0;
+        let address = (32*y1) + (x1/16);
+        let xModSixteen = x1&15;
+        while (~(currX = (x2+1)) | ~(currY = (y2-1))){
+            do Screen.innerDrawPixel(address, xModSixteen);
+            if (diff < 0){
+                let currX = currX + 1;
+                let diff = diff + dy;
+                let xModSixteen = xModSixteen + 1;
+                if (xModSixteen = 16){
+                    let xModSixteen = 0;
+                }
+                if (xModSixteen = 0){
+                    let address = address+1;
+                }
+            }
+            else{
+                let currY = currY - 1;
+                let diff = diff - dx;
+                let address = address - 32;
+            }
+        }
+        return;
+    }
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int currY;
+        let currY = y1;
+        while (currY < (y2 + 1)){
+            do Screen.drawHorizontalLine(x1, x2, currY);
+            let currY = currY + 1;
+        }
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+        var int dy;
+        var int xDiff;
+        var int currY;
+        if (r > 181){ // 181 is the limit we have to set in order to avoid overflow on the hack computer hardware
+            return;
+        }
+        let dy = -r;
+        while (~(dy > r)){
+            let xDiff = Math.sqrt((r*r) - (dy*dy));
+            let currY = y + dy;
+            do Screen.drawLine(x - xDiff, currY, x + xDiff, currY);
+            let dy = dy + 1;
+        }
+        return;
+    }
+}
