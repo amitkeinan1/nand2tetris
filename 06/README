@@ -1,0 +1,20 @@
+gal.ofer1,amitkeinan
+===============================================================================
+Gal Ofer, ID 211589544, gal.ofer1@mail.huji.ac.il
+Amit Keinan, ID 208296426, amit.keinan2@mail.huji.ac.il
+===============================================================================
+
+                           Project 6 - Assembler
+                           -------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+Assembler - The executable.
+Makefile - A makefile for the project.
+Main.py 
+Parser.py
+Code.py
+SymbolTable.py
+tables.py - a file containing constant strings, and symbol to binary conversion tables that are required for the assembler.

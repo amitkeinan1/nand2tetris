@@ -1,0 +1,492 @@
+<class>
+  <keyword> class </keyword>
+  <identifier-class-0-definition-UNK> Main </identifier-class-0-definition-UNK>
+  <symbol> { </symbol>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-function> main </identifier-subroutine-0-definition-function>
+    <symbol> ( </symbol>
+    <parameterList/>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <varDec>
+        <keyword> var </keyword>
+        <keyword> int </keyword>
+        <identifier-VAR-0-definition-int> value </identifier-VAR-0-definition-int>
+        <symbol> ; </symbol>
+      </varDec>
+      <statements>
+        <doStatement>
+          <keyword> do </keyword>
+          <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+          <symbol> . </symbol>
+          <identifier-subroutine-0-usage-function> fillMemory </identifier-subroutine-0-usage-function>
+          <symbol> ( </symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <integerConstant> 8001 </integerConstant>
+              </term>
+            </expression>
+            <symbol> , </symbol>
+            <expression>
+              <term>
+                <integerConstant> 16 </integerConstant>
+              </term>
+            </expression>
+            <symbol> , </symbol>
+            <expression>
+              <term>
+                <symbol> - </symbol>
+                <term>
+                  <integerConstant> 1 </integerConstant>
+                </term>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol> ) </symbol>
+          <symbol> ; </symbol>
+        </doStatement>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier-VAR-0-usage-int> value </identifier-VAR-0-usage-int>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-None> peek </identifier-subroutine-0-usage-None>
+              <symbol> ( </symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <integerConstant> 8000 </integerConstant>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol> ) </symbol>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <doStatement>
+          <keyword> do </keyword>
+          <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+          <symbol> . </symbol>
+          <identifier-subroutine-0-usage-function> convert </identifier-subroutine-0-usage-function>
+          <symbol> ( </symbol>
+          <expressionList>
+            <expression>
+              <term>
+                <identifier-VAR-0-usage-int> value </identifier-VAR-0-usage-int>
+              </term>
+            </expression>
+          </expressionList>
+          <symbol> ) </symbol>
+          <symbol> ; </symbol>
+        </doStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-function> convert </identifier-subroutine-0-definition-function>
+    <symbol> ( </symbol>
+    <parameterList>
+      <keyword> int </keyword>
+      <identifier-ARG-0-definition-int> value </identifier-ARG-0-definition-int>
+    </parameterList>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <varDec>
+        <keyword> var </keyword>
+        <keyword> int </keyword>
+        <identifier-VAR-0-definition-int> mask </identifier-VAR-0-definition-int>
+        <symbol> , </symbol>
+        <identifier-VAR-1-definition-int> position </identifier-VAR-1-definition-int>
+        <symbol> ; </symbol>
+      </varDec>
+      <varDec>
+        <keyword> var </keyword>
+        <keyword> boolean </keyword>
+        <identifier-VAR-2-definition-boolean> loop </identifier-VAR-2-definition-boolean>
+        <symbol> ; </symbol>
+      </varDec>
+      <statements>
+        <letStatement>
+          <keyword> let </keyword>
+          <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+          <symbol> = </symbol>
+          <expression>
+            <term>
+              <keyword> true </keyword>
+            </term>
+          </expression>
+          <symbol> ; </symbol>
+        </letStatement>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <letStatement>
+              <keyword> let </keyword>
+              <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+              <symbol> = </symbol>
+              <expression>
+                <term>
+                  <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                </term>
+                <symbol> + </symbol>
+                <term>
+                  <integerConstant> 1 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </letStatement>
+            <letStatement>
+              <keyword> let </keyword>
+              <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+              <symbol> = </symbol>
+              <expression>
+                <term>
+                  <identifier-class-0-usage-UNK> Main </identifier-class-0-usage-UNK>
+                  <symbol> . </symbol>
+                  <identifier-subroutine-0-usage-function> nextMask </identifier-subroutine-0-usage-function>
+                  <symbol> ( </symbol>
+                  <expressionList>
+                    <expression>
+                      <term>
+                        <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+                      </term>
+                    </expression>
+                  </expressionList>
+                  <symbol> ) </symbol>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </letStatement>
+            <ifStatement>
+              <keyword> if </keyword>
+              <symbol> ( </symbol>
+              <expression>
+                <term>
+                  <symbol> ~ </symbol>
+                  <term>
+                    <symbol> ( </symbol>
+                    <expression>
+                      <term>
+                        <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                      </term>
+                      <symbol> &gt; </symbol>
+                      <term>
+                        <integerConstant> 16 </integerConstant>
+                      </term>
+                    </expression>
+                    <symbol> ) </symbol>
+                  </term>
+                </term>
+              </expression>
+              <symbol> ) </symbol>
+              <symbol> { </symbol>
+              <statements>
+                <ifStatement>
+                  <keyword> if </keyword>
+                  <symbol> ( </symbol>
+                  <expression>
+                    <term>
+                      <symbol> ~ </symbol>
+                      <term>
+                        <symbol> ( </symbol>
+                        <expression>
+                          <term>
+                            <symbol> ( </symbol>
+                            <expression>
+                              <term>
+                                <identifier-ARG-0-usage-int> value </identifier-ARG-0-usage-int>
+                              </term>
+                              <symbol> &amp; </symbol>
+                              <term>
+                                <identifier-VAR-0-usage-int> mask </identifier-VAR-0-usage-int>
+                              </term>
+                            </expression>
+                            <symbol> ) </symbol>
+                          </term>
+                          <symbol> = </symbol>
+                          <term>
+                            <integerConstant> 0 </integerConstant>
+                          </term>
+                        </expression>
+                        <symbol> ) </symbol>
+                      </term>
+                    </term>
+                  </expression>
+                  <symbol> ) </symbol>
+                  <symbol> { </symbol>
+                  <statements>
+                    <doStatement>
+                      <keyword> do </keyword>
+                      <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+                      <symbol> . </symbol>
+                      <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+                      <symbol> ( </symbol>
+                      <expressionList>
+                        <expression>
+                          <term>
+                            <integerConstant> 8000 </integerConstant>
+                          </term>
+                          <symbol> + </symbol>
+                          <term>
+                            <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                          </term>
+                        </expression>
+                        <symbol> , </symbol>
+                        <expression>
+                          <term>
+                            <integerConstant> 1 </integerConstant>
+                          </term>
+                        </expression>
+                      </expressionList>
+                      <symbol> ) </symbol>
+                      <symbol> ; </symbol>
+                    </doStatement>
+                  </statements>
+                  <symbol> } </symbol>
+                  <keyword> else </keyword>
+                  <symbol> { </symbol>
+                  <statements>
+                    <doStatement>
+                      <keyword> do </keyword>
+                      <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+                      <symbol> . </symbol>
+                      <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+                      <symbol> ( </symbol>
+                      <expressionList>
+                        <expression>
+                          <term>
+                            <integerConstant> 8000 </integerConstant>
+                          </term>
+                          <symbol> + </symbol>
+                          <term>
+                            <identifier-VAR-1-usage-int> position </identifier-VAR-1-usage-int>
+                          </term>
+                        </expression>
+                        <symbol> , </symbol>
+                        <expression>
+                          <term>
+                            <integerConstant> 0 </integerConstant>
+                          </term>
+                        </expression>
+                      </expressionList>
+                      <symbol> ) </symbol>
+                      <symbol> ; </symbol>
+                    </doStatement>
+                  </statements>
+                  <symbol> } </symbol>
+                </ifStatement>
+              </statements>
+              <symbol> } </symbol>
+              <keyword> else </keyword>
+              <symbol> { </symbol>
+              <statements>
+                <letStatement>
+                  <keyword> let </keyword>
+                  <identifier-VAR-2-usage-boolean> loop </identifier-VAR-2-usage-boolean>
+                  <symbol> = </symbol>
+                  <expression>
+                    <term>
+                      <keyword> false </keyword>
+                    </term>
+                  </expression>
+                  <symbol> ; </symbol>
+                </letStatement>
+              </statements>
+              <symbol> } </symbol>
+            </ifStatement>
+          </statements>
+          <symbol> } </symbol>
+        </whileStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> int </keyword>
+    <identifier-subroutine-0-definition-function> nextMask </identifier-subroutine-0-definition-function>
+    <symbol> ( </symbol>
+    <parameterList>
+      <keyword> int </keyword>
+      <identifier-ARG-0-definition-int> mask </identifier-ARG-0-definition-int>
+    </parameterList>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements>
+        <ifStatement>
+          <keyword> if </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-ARG-0-usage-int> mask </identifier-ARG-0-usage-int>
+            </term>
+            <symbol> = </symbol>
+            <term>
+              <integerConstant> 0 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <returnStatement>
+              <keyword> return </keyword>
+              <expression>
+                <term>
+                  <integerConstant> 1 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </returnStatement>
+          </statements>
+          <symbol> } </symbol>
+          <keyword> else </keyword>
+          <symbol> { </symbol>
+          <statements>
+            <returnStatement>
+              <keyword> return </keyword>
+              <expression>
+                <term>
+                  <identifier-ARG-0-usage-int> mask </identifier-ARG-0-usage-int>
+                </term>
+                <symbol> * </symbol>
+                <term>
+                  <integerConstant> 2 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </returnStatement>
+          </statements>
+          <symbol> } </symbol>
+        </ifStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier-subroutine-0-definition-function> fillMemory </identifier-subroutine-0-definition-function>
+    <symbol> ( </symbol>
+    <parameterList>
+      <keyword> int </keyword>
+      <identifier-ARG-0-definition-int> startAddress </identifier-ARG-0-definition-int>
+      <symbol> , </symbol>
+      <keyword> int </keyword>
+      <identifier-ARG-1-definition-int> length </identifier-ARG-1-definition-int>
+      <symbol> , </symbol>
+      <keyword> int </keyword>
+      <identifier-ARG-2-definition-int> value </identifier-ARG-2-definition-int>
+    </parameterList>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+      <statements>
+        <whileStatement>
+          <keyword> while </keyword>
+          <symbol> ( </symbol>
+          <expression>
+            <term>
+              <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+            </term>
+            <symbol> &gt; </symbol>
+            <term>
+              <integerConstant> 0 </integerConstant>
+            </term>
+          </expression>
+          <symbol> ) </symbol>
+          <symbol> { </symbol>
+          <statements>
+            <doStatement>
+              <keyword> do </keyword>
+              <identifier-class-0-usage-UNK> Memory </identifier-class-0-usage-UNK>
+              <symbol> . </symbol>
+              <identifier-subroutine-0-usage-None> poke </identifier-subroutine-0-usage-None>
+              <symbol> ( </symbol>
+              <expressionList>
+                <expression>
+                  <term>
+                    <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+                  </term>
+                </expression>
+                <symbol> , </symbol>
+                <expression>
+                  <term>
+                    <identifier-ARG-2-usage-int> value </identifier-ARG-2-usage-int>
+                  </term>
+                </expression>
+              </expressionList>
+              <symbol> ) </symbol>
+              <symbol> ; </symbol>
+            </doStatement>
+            <letStatement>
+              <keyword> let </keyword>
+              <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+              <symbol> = </symbol>
+              <expression>
+                <term>
+                  <identifier-ARG-1-usage-int> length </identifier-ARG-1-usage-int>
+                </term>
+                <symbol> - </symbol>
+                <term>
+                  <integerConstant> 1 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </letStatement>
+            <letStatement>
+              <keyword> let </keyword>
+              <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+              <symbol> = </symbol>
+              <expression>
+                <term>
+                  <identifier-ARG-0-usage-int> startAddress </identifier-ARG-0-usage-int>
+                </term>
+                <symbol> + </symbol>
+                <term>
+                  <integerConstant> 1 </integerConstant>
+                </term>
+              </expression>
+              <symbol> ; </symbol>
+            </letStatement>
+          </statements>
+          <symbol> } </symbol>
+        </whileStatement>
+        <returnStatement>
+          <keyword> return </keyword>
+          <symbol> ; </symbol>
+        </returnStatement>
+      </statements>
+      <symbol> } </symbol>
+    </subroutineBody>
+  </subroutineDec>
+  <symbol> } </symbol>
+</class>

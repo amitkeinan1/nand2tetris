@@ -1,0 +1,18 @@
+gal.ofer1,amitkeinan
+===============================================================================
+Gal Ofer, ID 211589544, gal.ofer1@mail.huji.ac.il
+Amit Keinan, ID 208296426, amit.keinan2@mail.huji.ac.il
+===============================================================================
+
+                           Project 5 - Computer Architecture
+                           ---------------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+CPU.hdl - 
+Memory.hdl - 
+Computer.hdl - 
+First15.hdl - helper chip - returns the first 15 bits of 16-bit input.
+

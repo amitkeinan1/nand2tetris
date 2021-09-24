@@ -1,0 +1,22 @@
+gal.ofer1,amitkeinan
+===============================================================================
+Gal Ofer, ID 211589544, gal.ofer1@mail.huji.ac.il
+Amit Keinan, ID 208296426, amit.keinan2@mail.huji.ac.il
+===============================================================================
+
+                           Project 10 - Compilation
+                           ------------------------
+  
+
+Submitted Files
+---------------
+README - This file.
+JackAnalyzer - The executable.
+Makefile - A makefile for the project.
+JackAnalyzer.py
+JackTokenizer.py
+CompilationEngine.py
+JackPreprocessing.py - handles preprocessing of jack code streams: mainly removes comments, spaces and new lines.
+jack_syntax.py - this file contains string constants and regular expressions for some parts of the jack language syntax
+config.py - this file contains constant definitions that are used for internally by the compiler (i.e. token types)
+xml_utils.py - this file include utilities for handling xml files

@@ -1,0 +1,19 @@
+<root>
+  <subroutineBody>
+    <symbol>{</symbol>
+    <statements>
+      <letStatement>
+        <keyword>let</keyword>
+        <identifier>a</identifier>
+        <symbol>=</symbol>
+        <expression>
+          <term>
+            <integerConstant>1</integerConstant>
+          </term>
+        </expression>
+        <symbol>;</symbol>
+      </letStatement>
+    </statements>
+    <symbol>}</symbol>
+  </subroutineBody>
+</root>
